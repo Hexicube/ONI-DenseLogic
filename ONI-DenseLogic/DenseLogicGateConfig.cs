@@ -43,7 +43,7 @@ namespace ONI_DenseLogic
             {
                 LogicPorts.Port.RibbonInputPort(
                     DenseLogicGate.INPUTID1,
-                    new CellOffset(0, -1),
+                    new CellOffset(0, 0),
                     STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
                     STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
                     STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
@@ -51,7 +51,7 @@ namespace ONI_DenseLogic
                 ),
                 LogicPorts.Port.RibbonInputPort(
                     DenseLogicGate.INPUTID2,
-                    new CellOffset(0, 1),
+                    new CellOffset(0, 2),
                     STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
                     STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
                     STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
@@ -62,7 +62,7 @@ namespace ONI_DenseLogic
             {
                 LogicPorts.Port.RibbonOutputPort(
                     DenseLogicGate.OUTPUTID,
-                    new CellOffset(1, 0),
+                    new CellOffset(1, 1),
                     STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT_OUTPUT,
                     STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_ACTIVE,
                     STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_INACTIVE,
