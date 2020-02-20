@@ -34,6 +34,22 @@ namespace ONI_DenseLogic
                     public static LocString DESC = "Performs logic.";
                     public static LocString EFFECT = "Performs logic.";
                 }
+
+                public static class DENSEMULTIPLEXER
+                {
+                    public static LocString NAME = STRINGS.UI.FormatAsLink("Dense Multiplexer",
+                        DenseMultiplexerConfig.ID);
+                    public static LocString DESC = $"4-bit multiplexer with {STRINGS.UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} as input.";
+                    public static LocString EFFECT = $"Controls which bit of the input {STRINGS.UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} is sent to the output using two control inputs.";
+                }
+
+                public static class DENSEDEMULTIPLEXER
+                {
+                    public static LocString NAME = STRINGS.UI.FormatAsLink("Dense DeMultiplexer",
+                        DenseDeMultiplexerConfig.ID);
+                    public static LocString DESC = $"4-bit multiplexer with {STRINGS.UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} as output.";
+                    public static LocString EFFECT = $"Controls which bit of the output {STRINGS.UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} the input is sent to using two control inputs.";
+                }
             }
         }
     }

@@ -117,7 +117,7 @@ namespace ONI_DenseLogic
 
 		public void Render200ms(float dt)
         {
-            // hexi/test: Do we have to do this here? Can we render only on state change?
+            // hexi/test/peter: Do we have to do this here? Can we render only on state change?
 			UpdateVisuals();
 		}
 
