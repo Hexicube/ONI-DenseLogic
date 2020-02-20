@@ -1,5 +1,6 @@
 ﻿/*
  * Copyright 2020 Dense Logic Team
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
  * restriction, including without limitation the rights to use, copy, modify, merge, publish,
@@ -16,25 +17,20 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace ONI_DenseLogic
-{
-    /// <summary>
-    /// Strings used in Dense Logic.
-    /// </summary>
-    public static class DenseLogicStrings
-    {
-        public static class BUILDINGS
-        {
-            public static class PREFABS
-            {
-                public static class DENSEGATE
-                {
-                    public static LocString NAME = STRINGS.UI.FormatAsLink("Dense Logic Gate",
-                        DenseLogicGateConfig.ID);
-                    public static LocString DESC = "Performs logic.";
-                    public static LocString EFFECT = "Performs logic.";
-                }
-            }
-        }
-    }
+namespace ONI_DenseLogic {
+	/// <summary>
+	/// Strings used in Dense Logic.
+	/// </summary>
+	public static class DenseLogicStrings {
+		public static class BUILDINGS {
+			public static class PREFABS {
+				public static class DENSEGATE {
+					public static LocString NAME = STRINGS.UI.FormatAsLink("Dense Logic Gate",
+						DenseLogicGateConfig.ID);
+					public static LocString DESC = "Performs logic.";
+					public static LocString EFFECT = "Performs logic.";
+				}
+			}
+		}
+	}
 }

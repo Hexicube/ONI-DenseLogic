@@ -1,5 +1,6 @@
 ﻿/*
  * Copyright 2020 Dense Logic Team
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
  * restriction, including without limitation the rights to use, copy, modify, merge, publish,
@@ -21,44 +22,35 @@ using Harmony;
 using PeterHan.PLib;
 using PeterHan.PLib.UI;
 
-namespace ONI_DenseLogic
-{
-    /// <summary>
-    /// Patches which will be applied for Dense Logic.
-    /// </summary>
-    public static class ONI_DenseLogicPatches
-    {
-        public static void OnLoad()
-        {
-            PUtil.InitLibrary();
-            LocString.CreateLocStringKeys(typeof(DenseLogicStrings.BUILDINGS));
-        }
+namespace ONI_DenseLogic {
+	/// <summary>
+	/// Patches which will be applied for Dense Logic.
+	/// </summary>
+	public static class ONI_DenseLogicPatches {
+		public static void OnLoad() {
+			PUtil.InitLibrary();
+			LocString.CreateLocStringKeys(typeof(DenseLogicStrings.BUILDINGS));
+		}
 
-        [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
-        public static class SideScreenCreator
-        {
-            internal static void Postfix()
-            {
-                PUIUtils.AddSideScreenContent<LogicGateSelectSideScreen>();
-            }
-        }
+		[HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
+		public static class SideScreenCreator {
+			internal static void Postfix() {
+				PUIUtils.AddSideScreenContent<LogicGateSelectSideScreen>();
+			}
+		}
 
-        [HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
-        public static class ONIDenseGateConfigurator
-        {
-            internal static void Prefix()
-            {
-                ModUtil.AddBuildingToPlanScreen("Automation", DenseLogicGateConfig.ID);
-            }
-        }
+		[HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
+		public static class ONIDenseGateConfigurator {
+			internal static void Prefix() {
+				ModUtil.AddBuildingToPlanScreen("Automation", DenseLogicGateConfig.ID);
+			}
+		}
 
-        [HarmonyPatch(typeof(Db), "Initialize")]
-        public static class InitDenseGate
-        {
-            internal static void Prefix()
-            {
-                Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseLogicGateConfig.ID);
-            }
-        }
-    }
+		[HarmonyPatch(typeof(Db), "Initialize")]
+		public static class InitDenseGate {
+			internal static void Prefix() {
+				Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseLogicGateConfig.ID);
+			}
+		}
+	}
 }
