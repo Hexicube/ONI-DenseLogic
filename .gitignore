@@ -1,2 +1,5 @@
-ONI-DenseLogic/bin/
-ONI-DenseLogic/obj/
+/.vs/
+bin/
+obj/
+/packages/
+*.user
