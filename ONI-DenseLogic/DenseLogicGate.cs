@@ -36,11 +36,14 @@ namespace ONI_DenseLogic
 		private static readonly KAnimHashedString[] IN_B = { "in_b1", "in_b2", "in_b3", "in_b4" };
 		private static readonly KAnimHashedString[] OUT = { "out_1", "out_2", "out_3", "out_4" };
 
-		private static readonly KAnimHashedString GATE_OR = "gate";
+		private static readonly KAnimHashedString GATE_OR = "or_gate";
 		private static readonly KAnimHashedString GATE_AND = "and_gate";
 		private static readonly KAnimHashedString GATE_XOR = "xor_gate";
+        private static readonly KAnimHashedString GATE_XNOR = "xnor_gate";
+        private static readonly KAnimHashedString GATE_NAND = "nand_gate";
+        private static readonly KAnimHashedString GATE_NOR = "nor_gate";
 
-		private static readonly KAnimHashedString[] LIGHTS =
+        private static readonly KAnimHashedString[] LIGHTS =
             {
 			"on_0", "on_1", "on_2", "on_3", "on_4", "on_5", "on_6", "on_7", "on_8",
 			"on_9", "on_10", "on_11", "on_12", "on_13", "on_14", "on_15", "on_16", "on_17",
@@ -59,6 +62,9 @@ namespace ONI_DenseLogic
 				kbac.SetSymbolVisiblity(GATE_OR, mode == LogicGateType.Or);
 				kbac.SetSymbolVisiblity(GATE_AND, mode == LogicGateType.And);
 				kbac.SetSymbolVisiblity(GATE_XOR, mode == LogicGateType.Xor);
+                kbac.SetSymbolVisiblity(GATE_XNOR, false);
+                kbac.SetSymbolVisiblity(GATE_NAND, false);
+                kbac.SetSymbolVisiblity(GATE_NOR, false);
                 UpdateLogicCircuit();
 			}
 		}
