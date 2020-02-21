@@ -22,7 +22,7 @@ using UnityEngine;
 
 namespace ONI_DenseLogic {
 	public class DenseLogicGateConfig : IBuildingConfig {
-		public const string ID = "DenseGate";
+		public const string ID = "DenseLogicTeam_DenseGate";
 
 		public override BuildingDef CreateBuildingDef() {
 			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 3,
