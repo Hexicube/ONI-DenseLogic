@@ -22,7 +22,8 @@ using UnityEngine;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public class DenseLogicGate : KMonoBehaviour, IRender200ms, IConfigurableLogicGate {
+	public sealed class DenseLogicGate : KMonoBehaviour, ISaveLoadable, IRender200ms,
+			IConfigurableLogicGate {
 		public static readonly HashedString INPUTID1 = new HashedString("DenseGate_IN1");
 		public static readonly HashedString INPUTID2 = new HashedString("DenseGate_IN2");
 		public static readonly HashedString OUTPUTID = new HashedString("DenseGate_OUT");
@@ -30,6 +31,9 @@ namespace ONI_DenseLogic {
 		private static readonly EventSystem.IntraObjectHandler<DenseLogicGate>
 			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<DenseLogicGate>(
 			(component, data) => component.OnLogicValueChanged(data));
+
+		private static readonly Color COLOR_ON = new Color(0.3411765f, 0.7254902f, 0.3686275f);
+		private static readonly Color COLOR_OFF = new Color(0.9529412f, 0.2901961f, 0.2784314f);
 
 		private static readonly KAnimHashedString[] IN_A = { "in_a1", "in_a2", "in_a3", "in_a4" };
 		private static readonly KAnimHashedString[] IN_B = { "in_b1", "in_b2", "in_b3", "in_b4" };
@@ -57,9 +61,6 @@ namespace ONI_DenseLogic {
 				UpdateGateType();
 			}
 		}
-
-		private static readonly Color colorOn = new Color(0.3411765f, 0.7254902f, 0.3686275f);
-		private static readonly Color colorOff = new Color(0.9529412f, 0.2901961f, 0.2784314f);
 
 #pragma warning disable IDE0044 // Add readonly modifier
 		[MyCmpReq]
@@ -135,9 +136,9 @@ namespace ONI_DenseLogic {
 			kbac.Play(LIGHTS[state], KAnim.PlayMode.Once, 1f, 0.0f);
 			for (int a = 0; a < 4; a++) {
 				int mask = 1 << a;
-				kbac.SetSymbolTint(IN_A[a], (inVal2 & mask) != 0 ? colorOn : colorOff);
-				kbac.SetSymbolTint(IN_B[a], (inVal1 & mask) != 0 ? colorOn : colorOff);
-				kbac.SetSymbolTint(OUT[a], (curOut & mask) != 0 ? colorOn : colorOff);
+				kbac.SetSymbolTint(IN_A[a], (inVal2 & mask) != 0 ? COLOR_ON : COLOR_OFF);
+				kbac.SetSymbolTint(IN_B[a], (inVal1 & mask) != 0 ? COLOR_ON : COLOR_OFF);
+				kbac.SetSymbolTint(OUT[a], (curOut & mask) != 0 ? COLOR_ON : COLOR_OFF);
 			}
 		}
 	}
