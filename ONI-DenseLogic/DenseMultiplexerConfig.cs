@@ -21,7 +21,7 @@ using UnityEngine;
 
 namespace ONI_DenseLogic {
 	public class DenseMultiplexerConfig : IBuildingConfig {
-		public const string ID = "DenseMultiplexer";
+		public const string ID = "DenseLogicTeam_DenseMultiplexer";
 
 		public override BuildingDef CreateBuildingDef() {
 			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 2,
