@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ONI-HexiLiquidGermScrubber")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("ONI-DenseLogic")]
+[assembly: AssemblyDescription("Dense Logic Gates and more for Oxygen Not Included")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ONI-HexiLiquidGermScrubber")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyProduct("ONI-DenseLogic")]
+[assembly: AssemblyCopyright("Copyright ©Dense Logic Team 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
