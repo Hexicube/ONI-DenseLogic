@@ -51,9 +51,10 @@ namespace ONI_DenseLogic {
 		[HarmonyPatch(typeof(Db), "Initialize")]
 		public static class InitDenseGate {
 			internal static void Prefix() {
-				Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseLogicGateConfig.ID);
-				Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseMultiplexerConfig.ID);
-				Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseDeMultiplexerConfig.ID);
+				Techs.TECH_GROUPING["DupeTrafficControl"] =
+				Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseLogicGateConfig.ID)
+														 .Append(DenseMultiplexerConfig.ID)
+														 .Append(DenseDeMultiplexerConfig.ID);
 			}
 		}
 	}
