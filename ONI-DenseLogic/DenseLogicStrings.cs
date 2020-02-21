@@ -37,7 +37,7 @@ namespace ONI_DenseLogic {
 					public static LocString PORTOUT_INACTIVE = $"Writes {UI.FormatAsAutomationState("Red", UI.AutomationState.Standby)} signals to Automation Ribbons.";
 				}
 
-				public static class DENSEMULTIPLEXER
+				public static class DENSELOGICTEAM_DENSEMULTIPLEXER
 				{
 					public static LocString NAME = UI.FormatAsLink("Dense Multiplexer",
 						DenseMultiplexerConfig.ID);
@@ -45,7 +45,7 @@ namespace ONI_DenseLogic {
 					public static LocString EFFECT = $"Controls which bit of the input {UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} is sent to the output using two control inputs.";
 				}
 
-				public static class DENSEDEMULTIPLEXER
+				public static class DENSELOGICTEAM_DENSEDEMULTIPLEXER
 				{
 					public static LocString NAME = UI.FormatAsLink("Dense DeMultiplexer",
 						DenseDeMultiplexerConfig.ID);
