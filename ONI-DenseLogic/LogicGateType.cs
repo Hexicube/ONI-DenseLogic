@@ -22,7 +22,6 @@ namespace ONI_DenseLogic {
 	/// The logic gate types selectable through the user interface.
 	/// </summary>
 	public enum LogicGateType {
-		And, Or, Xor,
-		NumTypes
+		And, Or, Xor
 	}
 }

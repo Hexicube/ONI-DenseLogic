@@ -19,8 +19,8 @@
 
 using PeterHan.PLib;
 using PeterHan.PLib.UI;
+using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace ONI_DenseLogic {
 	/// <summary>
@@ -39,7 +39,7 @@ namespace ONI_DenseLogic {
 		private IConfigurableLogicGate target;
 
 		internal LogicGateSelectSideScreen() {
-			buttons = new GameObject[(int)LogicGateType.NumTypes];
+			buttons = new GameObject[Enum.GetNames(typeof(LogicGateType)).Length];
 			target = null;
 		}
 
@@ -90,6 +90,7 @@ namespace ONI_DenseLogic {
 			ContentContainer = ss.Build();
 			base.OnPrefabInit();
 			ContentContainer.SetParent(gameObject);
+			UpdateGateType();
 		}
 
 		/// <summary>
@@ -97,23 +98,33 @@ namespace ONI_DenseLogic {
 		/// </summary>
 		/// <param name="type">The gate type to use.</param>
 		private void SetGateType(LogicGateType type) {
-			int n = buttons.Length;
 			if (target != null)
 				target.GateType = type;
-			// Update the button colors, making the selected button pink and the rest blue
-			for (int i = 0; i < n; i++) {
-				var color = ((LogicGateType)i == type) ? PUITuning.Colors.ButtonPinkStyle :
-					PUITuning.Colors.ButtonBlueStyle;
-				var image = buttons[i].GetComponentSafe<KImage>();
-				if (image != null) {
-					image.colorStyleSetting = color;
-					image.ApplyColorStyleSetting();
-				}
-			}
+			UpdateGateType();
 		}
 
 		public override void SetTarget(GameObject target) {
 			this.target = target.GetComponentSafe<DenseLogicGate>();
+			UpdateGateType();
+		}
+
+		/// <summary>
+		/// Updates the button colors, making the selected button pink and the rest blue.
+		/// </summary>
+		private void UpdateGateType() {
+			int n = buttons.Length;
+			if (target != null) {
+				var type = target.GateType;
+				for (int i = 0; i < n; i++) {
+					var color = ((LogicGateType)i == type) ? PUITuning.Colors.ButtonPinkStyle :
+						PUITuning.Colors.ButtonBlueStyle;
+					var image = buttons[i].GetComponentSafe<KImage>();
+					if (image != null) {
+						image.colorStyleSetting = color;
+						image.ApplyColorStyleSetting();
+					}
+				}
+			}
 		}
 	}
 }
