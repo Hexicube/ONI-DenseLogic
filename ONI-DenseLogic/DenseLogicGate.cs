@@ -42,15 +42,10 @@ namespace ONI_DenseLogic {
 		private static readonly KAnimHashedString GATE_OR = "or_gate";
 		private static readonly KAnimHashedString GATE_AND = "and_gate";
 		private static readonly KAnimHashedString GATE_XOR = "xor_gate";
+
 		private static readonly KAnimHashedString GATE_XNOR = "xnor_gate";
 		private static readonly KAnimHashedString GATE_NAND = "nand_gate";
 		private static readonly KAnimHashedString GATE_NOR = "nor_gate";
-
-		private static readonly KAnimHashedString[] LIGHTS = {
-			"on_0", "on_1", "on_2", "on_3", "on_4", "on_5", "on_6", "on_7", "on_8",
-			"on_9", "on_10", "on_11", "on_12", "on_13", "on_14", "on_15", "on_16", "on_17",
-			"on_18", "on_19", "on_20", "on_21", "on_22", "on_23", "on_24", "on_25", "on_26"
-		};
 
 		public LogicGateType GateType {
 			get {
@@ -121,19 +116,29 @@ namespace ONI_DenseLogic {
 		}
 
 		public void Render200ms(float dt) {
-			// hexi/test: Do we have to do this here? Can we render only on state change?
+			// hexi/test/peter: Do we have to do this here? Can we render only on state change?
 			UpdateVisuals();
 		}
 
+		private void SetSymbolVisibility(int pos, int wire) {
+			int color;
+			if (wire == 0) {
+				color = 2;
+			} else if (wire == 0b1111) {
+				color = 0;
+			} else {
+				color = 1;
+			}
+			for (int i = 0; i < 4; i++) {
+				kbac.SetSymbolVisiblity($"light_bloom_{pos}_{i}", false);
+			}
+			kbac.SetSymbolVisiblity($"light_bloom_{pos}_{color}", true);
+		}
+
 		public void UpdateVisuals() {
-			int state = 0;
-			if (inVal1 == 15) state += 2;
-			else if (inVal1 > 0) state += 1;
-			if (inVal2 == 15) state += 6;
-			else if (inVal2 > 0) state += 3;
-			if (curOut == 15) state += 18;
-			else if (curOut > 0) state += 9;
-			kbac.Play(LIGHTS[state], KAnim.PlayMode.Once, 1f, 0.0f);
+			SetSymbolVisibility(0, inVal1);
+			SetSymbolVisibility(1, inVal2);
+			SetSymbolVisibility(2, curOut);
 			for (int a = 0; a < 4; a++) {
 				int mask = 1 << a;
 				kbac.SetSymbolTint(IN_A[a], (inVal2 & mask) != 0 ? COLOR_ON : COLOR_OFF);

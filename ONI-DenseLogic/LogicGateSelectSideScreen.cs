@@ -55,9 +55,13 @@ namespace ONI_DenseLogic {
 		private PButton CreateGateButton(LogicGateType type) {
 			string text = type.ToString().ToUpper();
 			var button = new PButton(text) {
-				Color = PUITuning.Colors.ButtonBlueStyle, Margin = new RectOffset(8, 8, 3, 3),
-				TextStyle = PUITuning.Fonts.TextLightStyle, ToolTip = "Logic: " + text,
-				Text = text, DynamicSize = true, FlexSize = Vector2.right,
+				Color = PUITuning.Colors.ButtonBlueStyle,
+				Margin = new RectOffset(8, 8, 3, 3),
+				TextStyle = PUITuning.Fonts.TextLightStyle,
+				ToolTip = "Logic: " + text,
+				Text = text,
+				DynamicSize = true,
+				FlexSize = Vector2.right,
 				OnClick = (obj) => SetGateType(type)
 			};
 			button.OnRealize += (obj) => buttons[(int)type] = obj;

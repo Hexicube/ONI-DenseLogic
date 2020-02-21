@@ -1,6 +1,5 @@
 ﻿/*
  * Copyright 2020 Dense Logic Team
- * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
  * restriction, including without limitation the rights to use, copy, modify, merge, publish,
@@ -21,13 +20,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace ONI_DenseLogic {
-	public class DenseLogicGateConfig : IBuildingConfig {
-		public const string ID = "DenseLogicTeam_DenseGate";
+	public class DenseDeMultiplexerConfig : IBuildingConfig {
+		public const string ID = "DenseLogicTeam_DenseDeMultiplexer";
 
 		public override BuildingDef CreateBuildingDef() {
-			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 3,
-				"dense_MULTI_kanim", 30, 4.0f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
-				TUNING.MATERIALS.REFINED_METALS, 800.0f, BuildLocationRule.LogicBridge,
+			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 2,
+				"dense_DEMUX_kanim", 30, 4.0f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
+				TUNING.MATERIALS.REFINED_METALS, 600.0f, BuildLocationRule.LogicBridge,
 				TUNING.BUILDINGS.DECOR.PENALTY.TIER1, TUNING.NOISE_POLLUTION.NOISY.TIER1);
 			buildingDef.Overheatable = false;
 			buildingDef.Floodable = false;
@@ -39,31 +38,39 @@ namespace ONI_DenseLogic {
 			buildingDef.AlwaysOperational = true;
 			buildingDef.LogicInputPorts = new List<LogicPorts.Port>()
 			{
-				LogicPorts.Port.RibbonInputPort(
-					DenseLogicGate.INPUTID1,
-					new CellOffset(0, 0),
+				LogicPorts.Port.InputPort(
+					DenseMultiplexerBase.INPUTID,
+					new CellOffset(0, 1),
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTIN_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTIN_INACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
 					true
 				),
-				LogicPorts.Port.RibbonInputPort(
-					DenseLogicGate.INPUTID2,
-					new CellOffset(0, 2),
+				LogicPorts.Port.InputPort(
+					DenseMultiplexerBase.CONTROLID1,
+					new CellOffset(0, 0),
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTIN_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTIN_INACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
+					true
+				),
+				LogicPorts.Port.InputPort(
+					DenseMultiplexerBase.CONTROLID2,
+					new CellOffset(1, 0),
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
 					true
 				)
 			};
 			buildingDef.LogicOutputPorts = new List<LogicPorts.Port>()
 			{
 				LogicPorts.Port.RibbonOutputPort(
-					DenseLogicGate.OUTPUTID,
+					DenseMultiplexerBase.OUTPUTID,
 					new CellOffset(1, 1),
-					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONWRITER.LOGIC_PORT_OUTPUT,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTOUT_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTOUT_INACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT_OUTPUT,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_ACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_INACTIVE,
 					true
 				)
 			};
@@ -72,7 +79,7 @@ namespace ONI_DenseLogic {
 		}
 
 		public override void DoPostConfigureComplete(GameObject go) {
-			go.AddOrGet<DenseLogicGate>();
+			go.AddOrGet<DenseMultiplexerBase>().muxType = DenseMultiplexerBase.MultiplexerType.DEMUX;
 		}
 	}
 }

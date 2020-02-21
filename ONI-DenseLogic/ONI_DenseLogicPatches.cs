@@ -43,6 +43,8 @@ namespace ONI_DenseLogic {
 		public static class ONIDenseGateConfigurator {
 			internal static void Prefix() {
 				ModUtil.AddBuildingToPlanScreen("Automation", DenseLogicGateConfig.ID);
+				ModUtil.AddBuildingToPlanScreen("Automation", DenseMultiplexerConfig.ID);
+				ModUtil.AddBuildingToPlanScreen("Automation", DenseDeMultiplexerConfig.ID);
 			}
 		}
 
@@ -50,6 +52,8 @@ namespace ONI_DenseLogic {
 		public static class InitDenseGate {
 			internal static void Prefix() {
 				Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseLogicGateConfig.ID);
+				Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseMultiplexerConfig.ID);
+				Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseDeMultiplexerConfig.ID);
 			}
 		}
 	}

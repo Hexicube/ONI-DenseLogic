@@ -27,15 +27,30 @@ namespace ONI_DenseLogic {
 		public static class BUILDINGS {
 			public static class PREFABS {
 				public static class DENSELOGICTEAM_DENSEGATE {
-					public static LocString NAME = STRINGS.UI.FormatAsLink("Dense Logic Gate",
+					public static LocString NAME = UI.FormatAsLink("Dense Logic Gate",
 						DenseLogicGateConfig.ID);
-					
 					public static LocString DESC = $"Banhi told us she didn't like the old logic gates. Banhi is weird.";
 					public static LocString EFFECT = $"Performs logic on each bit in {UI.FormatAsLink("Automation Ribbons", "LOGICRIBBON")} based on the specified mode.\n\nAND:\nOutputs {UI.FormatAsAutomationState("Green Signals", UI.AutomationState.Active)} when both Input A <b>AND</b> Input B are receiving {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)}.\n\nOR:\nOutputs {UI.FormatAsAutomationState("Green Signals", UI.AutomationState.Active)} when either Input A <b>OR</b> Input B are receiving {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)}.\n\nXOR:\nOutputs {UI.FormatAsAutomationState("Green Signals", UI.AutomationState.Active)} when <b>EXACTLY ONE</b> of Input A and Input B are receiving {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)}.\n\nOutputs {UI.FormatAsAutomationState("Red Signals", UI.AutomationState.Standby)} if none of the above are true.";
 					public static LocString PORTIN_ACTIVE = $"Reads {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)} signals from Automation Ribbons.";
 					public static LocString PORTIN_INACTIVE = $"Reads {UI.FormatAsAutomationState("Red", UI.AutomationState.Standby)} signals from Automation Ribbons.";
 					public static LocString PORTOUT_ACTIVE = $"Writes {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)} signals to Automation Ribbons.";
 					public static LocString PORTOUT_INACTIVE = $"Writes {UI.FormatAsAutomationState("Red", UI.AutomationState.Standby)} signals to Automation Ribbons.";
+				}
+
+				public static class DENSELOGICTEAM_DENSEMULTIPLEXER
+				{
+					public static LocString NAME = UI.FormatAsLink("Dense Multiplexer",
+						DenseMultiplexerConfig.ID);
+					public static LocString DESC = $"4-bit multiplexer with {UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} as input.";
+					public static LocString EFFECT = $"Controls which bit of the input {UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} is sent to the output using two control inputs.";
+				}
+
+				public static class DENSELOGICTEAM_DENSEDEMULTIPLEXER
+				{
+					public static LocString NAME = UI.FormatAsLink("Dense DeMultiplexer",
+						DenseDeMultiplexerConfig.ID);
+					public static LocString DESC = $"4-bit multiplexer with {UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} as output.";
+					public static LocString EFFECT = $"Controls which bit of the output {UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} the input is sent to using two control inputs.";
 				}
 			}
 		}
