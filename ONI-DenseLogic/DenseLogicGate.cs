@@ -32,6 +32,10 @@ namespace ONI_DenseLogic {
 			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<DenseLogicGate>(
 			(component, data) => component.OnLogicValueChanged(data));
 
+		private static readonly EventSystem.IntraObjectHandler<DenseLogicGate>
+			OnCopySettingsDelegate = new EventSystem.IntraObjectHandler<DenseLogicGate>(
+			(component, data) => component.OnCopySettings(data));
+
 		private static readonly Color COLOR_ON = new Color(0.3411765f, 0.7254902f, 0.3686275f);
 		private static readonly Color COLOR_OFF = new Color(0.9529412f, 0.2901961f, 0.2784314f);
 
@@ -60,11 +64,14 @@ namespace ONI_DenseLogic {
 #pragma warning disable IDE0044 // Add readonly modifier
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
+		[MyCmpAdd]
+		private CopyBuildingSettings copyBuildingSettings;
 #pragma warning restore IDE0044
 
 		[Serialize]
 		private int inVal1, inVal2;
 		private int curOut;
+		[SerializeField]
 		[Serialize]
 		private LogicGateType mode;
 
@@ -75,6 +82,7 @@ namespace ONI_DenseLogic {
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
+			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
 			UpdateGateType();
 		}
 
@@ -87,6 +95,14 @@ namespace ONI_DenseLogic {
 			else
 				return;
 			UpdateLogicCircuit();
+		}
+
+		private void OnCopySettings(object data)
+		{
+			DenseLogicGate component = ((GameObject)data).GetComponent<DenseLogicGate>();
+			if (component == null) return;
+			mode = component.mode;
+			UpdateGateType();
 		}
 
 		private void UpdateGateType() {
