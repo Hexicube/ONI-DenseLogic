@@ -19,71 +19,67 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ONI_DenseLogic
-{
-    public class DenseMultiplexerConfig : IBuildingConfig
-    {
-        public const string ID = "DenseMultiplexer";
+namespace ONI_DenseLogic {
+	public class DenseMultiplexerConfig : IBuildingConfig {
+		public const string ID = "DenseMultiplexer";
 
-        public override BuildingDef CreateBuildingDef()
-        {
-            BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 2,
-                "dense_MUX_kanim", 30, 4.0f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
-                TUNING.MATERIALS.REFINED_METALS, 600.0f, BuildLocationRule.LogicBridge,
-                TUNING.BUILDINGS.DECOR.PENALTY.TIER1, TUNING.NOISE_POLLUTION.NOISY.TIER1);
-            buildingDef.Overheatable = false;
-            buildingDef.Floodable = false;
-            buildingDef.Entombable = false;
-            buildingDef.PermittedRotations = PermittedRotations.R360;
-            buildingDef.ViewMode = OverlayModes.Logic.ID;
-            buildingDef.AudioCategory = "Metal";
-            buildingDef.SceneLayer = Grid.SceneLayer.Building;
-            buildingDef.AlwaysOperational = true;
-            buildingDef.LogicInputPorts = new List<LogicPorts.Port>()
-            {
-                LogicPorts.Port.RibbonInputPort(
-                    DenseMultiplexerBase.INPUTID,
-                    new CellOffset(0, 1),
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
-                    true
-                ),
-                LogicPorts.Port.InputPort(
-                    DenseMultiplexerBase.CONTROLID1,
-                    new CellOffset(0, 0),
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
-                    true
-                ),
-                LogicPorts.Port.InputPort(
-                    DenseMultiplexerBase.CONTROLID2,
-                    new CellOffset(1, 0),
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
-                    true
-                )
-            };
-            buildingDef.LogicOutputPorts = new List<LogicPorts.Port>()
-            {
-                LogicPorts.Port.OutputPort(
-                    DenseMultiplexerBase.OUTPUTID,
-                    new CellOffset(1, 1),
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT_OUTPUT,
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_ACTIVE,
-                    STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_INACTIVE,
-                    true
-                )
-            };
-            GeneratedBuildings.RegisterWithOverlay(OverlayModes.Logic.HighlightItemIDs, ID);
-            return buildingDef;
-        }
+		public override BuildingDef CreateBuildingDef() {
+			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 2,
+				"dense_MUX_kanim", 30, 4.0f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
+				TUNING.MATERIALS.REFINED_METALS, 600.0f, BuildLocationRule.LogicBridge,
+				TUNING.BUILDINGS.DECOR.PENALTY.TIER1, TUNING.NOISE_POLLUTION.NOISY.TIER1);
+			buildingDef.Overheatable = false;
+			buildingDef.Floodable = false;
+			buildingDef.Entombable = false;
+			buildingDef.PermittedRotations = PermittedRotations.R360;
+			buildingDef.ViewMode = OverlayModes.Logic.ID;
+			buildingDef.AudioCategory = "Metal";
+			buildingDef.SceneLayer = Grid.SceneLayer.Building;
+			buildingDef.AlwaysOperational = true;
+			buildingDef.LogicInputPorts = new List<LogicPorts.Port>()
+			{
+				LogicPorts.Port.RibbonInputPort(
+					DenseMultiplexerBase.INPUTID,
+					new CellOffset(0, 1),
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
+					true
+				),
+				LogicPorts.Port.InputPort(
+					DenseMultiplexerBase.CONTROLID1,
+					new CellOffset(0, 0),
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
+					true
+				),
+				LogicPorts.Port.InputPort(
+					DenseMultiplexerBase.CONTROLID2,
+					new CellOffset(1, 0),
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
+					true
+				)
+			};
+			buildingDef.LogicOutputPorts = new List<LogicPorts.Port>()
+			{
+				LogicPorts.Port.OutputPort(
+					DenseMultiplexerBase.OUTPUTID,
+					new CellOffset(1, 1),
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT_OUTPUT,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_ACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_INACTIVE,
+					true
+				)
+			};
+			GeneratedBuildings.RegisterWithOverlay(OverlayModes.Logic.HighlightItemIDs, ID);
+			return buildingDef;
+		}
 
-        public override void DoPostConfigureComplete(GameObject go)
-        {
-            go.AddOrGet<DenseMultiplexerBase>().muxType = DenseMultiplexerBase.MultiplexerType.MUX;
-        }
-    }
+		public override void DoPostConfigureComplete(GameObject go) {
+			go.AddOrGet<DenseMultiplexerBase>().muxType = DenseMultiplexerBase.MultiplexerType.MUX;
+		}
+	}
 }

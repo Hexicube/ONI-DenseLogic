@@ -87,6 +87,8 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>xcopy /y /s /i "$(TargetDir)$(TargetFileName)" "%25userprofile%25\Documents\Klei\OxygenNotIncluded\mods\dev\$(TargetName)\"
-xcopy /y /s /i "$(TargetDir)PLib.dll" "%25userprofile%25\Documents\Klei\OxygenNotIncluded\mods\dev\$(TargetName)\"</PostBuildEvent>
+xcopy /y /s /i "$(TargetDir)PLib.dll" "%25userprofile%25\Documents\Klei\OxygenNotIncluded\mods\dev\$(TargetName)\"
+rd /s /q "%25userprofile%25\Documents\Klei\OxygenNotIncluded\mods\dev\$(TargetName)\anim"
+xcopy /y /s /i "$(ProjectDir)anim" "%25userprofile%25\Documents\Klei\OxygenNotIncluded\mods\dev\$(TargetName)\anim"</PostBuildEvent>
   </PropertyGroup>
 </Project>
