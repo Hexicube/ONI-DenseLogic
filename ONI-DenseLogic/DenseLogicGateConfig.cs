@@ -27,7 +27,7 @@ namespace ONI_DenseLogic {
 		public override BuildingDef CreateBuildingDef() {
 			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 3,
 				"dense_MULTI_kanim", 30, 4.0f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
-				TUNING.MATERIALS.REFINED_METALS, 800.0f, BuildLocationRule.LogicBridge,
+				TUNING.MATERIALS.REFINED_METALS, 800.0f, BuildLocationRule.Anywhere,
 				TUNING.BUILDINGS.DECOR.PENALTY.TIER1, TUNING.NOISE_POLLUTION.NOISY.TIER1);
 			buildingDef.Overheatable = false;
 			buildingDef.Floodable = false;
@@ -35,7 +35,8 @@ namespace ONI_DenseLogic {
 			buildingDef.PermittedRotations = PermittedRotations.R360;
 			buildingDef.ViewMode = OverlayModes.Logic.ID;
 			buildingDef.AudioCategory = "Metal";
-			buildingDef.SceneLayer = Grid.SceneLayer.Building;
+			buildingDef.ObjectLayer = ObjectLayer.LogicGates;
+			buildingDef.SceneLayer = Grid.SceneLayer.LogicGates;
 			buildingDef.AlwaysOperational = true;
 			buildingDef.LogicInputPorts = new List<LogicPorts.Port>()
 			{
@@ -44,16 +45,14 @@ namespace ONI_DenseLogic {
 					new CellOffset(0, 0),
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
 					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTIN_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTIN_INACTIVE,
-					true
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTIN_INACTIVE
 				),
 				LogicPorts.Port.RibbonInputPort(
 					DenseLogicGate.INPUTID2,
 					new CellOffset(0, 2),
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
 					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTIN_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTIN_INACTIVE,
-					true
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTIN_INACTIVE
 				)
 			};
 			buildingDef.LogicOutputPorts = new List<LogicPorts.Port>()
@@ -63,8 +62,7 @@ namespace ONI_DenseLogic {
 					new CellOffset(1, 1),
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONWRITER.LOGIC_PORT_OUTPUT,
 					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTOUT_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTOUT_INACTIVE,
-					true
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEGATE.PORTOUT_INACTIVE
 				)
 			};
 			GeneratedBuildings.RegisterWithOverlay(OverlayModes.Logic.HighlightItemIDs, ID);
