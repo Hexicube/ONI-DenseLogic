@@ -26,7 +26,7 @@ namespace ONI_DenseLogic {
 		public override BuildingDef CreateBuildingDef() {
 			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 2,
 				"dense_DEMUX_kanim", 30, 4.0f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
-				TUNING.MATERIALS.REFINED_METALS, 600.0f, BuildLocationRule.LogicBridge,
+				TUNING.MATERIALS.REFINED_METALS, 600.0f, BuildLocationRule.Anywhere,
 				TUNING.BUILDINGS.DECOR.PENALTY.TIER1, TUNING.NOISE_POLLUTION.NOISY.TIER1);
 			buildingDef.Overheatable = false;
 			buildingDef.Floodable = false;
@@ -34,7 +34,8 @@ namespace ONI_DenseLogic {
 			buildingDef.PermittedRotations = PermittedRotations.R360;
 			buildingDef.ViewMode = OverlayModes.Logic.ID;
 			buildingDef.AudioCategory = "Metal";
-			buildingDef.SceneLayer = Grid.SceneLayer.Building;
+			buildingDef.ObjectLayer = ObjectLayer.LogicGates;
+			buildingDef.SceneLayer = Grid.SceneLayer.LogicGates;
 			buildingDef.AlwaysOperational = true;
 			buildingDef.LogicInputPorts = new List<LogicPorts.Port>()
 			{
@@ -43,24 +44,21 @@ namespace ONI_DenseLogic {
 					new CellOffset(0, 1),
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
-					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
-					true
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE
 				),
 				LogicPorts.Port.InputPort(
 					DenseMultiplexerBase.CONTROLID1,
 					new CellOffset(0, 0),
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
-					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
-					true
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE
 				),
 				LogicPorts.Port.InputPort(
 					DenseMultiplexerBase.CONTROLID2,
 					new CellOffset(1, 0),
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
-					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE,
-					true
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE
 				)
 			};
 			buildingDef.LogicOutputPorts = new List<LogicPorts.Port>()
@@ -70,8 +68,7 @@ namespace ONI_DenseLogic {
 					new CellOffset(1, 1),
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT_OUTPUT,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_ACTIVE,
-					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_INACTIVE,
-					true
+					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_INACTIVE
 				)
 			};
 			GeneratedBuildings.RegisterWithOverlay(OverlayModes.Logic.HighlightItemIDs, ID);

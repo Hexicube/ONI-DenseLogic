@@ -48,12 +48,18 @@ namespace ONI_DenseLogic {
 			}
 		}
 
+		private static void AddToTech(string tech, params string[] items) {
+			string[] oldlist = Techs.TECH_GROUPING[tech];
+			string[] newList = new string[oldlist.Length + items.Length];
+			System.Array.Copy(oldlist, newList, oldlist.Length);
+			System.Array.Copy(items, 0, newList, oldlist.Length, items.Length);
+			Techs.TECH_GROUPING[tech] = newList;
+		}
+
 		[HarmonyPatch(typeof(Db), "Initialize")]
 		public static class InitDenseGate {
 			internal static void Prefix() {
-				Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseLogicGateConfig.ID);
-				Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseMultiplexerConfig.ID);
-				Techs.TECH_GROUPING["DupeTrafficControl"].Append(DenseDeMultiplexerConfig.ID);
+				AddToTech("DupeTrafficControl", DenseLogicGateConfig.ID, DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID);
 			}
 		}
 	}
