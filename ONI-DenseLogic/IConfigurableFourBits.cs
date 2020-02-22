@@ -22,7 +22,7 @@ namespace ONI_DenseLogic {
 	/// Tagged on configurable buildings that can have mulitple bits set to
 	/// provide hooks for the bit select side screen.
 	/// </summary>
-	public interface IConfigurableBits {
+	public interface IConfigurableFourBits {
 		/// <summary>
 		/// Sets the value of a bit at a specific position.
 		/// </summary>
@@ -34,6 +34,7 @@ namespace ONI_DenseLogic {
 		/// Gets the value of a bit at a specific position.
 		/// </summary>
 		/// <param name="pos">The position at which to get the value.</param>
-		void GetBit(int pos);
+		/// <returns>The value of the bit at that position.</returns>
+		bool GetBit(int pos);
 	}
 }

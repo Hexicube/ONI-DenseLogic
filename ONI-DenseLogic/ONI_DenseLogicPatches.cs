@@ -36,6 +36,14 @@ namespace ONI_DenseLogic {
 		public static class SideScreenCreator {
 			internal static void Postfix() {
 				PUIUtils.AddSideScreenContent<LogicGateSelectSideScreen>();
+				PUIUtils.AddSideScreenContent<FourBitSelectSideScreen>();
+			}
+		}
+
+		[HarmonyPatch(typeof(LogicBitSelectorSideScreen), "RefreshToggles")]
+		public static class AAA {
+			internal static void Postfix(LogicBitSelectorSideScreen __instance) {
+				PUIUtils.DebugObjectTree(__instance.toggles_by_int[1].gameObject);
 			}
 		}
 
@@ -45,6 +53,7 @@ namespace ONI_DenseLogic {
 				ModUtil.AddBuildingToPlanScreen("Automation", DenseLogicGateConfig.ID);
 				ModUtil.AddBuildingToPlanScreen("Automation", DenseMultiplexerConfig.ID);
 				ModUtil.AddBuildingToPlanScreen("Automation", DenseDeMultiplexerConfig.ID);
+				ModUtil.AddBuildingToPlanScreen("Automation", DenseInputConfig.ID);
 			}
 		}
 
@@ -59,7 +68,7 @@ namespace ONI_DenseLogic {
 		[HarmonyPatch(typeof(Db), "Initialize")]
 		public static class InitDenseGate {
 			internal static void Prefix() {
-				AddToTech("DupeTrafficControl", DenseLogicGateConfig.ID, DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID);
+				AddToTech("DupeTrafficControl", DenseLogicGateConfig.ID, DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID, DenseInputConfig.ID);
 			}
 		}
 	}

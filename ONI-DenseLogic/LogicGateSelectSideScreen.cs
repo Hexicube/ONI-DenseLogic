@@ -73,6 +73,8 @@ namespace ONI_DenseLogic {
 		}
 
 		public override bool IsValidForTarget(GameObject target) {
+			// peter: why are you using GetComponentSafe with the actual class
+			// rather than GetComponent with the interface like vanilla does?
 			return target.GetComponentSafe<DenseLogicGate>() != null;
 		}
 

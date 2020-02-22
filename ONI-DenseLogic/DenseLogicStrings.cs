@@ -37,20 +37,27 @@ namespace ONI_DenseLogic {
 					public static LocString PORTOUT_INACTIVE = $"Writes {UI.FormatAsAutomationState("Red", UI.AutomationState.Standby)} signals to Automation Ribbons.";
 				}
 
-				public static class DENSELOGICTEAM_DENSEMULTIPLEXER
-				{
+				public static class DENSELOGICTEAM_DENSEMULTIPLEXER {
 					public static LocString NAME = UI.FormatAsLink("Dense Multiplexer",
 						DenseMultiplexerConfig.ID);
 					public static LocString DESC = $"4-bit multiplexer with {UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} as input.";
 					public static LocString EFFECT = $"Controls which bit of the input {UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} is sent to the output using two control inputs.";
 				}
 
-				public static class DENSELOGICTEAM_DENSEDEMULTIPLEXER
-				{
+				public static class DENSELOGICTEAM_DENSEDEMULTIPLEXER {
 					public static LocString NAME = UI.FormatAsLink("Dense DeMultiplexer",
 						DenseDeMultiplexerConfig.ID);
 					public static LocString DESC = $"4-bit multiplexer with {UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} as output.";
 					public static LocString EFFECT = $"Controls which bit of the output {UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} the input is sent to using two control inputs.";
+				}
+
+				public static class DENSELOGICTEAM_DENSEINPUT {
+					public static LocString NAME = UI.FormatAsLink("Dense Input",
+						DenseInputConfig.ID);
+					public static LocString DESC = $"4-bit input with {UI.FormatAsLink("Ribbon Cable", LogicRibbonConfig.ID)} as output.";
+					public static LocString EFFECT = $"Provides a constant 4-bit automation signal.";
+					public static LocString PORTOUT_ACTIVE = $"Writes {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)} signals to Automation Ribbons.";
+					public static LocString PORTOUT_INACTIVE = $"Writes {UI.FormatAsAutomationState("Red", UI.AutomationState.Standby)} signals to Automation Ribbons.";
 				}
 			}
 		}
