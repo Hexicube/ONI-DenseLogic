@@ -91,13 +91,14 @@ namespace ONI_DenseLogic {
 			}
 			border.AddChild(ss);
 			ContentContainer = border.Build();
-			/*foreach (KeyValuePair<int, BitSelectRow> keyValuePair in toggles) {
+			foreach (KeyValuePair<int, BitSelectRow> keyValuePair in toggles) {
 				keyValuePair.Value.Toggle.onClick += () => {
 					if (target != null) {
 						target.SetBit(!target.GetBit(keyValuePair.Key), keyValuePair.Key);
+						RefreshToggles();
 					}
 				};
-			}*/
+			}
 			ContentContainer.SetMinUISize(MIN_PANEL_SIZE);
 			base.OnPrefabInit();
 			ContentContainer.SetParent(gameObject);
@@ -137,7 +138,9 @@ namespace ONI_DenseLogic {
 			/// <summary>
 			/// The panel containing this row
 			/// </summary>
-			public PPanel Row { get;  }
+			public PPanel Row { get; }
+
+			public KButton Toggle;
 
 			public Image StateIcon;
 
@@ -145,21 +148,60 @@ namespace ONI_DenseLogic {
 
 			public LocText StateText;
 
+			public static ColorStyleSetting BitSelectColorStyle;
+			public static ColorStyleSetting BitSelectOutlineStyle;
+
+			private KImage outlineImage;
+
+			static BitSelectRow() {
+				BitSelectColorStyle = ScriptableObject.CreateInstance<ColorStyleSetting>();
+				BitSelectColorStyle.activeColor = new Color(0.96f, 0.89f, .93f);
+				BitSelectColorStyle.inactiveColor = new Color(1.0f, 1.0f, 1.0f);
+				BitSelectColorStyle.hoverColor = new Color(0.93f, 0.86f, .90f);
+				BitSelectOutlineStyle = ScriptableObject.CreateInstance<ColorStyleSetting>();
+				BitSelectOutlineStyle.activeColor = new Color(0.94f, 0.84f, 0.88f);
+				BitSelectOutlineStyle.inactiveColor = new Color(0.898f, 0.898f, 0.898f);
+				BitSelectOutlineStyle.hoverColor = new Color(0.91f, 0.81f, 0.85f);
+			}
+
 			public BitSelectRow(int pos) {
 				Row = new PPanel("BitSelectRow") {
 					Margin = new RectOffset(4, 4, 4, 4),
 					FlexSize = new Vector2(1.0f, 0.0f),
 				};
+				var RowBackground = new PPanel("BitSelectRowBackground") {
+					FlexSize = new Vector2(1.0f, 0.0f),
+				};
+				RowBackground.OnRealize += gameObject => {
+					var img = gameObject.AddComponent<KImage>();
+					img.sprite = PUITuning.Images.GetSpriteByName("BitSelectorSideScreenRow");
+					img.type = Image.Type.Sliced;
+					img.colorStyleSetting = BitSelectColorStyle;
+					Toggle = gameObject.AddComponent<KButton>();
+					Toggle.soundPlayer = new ButtonSoundPlayer() {
+						Enabled = true
+					};
+					Toggle.bgImage = img;
+					// this only works as long as the children are realized before the parents
+					// there is probably a better way to do this but this works under that assumption
+					Toggle.additionalKImages = new KImage[1] { outlineImage };
+				};
+				Row.AddChild(RowBackground);
 				var RowInternal = new PPanel("BitSelectRowInternal") {
 					Margin = new RectOffset(4, 4, 4, 4),
 					FlexSize = new Vector2(1.0f, 0.0f),
-					BackColor = new Color(0.898f, 0.898f, 0.898f)
 				};
-				Row.AddChild(RowInternal);
+				RowInternal.OnRealize += gameObject => {
+					var img = gameObject.AddComponent<KImage>();
+					img.sprite = PUITuning.Images.GetSpriteByName("overview_highlight_outline_sharp");
+					img.type = Image.Type.Sliced;
+					img.colorStyleSetting = BitSelectOutlineStyle;
+					outlineImage = img;
+				};
+				RowBackground.AddChild(RowInternal);
 				var RowInternalGrid = new PGridPanel("BitSelectRowInternalGrid") {
 					Margin = new RectOffset(4, 4, 4, 4),
 					FlexSize = new Vector2(1.0f, 0.0f),
-					BackColor = new Color(1.0f, 1.0f, 1.0f)
 				};
 				RowInternalGrid.AddRow(new GridRowSpec());
 				RowInternalGrid.AddColumn(new GridColumnSpec()).AddColumn(new GridColumnSpec())
@@ -188,7 +230,7 @@ namespace ONI_DenseLogic {
 				var stateText = new PLabel("StateText") {
 					Text = UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_INACTIVE,
 					TextStyle = PUITuning.Fonts.TextDarkStyle,
-					TextAlignment = TextAnchor.MiddleRight
+					TextAlignment = TextAnchor.MiddleLeft
 				};
 				stateText.OnRealize += gameObject => StateText = gameObject.GetComponentInChildren<LocText>();
 				RowInternalGrid.AddChild(stateText, new GridComponentSpec(0, 3));

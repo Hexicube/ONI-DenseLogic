@@ -71,6 +71,7 @@ namespace ONI_DenseLogic {
 			if (value) {
 				curOut |= 1 << pos;
 			}
+			UpdateLogicCircuit();
 		}
 
 		public bool GetBit(int pos) {
