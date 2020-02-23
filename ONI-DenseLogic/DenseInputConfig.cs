@@ -13,6 +13,7 @@ namespace ONI_DenseLogic {
 			buildingDef.Overheatable = false;
 			buildingDef.Floodable = false;
 			buildingDef.Entombable = false;
+			buildingDef.PermittedRotations = PermittedRotations.R90;
 			buildingDef.ViewMode = OverlayModes.Logic.ID;
 			buildingDef.AudioCategory = "Metal";
 			buildingDef.SceneLayer = Grid.SceneLayer.Building;

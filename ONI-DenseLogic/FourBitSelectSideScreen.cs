@@ -89,6 +89,44 @@ namespace ONI_DenseLogic {
 				toggles[i] = new BitSelectRow(i);
 				ss.AddChild(toggles[i].Row);
 			}
+			ss.AddChild(new PPanel() {
+				Margin = margin,
+				Direction = PanelDirection.Horizontal,
+				FlexSize = new Vector2(1.0f, 1.0f),
+				Alignment = TextAnchor.UpperCenter,
+			}.AddChild(new PSpacer() { FlexSize = new Vector2(1.0f, 0.0f) })
+			.AddChild(new PButton() {
+				Color = PUITuning.Colors.ButtonBlueStyle,
+				Margin = new RectOffset(8, 8, 3, 3),
+				TextStyle = PUITuning.Fonts.TextLightStyle,
+				ToolTip = "Enables all bits",
+				Text = "Set",
+				OnClick = obj => {
+					if (target != null) {
+						target.SetBit(true, 0);
+						target.SetBit(true, 1);
+						target.SetBit(true, 2);
+						target.SetBit(true, 3);
+						RefreshToggles();
+					}
+				}
+			}).AddChild(new PSpacer() { FlexSize = new Vector2(0.5f, 0.0f) })
+			.AddChild(new PButton() {
+				Color = PUITuning.Colors.ButtonBlueStyle,
+				Margin = new RectOffset(8, 8, 3, 3),
+				TextStyle = PUITuning.Fonts.TextLightStyle,
+				ToolTip = "Disables all bits",
+				Text = "Clear",
+				OnClick = obj => {
+					if (target != null) {
+						target.SetBit(false, 0);
+						target.SetBit(false, 1);
+						target.SetBit(false, 2);
+						target.SetBit(false, 3);
+						RefreshToggles();
+					}
+				}
+			}).AddChild(new PSpacer() { FlexSize = new Vector2(1.0f, 0.0f) }));
 			border.AddChild(ss);
 			ContentContainer = border.Build();
 			foreach (KeyValuePair<int, BitSelectRow> keyValuePair in toggles) {
