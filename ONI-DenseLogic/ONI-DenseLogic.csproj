@@ -52,8 +52,16 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ONI-Mods\src\lib\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>E:\steamlib\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ONI-Mods\src\lib\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>E:\steamlib\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed\UnityEngine.UI.dll</HintPath>
@@ -63,10 +71,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DenseInput.cs" />
+    <Compile Include="DenseInputConfig.cs" />
+    <Compile Include="FourBitSelectSideScreen.cs" />
     <Compile Include="DenseDeMultiplexerConfig.cs" />
     <Compile Include="DenseLogicGate.cs" />
     <Compile Include="DenseMultiplexerBase.cs" />
     <Compile Include="DenseMultiplexerConfig.cs" />
+    <Compile Include="IConfigurableFourBits.cs" />
     <Compile Include="ONI_DenseLogicPatches.cs" />
     <Compile Include="DenseLogicGateConfig.cs" />
     <Compile Include="IConfigurableLogicGate.cs" />
