@@ -19,6 +19,7 @@
 
 using Database;
 using Harmony;
+using System.Collections.Generic;
 using PeterHan.PLib;
 using PeterHan.PLib.UI;
 
@@ -47,13 +48,34 @@ namespace ONI_DenseLogic {
 			}
 		}
 
+		private static void AddBuildingToPlanScreen(HashedString category, string building_id, string building_after = null) {
+			if (building_after == null)
+				ModUtil.AddBuildingToPlanScreen(category, building_id);
+			else {
+				int index = TUNING.BUILDINGS.PLANORDER.FindIndex(x => x.category == category);
+				if (index < 0)
+					return;
+				var lst = TUNING.BUILDINGS.PLANORDER[index].data as IList<string>;
+				int after_index = lst.IndexOf(building_after);
+				if (after_index < 0)
+					return;
+				if (after_index + 1 >= lst.Count)
+					lst.Add(building_id);
+				else
+					lst.Insert(after_index + 1, building_id);
+			}
+		}
+
 		[HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
 		public static class ONIDenseGateConfigurator {
 			internal static void Prefix() {
 				ModUtil.AddBuildingToPlanScreen("Automation", DenseLogicGateConfig.ID);
 				ModUtil.AddBuildingToPlanScreen("Automation", DenseMultiplexerConfig.ID);
 				ModUtil.AddBuildingToPlanScreen("Automation", DenseDeMultiplexerConfig.ID);
-				ModUtil.AddBuildingToPlanScreen("Automation", DenseInputConfig.ID);
+				AddBuildingToPlanScreen("Automation", DenseInputConfig.ID, LogicSwitchConfig.ID);
+				AddBuildingToPlanScreen("Automation", LogicGateNorConfig.ID, LogicGateOrConfig.ID);
+				AddBuildingToPlanScreen("Automation", LogicGateNandConfig.ID, LogicGateAndConfig.ID);
+				AddBuildingToPlanScreen("Automation", LogicGateXnorConfig.ID, LogicGateXorConfig.ID);
 			}
 		}
 
@@ -68,7 +90,10 @@ namespace ONI_DenseLogic {
 		[HarmonyPatch(typeof(Db), "Initialize")]
 		public static class InitDenseGate {
 			internal static void Prefix() {
-				AddToTech("DupeTrafficControl", DenseLogicGateConfig.ID, DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID, DenseInputConfig.ID);
+				AddToTech("DupeTrafficControl", LogicGateXnorConfig.ID);
+				AddToTech("Multiplexing", DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID);
+				AddToTech("LogicCircuits", LogicGateNorConfig.ID, LogicGateNandConfig.ID);
+				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID);
 			}
 		}
 	}

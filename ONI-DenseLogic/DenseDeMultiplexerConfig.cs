@@ -25,8 +25,11 @@ namespace ONI_DenseLogic {
 
 		public override BuildingDef CreateBuildingDef() {
 			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 2,
-				"dense_DEMUX_kanim", 30, 4.0f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
-				TUNING.MATERIALS.REFINED_METALS, 600.0f, BuildLocationRule.Anywhere,
+				"dense_DEMUX_kanim",
+				TUNING.BUILDINGS.HITPOINTS.TIER1,
+				TUNING.BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER1,
+				TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
+				TUNING.MATERIALS.REFINED_METALS, 1600.0f, BuildLocationRule.Anywhere,
 				TUNING.BUILDINGS.DECOR.PENALTY.TIER1, TUNING.NOISE_POLLUTION.NOISY.TIER1);
 			buildingDef.Overheatable = false;
 			buildingDef.Floodable = false;
@@ -40,22 +43,22 @@ namespace ONI_DenseLogic {
 			buildingDef.LogicInputPorts = new List<LogicPorts.Port>()
 			{
 				LogicPorts.Port.InputPort(
-					DenseMultiplexerBase.INPUTID,
-					new CellOffset(0, 1),
+					DenseMultiplexer.INPUTID,
+					DenseMultiplexer.INPUTOFFSET,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE
 				),
 				LogicPorts.Port.InputPort(
-					DenseMultiplexerBase.CONTROLID1,
-					new CellOffset(0, 0),
+					DenseMultiplexer.CONTROLID1,
+					DenseMultiplexer.CONTROLOFFSET1,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE
 				),
 				LogicPorts.Port.InputPort(
-					DenseMultiplexerBase.CONTROLID2,
-					new CellOffset(1, 0),
+					DenseMultiplexer.CONTROLID2,
+					DenseMultiplexer.CONTROLOFFSET2,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_ACTIVE,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.INPUT_PORT_INACTIVE
@@ -64,8 +67,8 @@ namespace ONI_DenseLogic {
 			buildingDef.LogicOutputPorts = new List<LogicPorts.Port>()
 			{
 				LogicPorts.Port.RibbonOutputPort(
-					DenseMultiplexerBase.OUTPUTID,
-					new CellOffset(1, 1),
+					DenseMultiplexer.OUTPUTID,
+					DenseMultiplexer.OUTPUTOFFSET,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.LOGIC_PORT_OUTPUT,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_ACTIVE,
 					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONREADER.OUTPUT_PORT_INACTIVE
@@ -76,7 +79,7 @@ namespace ONI_DenseLogic {
 		}
 
 		public override void DoPostConfigureComplete(GameObject go) {
-			go.AddOrGet<DenseMultiplexerBase>().muxType = DenseMultiplexerBase.MultiplexerType.DEMUX;
+			go.AddOrGet<DenseMultiplexer>().muxType = DenseMultiplexer.MultiplexerType.DEMUX;
 		}
 	}
 }
