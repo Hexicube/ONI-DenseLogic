@@ -76,6 +76,7 @@ namespace ONI_DenseLogic {
 				AddBuildingToPlanScreen("Automation", LogicGateNorConfig.ID, LogicGateOrConfig.ID);
 				AddBuildingToPlanScreen("Automation", LogicGateNandConfig.ID, LogicGateAndConfig.ID);
 				AddBuildingToPlanScreen("Automation", LogicGateXnorConfig.ID, LogicGateXorConfig.ID);
+				AddBuildingToPlanScreen("Automation", LogicSevenSegmentConfig.ID, LogicCounterConfig.ID);
 			}
 		}
 
@@ -93,7 +94,7 @@ namespace ONI_DenseLogic {
 				AddToTech("DupeTrafficControl", LogicGateXnorConfig.ID);
 				AddToTech("Multiplexing", DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID);
 				AddToTech("LogicCircuits", LogicGateNorConfig.ID, LogicGateNandConfig.ID);
-				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID);
+				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID, LogicSevenSegmentConfig.ID);
 			}
 		}
 	}
