@@ -81,7 +81,7 @@ namespace ONI_DenseLogic {
 		protected override void OnPrefabInit() {
 			var margin = new RectOffset(4, 4, 4, 4);
 			var ss = new PGridPanel("GateLogicSelect") { Margin = margin }.
-				AddRow(new GridRowSpec()).AddRow(new GridRowSpec()).
+				AddRow(new GridRowSpec()).AddRow(new GridRowSpec()).AddRow(new GridRowSpec()).
 				AddColumn(new GridColumnSpec(flex: 0.5f)).AddColumn(new GridColumnSpec()).
 				AddColumn(new GridColumnSpec()).AddColumn(new GridColumnSpec(flex: 0.5f));
 			var and = CreateGateButton(LogicGateType.And);
@@ -91,6 +91,15 @@ namespace ONI_DenseLogic {
 				Margin = margin
 			});
 			ss.AddChild(CreateGateButton(LogicGateType.Xor), new GridComponentSpec(1, 1) {
+				Margin = margin
+			});
+			ss.AddChild(CreateGateButton(LogicGateType.Nand), new GridComponentSpec(1, 2) {
+				Margin = margin
+			});
+			ss.AddChild(CreateGateButton(LogicGateType.Nor), new GridComponentSpec(2, 1) {
+				Margin = margin
+			});
+			ss.AddChild(CreateGateButton(LogicGateType.Xnor), new GridComponentSpec(2, 2) {
 				Margin = margin
 			});
 			ContentContainer = ss.Build();

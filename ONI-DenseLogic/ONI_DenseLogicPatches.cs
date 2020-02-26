@@ -90,10 +90,10 @@ namespace ONI_DenseLogic {
 		[HarmonyPatch(typeof(Db), "Initialize")]
 		public static class InitDenseGate {
 			internal static void Prefix() {
-				AddToTech("DupeTrafficControl", LogicGateXnorConfig.ID, DenseLogicGateConfig.ID);
+				AddToTech("DupeTrafficControl", LogicGateXnorConfig.ID);
 				AddToTech("Multiplexing", DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID);
 				AddToTech("LogicCircuits", LogicGateNorConfig.ID, LogicGateNandConfig.ID);
-				AddToTech("ParallelAutomation", DenseInputConfig.ID);
+				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID);
 			}
 		}
 	}
