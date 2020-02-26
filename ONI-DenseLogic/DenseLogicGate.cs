@@ -28,6 +28,10 @@ namespace ONI_DenseLogic {
 		public static readonly HashedString INPUTID2 = new HashedString("DenseGate_IN2");
 		public static readonly HashedString OUTPUTID = new HashedString("DenseGate_OUT");
 
+		public static readonly CellOffset INPUTOFFSET1 = new CellOffset(0, 0);
+		public static readonly CellOffset INPUTOFFSET2 = new CellOffset(0, 2);
+		public static readonly CellOffset OUTPUTOFFSET = new CellOffset(1, 1);
+
 		private static readonly EventSystem.IntraObjectHandler<DenseLogicGate>
 			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<DenseLogicGate>(
 			(component, data) => component.OnLogicValueChanged(data));
@@ -38,6 +42,7 @@ namespace ONI_DenseLogic {
 
 		private static readonly Color COLOR_ON = new Color(0.3411765f, 0.7254902f, 0.3686275f);
 		private static readonly Color COLOR_OFF = new Color(0.9529412f, 0.2901961f, 0.2784314f);
+		private static readonly Color COLOR_DISABLED = new Color(1.0f, 1.0f, 1.0f);
 
 		private static readonly KAnimHashedString[] IN_A = { "in_a1", "in_a2", "in_a3", "in_a4" };
 		private static readonly KAnimHashedString[] IN_B = { "in_b1", "in_b2", "in_b3", "in_b4" };
@@ -74,6 +79,13 @@ namespace ONI_DenseLogic {
 		[SerializeField]
 		[Serialize]
 		private LogicGateType mode;
+
+		private int GetActualCell(CellOffset offset) {
+			Rotatable component = GetComponent<Rotatable>();
+			if (component != null)
+				offset = component.GetRotatedCellOffset(offset);
+			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
+		}
 
 		internal DenseLogicGate() {
 			mode = LogicGateType.And;
@@ -151,16 +163,38 @@ namespace ONI_DenseLogic {
 			kbac.SetSymbolVisiblity($"light_bloom_{pos}_{color}", true);
 		}
 
-		public void UpdateVisuals() {
-			SetSymbolVisibility(0, inVal1);
-			SetSymbolVisibility(1, inVal2);
-			SetSymbolVisibility(2, curOut);
-			for (int a = 0; a < 4; a++) {
-				int mask = 1 << a;
-				kbac.SetSymbolTint(IN_A[a], (inVal2 & mask) != 0 ? COLOR_ON : COLOR_OFF);
-				kbac.SetSymbolTint(IN_B[a], (inVal1 & mask) != 0 ? COLOR_ON : COLOR_OFF);
-				kbac.SetSymbolTint(OUT[a], (curOut & mask) != 0 ? COLOR_ON : COLOR_OFF);
+		private void SetSymbolsOff() {
+			for (int pos = 0; pos < 3; pos++) {
+				for (int i = 0; i < 4; i++) {
+					kbac.SetSymbolVisiblity($"light_bloom_{pos}_{i}", false);
+				}
+				kbac.SetSymbolVisiblity($"light_bloom_{pos}_3", true);
 			}
+		}
+
+		public void UpdateVisuals() {
+			// when there is not an output, we are supposed to play the off animation
+			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OUTPUTOFFSET)) is LogicCircuitNetwork)) {
+				SetSymbolsOff();
+				for (int a = 0; a < 4; a++) {
+					int mask = 1 << a;
+					kbac.SetSymbolTint(IN_A[a], COLOR_DISABLED);
+					kbac.SetSymbolTint(IN_B[a], COLOR_DISABLED);
+					kbac.SetSymbolTint(OUT[a], COLOR_DISABLED);
+				}
+			} else {
+			// otherwise set the colors of the lamps and of the individual wires on the gate
+				SetSymbolVisibility(0, inVal1);
+				SetSymbolVisibility(1, inVal2);
+				SetSymbolVisibility(2, curOut);
+				for (int a = 0; a < 4; a++) {
+					int mask = 1 << a;
+					kbac.SetSymbolTint(IN_A[a], (inVal2 & mask) != 0 ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(IN_B[a], (inVal1 & mask) != 0 ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(OUT[a], (curOut & mask) != 0 ? COLOR_ON : COLOR_OFF);
+				}
+			}
+			
 		}
 	}
 }

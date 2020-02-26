@@ -26,6 +26,11 @@ namespace ONI_DenseLogic {
 		public static readonly HashedString CONTROLID1 = new HashedString("DenseMuxGate_CTRL1");
 		public static readonly HashedString CONTROLID2 = new HashedString("DenseMuxGate_CTRL2");
 
+		public static readonly CellOffset INPUTOFFSET = new CellOffset(0, 1);
+		public static readonly CellOffset OUTPUTOFFSET = new CellOffset(1, 1);
+		public static readonly CellOffset CONTROLOFFSET1 = new CellOffset(0, 0);
+		public static readonly CellOffset CONTROLOFFSET2 = new CellOffset(1, 0);
+
 		private static readonly EventSystem.IntraObjectHandler<DenseMultiplexerBase>
 			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<DenseMultiplexerBase>(
 			(component, data) => component.OnLogicValueChanged(data));
@@ -43,6 +48,13 @@ namespace ONI_DenseLogic {
 
 		[Serialize]
 		public MultiplexerType muxType;
+
+		private int GetActualCell(CellOffset offset) {
+			Rotatable component = GetComponent<Rotatable>();
+			if (component != null)
+				offset = component.GetRotatedCellOffset(offset);
+			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
+		}
 
 		protected override void OnSpawn() {
 			base.OnSpawn();
@@ -108,6 +120,11 @@ namespace ONI_DenseLogic {
 		}
 
 		public void UpdateVisuals() {
+			// when there is not an output, we are supposed to play the off animation
+			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OUTPUTOFFSET)) is LogicCircuitNetwork)) {
+				kbac.Play("off", KAnim.PlayMode.Once, 1f, 0.0f);
+				return;
+			}
 			int num0 = 0;
 			int num1 = 0;
 			int num2 = 0;
