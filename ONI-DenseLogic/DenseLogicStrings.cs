@@ -117,6 +117,8 @@ namespace ONI_DenseLogic {
 					public static LocString BIT_2 = "Select input signal to use on Bit 2";
 					public static LocString BIT_3 = "Select input signal to use on Bit 3";
 					public static LocString BIT_4 = "Select input signal to use on Bit 4";
+					public static LocString IDENTITY = "Sets all bits to pass through as normal";
+					public static LocString CLEAR = "Stop all bits from passing through";
 				}
 			}
 
@@ -139,6 +141,8 @@ namespace ONI_DenseLogic {
 					public static LocString BIT_4 = "Bit 4";
 					public static LocString OUTPUT = "Output {0}";
 					public static LocString TITLE = "Configure Signal Mapping";
+					public static LocString IDENTITY = "Set Identity";
+					public static LocString CLEAR = "Clear";
 				}
 			}
 		}

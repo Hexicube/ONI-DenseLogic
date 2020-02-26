@@ -25,7 +25,7 @@ namespace ONI_DenseLogic {
 
 		public override BuildingDef CreateBuildingDef() {
 			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 1,
-				"logic_not_kanim", 30, 4.0f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
+				"dense_SWITCH_kanim", 30, 4.0f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
 				TUNING.MATERIALS.REFINED_METALS, 200.0f, BuildLocationRule.Anywhere,
 				TUNING.BUILDINGS.DECOR.NONE, TUNING.NOISE_POLLUTION.NONE);
 			buildingDef.Overheatable = false;

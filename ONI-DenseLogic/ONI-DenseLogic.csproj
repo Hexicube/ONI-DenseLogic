@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DenseInput.cs" />
+    <Compile Include="IConfigurableFourBits.cs" />
     <Compile Include="RemapperSideScreen.cs" />
     <Compile Include="SignalRemapper.cs" />
     <Compile Include="SignalRemapperConfig.cs" />
@@ -81,7 +82,6 @@
     <Compile Include="DenseLogicGate.cs" />
     <Compile Include="DenseMultiplexer.cs" />
     <Compile Include="DenseMultiplexerConfig.cs" />
-    <Compile Include="IConfigurableFourBits.cs" />
     <Compile Include="LogicGate.cs" />
     <Compile Include="LogicGateNandConfig.cs" />
     <Compile Include="LogicGateNorConfig.cs" />
