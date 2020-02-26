@@ -83,6 +83,8 @@
     <Compile Include="LogicGateNandConfig.cs" />
     <Compile Include="LogicGateNorConfig.cs" />
     <Compile Include="LogicGateXnorConfig.cs" />
+    <Compile Include="LogicSevenSegment.cs" />
+    <Compile Include="LogicSevenSegmentConfig.cs" />
     <Compile Include="ONI_DenseLogicPatches.cs" />
     <Compile Include="DenseLogicGateConfig.cs" />
     <Compile Include="IConfigurableLogicGate.cs" />
