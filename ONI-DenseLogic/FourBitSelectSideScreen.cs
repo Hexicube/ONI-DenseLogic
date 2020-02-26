@@ -61,7 +61,7 @@ namespace ONI_DenseLogic {
 		}
 
 		public override string GetTitle() {
-			return "Set Provided Signal";
+			return DenseLogicStrings.UI.UISIDESCREENS.FOURBITSELECT.TITLE;
 		}
 
 		public override bool IsValidForTarget(GameObject target) {
@@ -99,8 +99,8 @@ namespace ONI_DenseLogic {
 				Color = PUITuning.Colors.ButtonBlueStyle,
 				Margin = new RectOffset(8, 8, 3, 3),
 				TextStyle = PUITuning.Fonts.TextLightStyle,
-				ToolTip = "Enables all bits",
-				Text = "Set",
+				ToolTip = DenseLogicStrings.UI.TOOLTIPS.FOURBITSELECT.ENABLE_ALL,
+				Text = DenseLogicStrings.UI.UISIDESCREENS.FOURBITSELECT.ENABLE_ALL,
 				OnClick = obj => {
 					if (target != null) {
 						target.SetBit(true, 0);
@@ -115,8 +115,8 @@ namespace ONI_DenseLogic {
 				Color = PUITuning.Colors.ButtonBlueStyle,
 				Margin = new RectOffset(8, 8, 3, 3),
 				TextStyle = PUITuning.Fonts.TextLightStyle,
-				ToolTip = "Disables all bits",
-				Text = "Clear",
+				ToolTip = DenseLogicStrings.UI.TOOLTIPS.FOURBITSELECT.DISABLE_ALL,
+				Text = DenseLogicStrings.UI.UISIDESCREENS.FOURBITSELECT.DISABLE_ALL,
 				OnClick = obj => {
 					if (target != null) {
 						target.SetBit(false, 0);
@@ -203,12 +203,14 @@ namespace ONI_DenseLogic {
 			}
 
 			public BitSelectRow(int pos) {
+				// TODO This could probably be done as a relative layout eventually, but
+				// until PRelativePanel is added this is the best we can do
 				Row = new PPanel("BitSelectRow") {
 					Margin = new RectOffset(4, 4, 4, 4),
 					FlexSize = new Vector2(1.0f, 0.0f),
 				};
 				var RowBackground = new PPanel("BitSelectRowBackground") {
-					FlexSize = new Vector2(1.0f, 0.0f),
+					FlexSize = new Vector2(1.0f, 0.0f)
 				};
 				RowBackground.OnRealize += gameObject => {
 					var img = gameObject.AddComponent<KImage>();
@@ -274,7 +276,6 @@ namespace ONI_DenseLogic {
 				RowInternalGrid.AddChild(stateText, new GridComponentSpec(0, 3));
 				RowInternalGrid.AddChild(new PSpacer(), new GridComponentSpec(0, 4));
 			}
-
 		}
 	}
 }

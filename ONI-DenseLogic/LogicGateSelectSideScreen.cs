@@ -69,12 +69,16 @@ namespace ONI_DenseLogic {
 		}
 
 		public override string GetTitle() {
-			return "Select Logic Function";
+			return DenseLogicStrings.UI.UISIDESCREENS.GATESELECT.TITLE;
 		}
 
 		public override bool IsValidForTarget(GameObject target) {
 			// peter: why are you using GetComponentSafe with the actual class
 			// rather than GetComponent with the interface like vanilla does?
+
+			// GetComponentSafe is force of habit as it is an extension that checks for
+			// disposed GameObject instances and will not NRE on those; in this case it
+			// probably matters not
 			return target.GetComponentSafe<DenseLogicGate>() != null;
 		}
 

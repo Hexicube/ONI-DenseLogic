@@ -22,6 +22,7 @@ using Harmony;
 using System.Collections.Generic;
 using PeterHan.PLib;
 using PeterHan.PLib.UI;
+using System;
 
 namespace ONI_DenseLogic {
 	/// <summary>
@@ -31,6 +32,7 @@ namespace ONI_DenseLogic {
 		public static void OnLoad() {
 			PUtil.InitLibrary();
 			LocString.CreateLocStringKeys(typeof(DenseLogicStrings.BUILDINGS));
+			LocString.CreateLocStringKeys(typeof(DenseLogicStrings.UI));
 		}
 
 		[HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
@@ -38,6 +40,7 @@ namespace ONI_DenseLogic {
 			internal static void Postfix() {
 				PUIUtils.AddSideScreenContent<LogicGateSelectSideScreen>();
 				PUIUtils.AddSideScreenContent<FourBitSelectSideScreen>();
+				PUIUtils.AddSideScreenContent<RemapperSideScreen>();
 			}
 		}
 
@@ -48,7 +51,8 @@ namespace ONI_DenseLogic {
 			}
 		}
 
-		private static void AddBuildingToPlanScreen(HashedString category, string building_id, string building_after = null) {
+		private static void AddBuildingToPlanScreen(HashedString category, string building_id,
+				string building_after = null) {
 			if (building_after == null)
 				ModUtil.AddBuildingToPlanScreen(category, building_id);
 			else {
@@ -68,22 +72,29 @@ namespace ONI_DenseLogic {
 
 		[HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
 		public static class ONIDenseGateConfigurator {
+			private const string CATEGORY_AUTOMATION = "Automation";
+
 			internal static void Prefix() {
-				ModUtil.AddBuildingToPlanScreen("Automation", DenseLogicGateConfig.ID);
-				ModUtil.AddBuildingToPlanScreen("Automation", DenseMultiplexerConfig.ID);
-				ModUtil.AddBuildingToPlanScreen("Automation", DenseDeMultiplexerConfig.ID);
-				AddBuildingToPlanScreen("Automation", DenseInputConfig.ID, LogicSwitchConfig.ID);
-				AddBuildingToPlanScreen("Automation", LogicGateNorConfig.ID, LogicGateOrConfig.ID);
-				AddBuildingToPlanScreen("Automation", LogicGateNandConfig.ID, LogicGateAndConfig.ID);
-				AddBuildingToPlanScreen("Automation", LogicGateXnorConfig.ID, LogicGateXorConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseLogicGateConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseMultiplexerConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseDeMultiplexerConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, SignalRemapperConfig.ID);
+				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseInputConfig.ID,
+					LogicSwitchConfig.ID);
+				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateNorConfig.ID,
+					LogicGateOrConfig.ID);
+				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateNandConfig.ID,
+					LogicGateAndConfig.ID);
+				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateXnorConfig.ID,
+					LogicGateXorConfig.ID);
 			}
 		}
 
 		private static void AddToTech(string tech, params string[] items) {
-			string[] oldlist = Techs.TECH_GROUPING[tech];
-			string[] newList = new string[oldlist.Length + items.Length];
-			System.Array.Copy(oldlist, newList, oldlist.Length);
-			System.Array.Copy(items, 0, newList, oldlist.Length, items.Length);
+			string[] oldList = Techs.TECH_GROUPING[tech];
+			string[] newList = new string[oldList.Length + items.Length];
+			Array.Copy(oldList, newList, oldList.Length);
+			Array.Copy(items, 0, newList, oldList.Length, items.Length);
 			Techs.TECH_GROUPING[tech] = newList;
 		}
 
@@ -91,7 +102,7 @@ namespace ONI_DenseLogic {
 		public static class InitDenseGate {
 			internal static void Prefix() {
 				AddToTech("DupeTrafficControl", LogicGateXnorConfig.ID);
-				AddToTech("Multiplexing", DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID);
+				AddToTech("Multiplexing", DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID, SignalRemapperConfig.ID);
 				AddToTech("LogicCircuits", LogicGateNorConfig.ID, LogicGateNandConfig.ID);
 				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID);
 			}
