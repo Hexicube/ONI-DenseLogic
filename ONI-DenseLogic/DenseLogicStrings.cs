@@ -43,8 +43,8 @@ namespace ONI_DenseLogic {
 					public static LocString DESC = $"Giving the duplicants a way to show off their favorite numbers has never been easier.";
 					public static LocString EFFECT = $"Displays the value of a {UI.FormatAsLink(STRINGS.BUILDINGS.PREFABS.LOGICRIBBON.NAME, LogicRibbonConfig.ID)} as a number 0 through 9.";
 					public static LocString LOGIC_PORT = "Numerical Input";
-					public static LocString INPUT_PORT_ACTIVE = $"Display a non-zero number.";
-					public static LocString INPUT_PORT_INACTIVE = $"Display zero.";
+					public static LocString INPUT_PORT_ACTIVE = $"Displays a non-zero number.";
+					public static LocString INPUT_PORT_INACTIVE = $"Displays zero.";
 					public static LocString OUTPUT_LOGIC_PORT = "Overflow";
 					public static LocString OUTPUT_PORT_ACTIVE = $"The input is larger than 9.";
 					public static LocString OUTPUT_PORT_INACTIVE = $"The input is less than or equal to 9.";
