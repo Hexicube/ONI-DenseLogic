@@ -20,7 +20,7 @@ using KSerialization;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public class DenseMultiplexerBase : KMonoBehaviour, IRender200ms {
+	public class DenseMultiplexer : KMonoBehaviour, IRender200ms {
 		public static readonly HashedString INPUTID = new HashedString("DenseGate_IN");
 		public static readonly HashedString OUTPUTID = new HashedString("DenseGate_OUT");
 		public static readonly HashedString CONTROLID1 = new HashedString("DenseMuxGate_CTRL1");
@@ -31,8 +31,8 @@ namespace ONI_DenseLogic {
 		public static readonly CellOffset CONTROLOFFSET1 = new CellOffset(0, 0);
 		public static readonly CellOffset CONTROLOFFSET2 = new CellOffset(1, 0);
 
-		private static readonly EventSystem.IntraObjectHandler<DenseMultiplexerBase>
-			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<DenseMultiplexerBase>(
+		private static readonly EventSystem.IntraObjectHandler<DenseMultiplexer>
+			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<DenseMultiplexer>(
 			(component, data) => component.OnLogicValueChanged(data));
 
 #pragma warning disable IDE0044 // Add readonly modifier

@@ -121,9 +121,9 @@ namespace ONI_DenseLogic {
 			kbac.SetSymbolVisiblity(GATE_OR, mode == LogicGateType.Or);
 			kbac.SetSymbolVisiblity(GATE_AND, mode == LogicGateType.And);
 			kbac.SetSymbolVisiblity(GATE_XOR, mode == LogicGateType.Xor);
-			kbac.SetSymbolVisiblity(GATE_XNOR, false);
-			kbac.SetSymbolVisiblity(GATE_NAND, false);
-			kbac.SetSymbolVisiblity(GATE_NOR, false);
+			kbac.SetSymbolVisiblity(GATE_NOR, mode == LogicGateType.Nor);
+			kbac.SetSymbolVisiblity(GATE_NAND, mode == LogicGateType.Nand);
+			kbac.SetSymbolVisiblity(GATE_XNOR, mode == LogicGateType.Xnor);
 			UpdateLogicCircuit();
 		}
 
@@ -134,6 +134,12 @@ namespace ONI_DenseLogic {
 				curOut = inVal1 & inVal2;
 			else if (mode == LogicGateType.Xor)
 				curOut = inVal1 ^ inVal2;
+			else if (mode == LogicGateType.Nor)
+				curOut = ~(inVal1 | inVal2);
+			else if (mode == LogicGateType.Nand)
+				curOut = ~(inVal1 & inVal2);
+			else if (mode == LogicGateType.Xnor)
+				curOut = ~(inVal1 ^ inVal2);
 			else {
 				// should never occur
 				Debug.Log("[DenseLogicGate] WARN: Unknown operand " + mode);
@@ -177,7 +183,6 @@ namespace ONI_DenseLogic {
 			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OUTPUTOFFSET)) is LogicCircuitNetwork)) {
 				SetSymbolsOff();
 				for (int a = 0; a < 4; a++) {
-					int mask = 1 << a;
 					kbac.SetSymbolTint(IN_A[a], COLOR_DISABLED);
 					kbac.SetSymbolTint(IN_B[a], COLOR_DISABLED);
 					kbac.SetSymbolTint(OUT[a], COLOR_DISABLED);

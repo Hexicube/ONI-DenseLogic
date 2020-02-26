@@ -76,9 +76,11 @@
     <Compile Include="FourBitSelectSideScreen.cs" />
     <Compile Include="DenseDeMultiplexerConfig.cs" />
     <Compile Include="DenseLogicGate.cs" />
-    <Compile Include="DenseMultiplexerBase.cs" />
+    <Compile Include="DenseMultiplexer.cs" />
     <Compile Include="DenseMultiplexerConfig.cs" />
     <Compile Include="IConfigurableFourBits.cs" />
+    <Compile Include="LogicGate.cs" />
+    <Compile Include="LogicGateNorConfig.cs" />
     <Compile Include="ONI_DenseLogicPatches.cs" />
     <Compile Include="DenseLogicGateConfig.cs" />
     <Compile Include="IConfigurableLogicGate.cs" />
