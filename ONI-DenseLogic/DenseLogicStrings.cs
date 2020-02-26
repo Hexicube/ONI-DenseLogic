@@ -44,6 +44,20 @@ namespace ONI_DenseLogic {
 					public static LocString EFFECT = $"Outputs a {UI.FormatAsAutomationState("Red Signal", UI.AutomationState.Standby)} if at least one of Input A <b>OR</b> Input B is receiving {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)}.\n\nOutputs a {UI.FormatAsAutomationState("Green Signal", UI.AutomationState.Active)} when neither Input A or Input B are receiving {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)}.";
 				}
 
+				public static class DENSELOGICTEAM_LOGICNAND {
+					public static LocString NAME = UI.FormatAsLink("NAND Gate",
+						LogicGateNorConfig.ID);
+					public static LocString DESC = $"This gate outputs a Red Signal if receiving two Green Signals.";
+					public static LocString EFFECT = $"Outputs a {UI.FormatAsAutomationState("Red Signal", UI.AutomationState.Standby)} if both Input A <b>AND</b> Input B are receiving {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)}.\n\nOutputs a {UI.FormatAsAutomationState("Green Signal", UI.AutomationState.Active)} when even one Input is receiving {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)}.";
+				}
+
+				public static class DENSELOGICTEAM_LOGICXNOR {
+					public static LocString NAME = UI.FormatAsLink("XNOR Gate",
+						LogicGateNorConfig.ID);
+					public static LocString DESC = $"This gate outputs a Red Signal if exactly one of its Inputs is receiving a Green Signal.";
+					public static LocString EFFECT = $"Outputs a {UI.FormatAsAutomationState("Red Signal", UI.AutomationState.Standby)} if exactly one of its Inputs is receiving {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)}.\n\nOutputs a {UI.FormatAsAutomationState("Green Signal", UI.AutomationState.Active)} if both or neither Inputs are receiving {UI.FormatAsAutomationState("Green", UI.AutomationState.Active)}.";
+				}
+
 				public static class DENSELOGICTEAM_DENSEMULTIPLEXER {
 					public static LocString NAME = UI.FormatAsLink("Dense Multiplexer",
 						DenseMultiplexerConfig.ID);

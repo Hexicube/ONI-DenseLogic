@@ -25,8 +25,8 @@ namespace ONI_DenseLogic {
 		public static readonly HashedString OUTPUTID = new HashedString("LogicGate_OUT");
 
 		public static readonly CellOffset INPUTOFFSET1 = new CellOffset(0, 0);
-		public static readonly CellOffset INPUTOFFSET2 = new CellOffset(1, 0);
-		public static readonly CellOffset OUTPUTOFFSET = new CellOffset(0, 1);
+		public static readonly CellOffset INPUTOFFSET2 = new CellOffset(0, 1);
+		public static readonly CellOffset OUTPUTOFFSET = new CellOffset(1, 0);
 
 		private static readonly EventSystem.IntraObjectHandler<LogicGate>
 				OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<LogicGate>(
@@ -95,11 +95,7 @@ namespace ONI_DenseLogic {
 		}
 
 		private int GetSingleValue(int wire) {
-			if (wire == 0) {
-				return 0;
-			} else {
-				return 1;
-			}
+			return wire & 0b1;
 		}
 
 		public void UpdateVisuals() {

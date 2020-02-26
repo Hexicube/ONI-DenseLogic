@@ -112,11 +112,7 @@ namespace ONI_DenseLogic {
 		}
 
 		private int GetSingleValue(int wire) {
-			if (wire == 0) {
-				return 0;
-			} else {
-				return 1;
-			}
+			return wire & 0b1;
 		}
 
 		public void UpdateVisuals() {
