@@ -26,9 +26,12 @@ namespace ONI_DenseLogic {
 
 		public override BuildingDef CreateBuildingDef() {
 			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 1,
-				"dense_INPUT_kanim", 30, 4.0f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
-				TUNING.MATERIALS.REFINED_METALS, 200.0f, BuildLocationRule.Anywhere,
-				TUNING.BUILDINGS.DECOR.NONE, TUNING.NOISE_POLLUTION.NONE);
+				"dense_INPUT_kanim", 
+				TUNING.BUILDINGS.HITPOINTS.TIER1,
+				TUNING.BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER1,
+				TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
+				TUNING.MATERIALS.REFINED_METALS, 1600.0f, BuildLocationRule.Anywhere,
+				TUNING.BUILDINGS.DECOR.PENALTY.TIER1, TUNING.NOISE_POLLUTION.NOISY.TIER1);
 			buildingDef.Overheatable = false;
 			buildingDef.Floodable = false;
 			buildingDef.Entombable = false;
@@ -42,7 +45,7 @@ namespace ONI_DenseLogic {
 				LogicPorts.Port.RibbonOutputPort(
 					DenseInput.OUTPUTID,
 					new CellOffset(1, 0),
-					STRINGS.BUILDINGS.PREFABS.LOGICRIBBONWRITER.LOGIC_PORT_OUTPUT,
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEINPUT.LOGIC_PORT_OUTPUT,
 					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEINPUT.PORTOUT_ACTIVE,
 					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_DENSEINPUT.PORTOUT_INACTIVE
 				)

@@ -87,6 +87,8 @@ namespace ONI_DenseLogic {
 					LogicGateAndConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateXnorConfig.ID,
 					LogicGateXorConfig.ID);
+				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicSevenSegmentConfig.ID,
+					LogicCounterConfig.ID);
 			}
 		}
 
