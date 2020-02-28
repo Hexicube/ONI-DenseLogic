@@ -38,10 +38,17 @@ namespace ONI_DenseLogic {
 		public const int NO_BIT = -1;
 
 #pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable CS0649
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
-#pragma warning restore IDE0044
 
+		[MyCmpReq]
+		private LogicPorts ports;
+
+		[MyCmpGet]
+		private Rotatable rotatable;
+#pragma warning restore CS0649
+#pragma warning restore IDE0044
 
 		[Serialize]
 		private int inVal;
@@ -51,15 +58,35 @@ namespace ONI_DenseLogic {
 		[SerializeField]
 		private List<int> bits;
 
+		internal SignalRemapper() {
+			bits = null;
+		}
+
 		private int GetActualCell(CellOffset offset) {
-			Rotatable component = GetComponent<Rotatable>();
-			if (component != null)
-				offset = component.GetRotatedCellOffset(offset);
+			if (rotatable != null)
+				offset = rotatable.GetRotatedCellOffset(offset);
 			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
 		}
 
-		internal SignalRemapper() {
-			bits = null;
+		public bool GetBit(int pos) {
+			return pos > NO_BIT && (inVal & (1 << pos)) != 0;
+		}
+
+		public int GetBitMapping(int bit) {
+			int mapping = NO_BIT;
+			if (bits != null && bit < bits.Count)
+				mapping = bits[bit].InRange(NO_BIT, BITS - 1);
+			return mapping;
+		}
+
+		private int GetRibbonValue(int wire) {
+			if (wire == 0) {
+				return 0;
+			} else if (wire == 0b1111) {
+				return 2;
+			} else {
+				return 1;
+			}
 		}
 
 		protected override void OnSpawn() {
@@ -81,36 +108,10 @@ namespace ONI_DenseLogic {
 
 		public void OnLogicValueChanged(object data) {
 			var logicValueChanged = (LogicValueChanged)data;
-			if (logicValueChanged.portID == INPUTID)
+			if (logicValueChanged.portID == INPUTID) {
 				inVal = logicValueChanged.newValue;
-			else
-				return;
-			UpdateLogicCircuit();
-		}
-
-		public void SetBit(bool value, int pos) {
-			curOut &= ~(1 << pos);
-			if (value) {
-				curOut |= 1 << pos;
+				UpdateLogicCircuit();
 			}
-		}
-
-		public bool GetBit(int pos) {
-			return (inVal & (1 << pos)) > 0;
-		}
-
-		private void UpdateLogicCircuit() {
-			bool num0 = GetBit(GetBitMapping(0));
-			bool num1 = GetBit(GetBitMapping(1));
-			bool num2 = GetBit(GetBitMapping(2));
-			bool num3 = GetBit(GetBitMapping(3));
-			curOut = 0;
-			SetBit(num0, 0);
-			SetBit(num1, 1);
-			SetBit(num2, 2);
-			SetBit(num3, 3);
-			GetComponent<LogicPorts>().SendSignal(OUTPUTID, curOut);
-			UpdateVisuals();
 		}
 
 		public void Render200ms(float dt) {
@@ -118,33 +119,12 @@ namespace ONI_DenseLogic {
 			UpdateVisuals();
 		}
 
-		private int GetRibbonValue(int wire) {
-			if (wire == 0) {
-				return 0;
-			} else if (wire == 0b1111) {
-				return 2;
-			} else {
-				return 1;
+		public void SetBit(bool value, int pos) {
+			if (pos > NO_BIT) {
+				curOut &= ~(1 << pos);
+				if (value)
+					curOut |= 1 << pos;
 			}
-		}
-
-		public void UpdateVisuals() {
-			// when there is not an output, we are supposed to play the off animation
-			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OUTPUTOFFSET)) is LogicCircuitNetwork)) {
-				kbac.Play("off", KAnim.PlayMode.Once, 1f, 0.0f);
-				return;
-			}
-			int num0 = GetRibbonValue(inVal);
-			int num1 = GetRibbonValue(curOut);
-			int state = num0 + 3 * num1;
-			kbac.Play("on_" + state, KAnim.PlayMode.Once, 1f, 0.0f);
-		}
-
-		public int GetBitMapping(int bit) {
-			int mapping = 0;
-			if (bits != null && bit < bits.Count)
-				mapping = bits[bit].InRange(NO_BIT, BITS - 1);
-			return mapping;
 		}
 
 		public void SetBitMapping(int bit, int mapping) {
@@ -152,6 +132,24 @@ namespace ONI_DenseLogic {
 				bits[bit] = mapping.InRange(NO_BIT, BITS - 1);
 				UpdateLogicCircuit();
 			}
+		}
+
+		private void UpdateLogicCircuit() {
+			curOut = 0;
+			for (int i = 0; i < BITS; i++)
+				SetBit(GetBit(GetBitMapping(i)), i);
+			ports.SendSignal(OUTPUTID, curOut);
+			UpdateVisuals();
+		}
+
+		public void UpdateVisuals() {
+			int cell = GetActualCell(OUTPUTOFFSET);
+			// when there is not an output, we are supposed to play the off animation
+			if (Game.Instance.logicCircuitSystem.GetNetworkForCell(cell) is LogicCircuitNetwork) {
+				int state = GetRibbonValue(inVal) + 3 * GetRibbonValue(curOut);
+				kbac.Play("on_" + state, KAnim.PlayMode.Once, 1f, 0.0f);
+			} else
+				kbac.Play("off", KAnim.PlayMode.Once, 1f, 0.0f);
 		}
 	}
 }

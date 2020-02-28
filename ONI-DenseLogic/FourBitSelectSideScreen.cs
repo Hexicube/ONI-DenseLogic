@@ -30,7 +30,6 @@ namespace ONI_DenseLogic {
 	/// of a building with configurable bits.
 	/// </summary>
 	internal sealed class FourBitSelectSideScreen : SideScreenContent {
-
 		/// <summary>
 		/// The number of bits that can be set/visualized.
 		/// </summary>
@@ -144,32 +143,30 @@ namespace ONI_DenseLogic {
 		}
 
 		public override void SetTarget(GameObject target) {
-			if (target == null) {
+			if (target == null)
 				PUtil.LogError("Invalid gameObject received");
-				return;
+			else {
+				this.target = target.GetComponent<IConfigurableFourBits>();
+				if (this.target == null)
+					PUtil.LogError("The gameObject received is not an IConfigurableFourBits");
+				else
+					RefreshToggles();
 			}
-			this.target = target.GetComponent<IConfigurableFourBits>();
-			if (this.target == null) {
-				PUtil.LogError("The gameObject received is not an IConfigurableFourBits");
-				return;
-			}
-			RefreshToggles();
 		}
 
 		/// <summary>
 		/// Updates the state of the bit toggles, based on the state in the target.
 		/// </summary>
 		private void RefreshToggles() {
-			if (target == null) {
-				return;
-			}
-			foreach (KeyValuePair<int, BitSelectRow> keyValuePair in toggles) {
-				bool bitOn = target.GetBit(keyValuePair.Key);
-				keyValuePair.Value.StateIcon.color = 
-					bitOn ? activeColor : inactiveColor;
-				keyValuePair.Value.StateText.SetText(
-					bitOn ? UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_ACTIVE : UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_INACTIVE);
-			}
+			if (target != null)
+				foreach (KeyValuePair<int, BitSelectRow> keyValuePair in toggles) {
+					bool bitOn = target.GetBit(keyValuePair.Key);
+					keyValuePair.Value.StateIcon.color = 
+						bitOn ? activeColor : inactiveColor;
+					keyValuePair.Value.StateText.SetText(
+						bitOn ? UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_ACTIVE :
+						UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_INACTIVE);
+				}
 		}
 
 		private sealed class BitSelectRow {

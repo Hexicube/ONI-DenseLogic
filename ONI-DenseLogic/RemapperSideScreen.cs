@@ -34,8 +34,8 @@ namespace ONI_DenseLogic {
 		private SignalRemapper target;
 
 		internal RemapperSideScreen() {
-			tooltips = new string[4];
-			bitNames = new List<BitOption>();
+			tooltips = new string[SignalRemapper.BITS];
+			bitNames = new List<BitOption>(1 + SignalRemapper.BITS);
 			bitSelects = new GameObject[SignalRemapper.BITS];
 			target = null;
 		}
@@ -64,21 +64,10 @@ namespace ONI_DenseLogic {
 		}
 
 		protected override void OnPrefabInit() {
-			var borderMargin = new RectOffset(1, 1, 0, 1);
-			var border = new PPanel() {
-				Margin = borderMargin,
-				Direction = PanelDirection.Vertical,
-				FlexSize = new Vector2(1.0f, 1.0f),
-				BackColor = new Color(0.0f, 0.0f, 0.0f),
-				Alignment = TextAnchor.UpperCenter
-			};
 			var margin = new RectOffset(4, 4, 4, 4);
-			var ss = new PPanel() {
-				Margin = margin,
-				Direction = PanelDirection.Vertical,
-				FlexSize = new Vector2(1.0f, 1.0f),
-				BackColor = new Color(1.0f, 1.0f, 1.0f),
-				Alignment = TextAnchor.UpperCenter
+			var border = new PPanel() {
+				Margin = margin, Direction = PanelDirection.Vertical, FlexSize = Vector2.right,
+				Alignment = TextAnchor.UpperCenter, Spacing = 4
 			};
 			tooltips[0] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_1;
 			tooltips[1] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_2;
@@ -90,50 +79,61 @@ namespace ONI_DenseLogic {
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_2);
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_3);
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_4);
+			var rowBG = PUITuning.Images.GetSpriteByName("BitSelectorSideScreenRow");
 			for (int i = 0; i < SignalRemapper.BITS; i++) {
-				ss.AddChild(new RemapperRow(i, this).Row);
+				// This assignment is required for captures to get the right index
+				int index = i;
+				var row = new PPanel("Bit" + index) {
+					BackImage = rowBG, BackColor = Color.white, ImageMode = Image.Type.Sliced,
+					Alignment = TextAnchor.MiddleCenter, Direction = PanelDirection.Horizontal,
+					Spacing = 10, Margin = margin, FlexSize = Vector2.right
+				}.AddChild(new PLabel("BitLabel") {
+					TextAlignment = TextAnchor.MiddleRight, ToolTip = tooltips[index],
+					Text = string.Format(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.
+					OUTPUT, bitNames[index + 1].GetProperName()), TextStyle = PUITuning.Fonts.
+					TextDarkStyle
+				});
+				var cb = new PComboBox<BitOption>("BitSelect") {
+					Content = bitNames, InitialItem = bitNames[0], ToolTip = tooltips[index],
+					OnOptionSelected = (_, chosen) => SetSignalMap(index, chosen),
+					TextStyle = PUITuning.Fonts.TextLightStyle, TextAlignment = TextAnchor.
+					MiddleLeft
+				};
+				cb.OnRealize += (obj) => bitSelects[index] = obj;
+				row.AddChild(cb);
+				border.AddChild(row);
 			}
-			ss.AddChild(new PPanel() {
-				Margin = margin,
-				Direction = PanelDirection.Horizontal,
-				FlexSize = new Vector2(1.0f, 1.0f),
-				Alignment = TextAnchor.UpperCenter,
-			}.AddChild(new PSpacer() { FlexSize = new Vector2(1.0f, 0.0f) })
-			.AddChild(new PButton() {
-				Color = PUITuning.Colors.ButtonBlueStyle,
-				Margin = new RectOffset(8, 8, 3, 3),
-				TextStyle = PUITuning.Fonts.TextLightStyle,
+			// Set default / Clear mapping
+			border.AddChild(new PPanel("BottomRow") {
+				Alignment = TextAnchor.MiddleCenter, Direction = PanelDirection.Horizontal,
+				Spacing = 10, Margin = margin
+			}.AddChild(new PButton() {
+				Color = PUITuning.Colors.ButtonBlueStyle, Margin = new RectOffset(8, 8, 3, 3),
+				TextStyle = PUITuning.Fonts.TextLightStyle, OnClick = SetDefaultMap,
 				ToolTip = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.IDENTITY,
-				Text = DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.IDENTITY,
-				OnClick = obj => {
-					if (target != null) {
-						SetSignalMap(0, bitNames[1]);
-						SetSignalMap(1, bitNames[2]);
-						SetSignalMap(2, bitNames[3]);
-						SetSignalMap(3, bitNames[4]);
-					}
-				}
-			}).AddChild(new PSpacer() { FlexSize = new Vector2(0.5f, 0.0f) })
-			.AddChild(new PButton() {
-				Color = PUITuning.Colors.ButtonBlueStyle,
-				Margin = new RectOffset(8, 8, 3, 3),
-				TextStyle = PUITuning.Fonts.TextLightStyle,
+				Text = DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.IDENTITY
+			}).AddChild(new PButton() {
+				Color = PUITuning.Colors.ButtonBlueStyle, Margin = new RectOffset(8, 8, 3, 3),
+				TextStyle = PUITuning.Fonts.TextLightStyle, OnClick = SetBlankMap,
 				ToolTip = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.CLEAR,
-				Text = DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.CLEAR,
-				OnClick = obj => {
-					if (target != null) {
-						SetSignalMap(0, bitNames[0]);
-						SetSignalMap(1, bitNames[0]);
-						SetSignalMap(2, bitNames[0]);
-						SetSignalMap(3, bitNames[0]);
-					}
-				}
-			}).AddChild(new PSpacer() { FlexSize = new Vector2(1.0f, 0.0f) }));
-			border.AddChild(ss);
+				Text = DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.CLEAR
+			}));
 			ContentContainer = border.Build();
 			base.OnPrefabInit();
 			ContentContainer.SetParent(gameObject);
 			LoadSignalMap();
+		}
+
+		private void SetBlankMap(GameObject _) {
+			if (target != null)
+				for (int i = 0; i < SignalRemapper.BITS; i++)
+					SetSignalMap(i, bitNames[0]);
+		}
+
+		private void SetDefaultMap(GameObject _) {
+			if (target != null)
+				for (int i = 0; i < SignalRemapper.BITS; i++)
+					SetSignalMap(i, bitNames[i + 1]);
 		}
 
 		private void SetSignalMap(int index, BitOption chosen) {
@@ -162,76 +162,6 @@ namespace ONI_DenseLogic {
 
 			public string GetProperName() {
 				return name;
-			}
-		}
-
-		private sealed class RemapperRow {
-			private RemapperSideScreen parent;
-
-			/// <summary>
-			/// The panel containing this row
-			/// </summary>
-			public PPanel Row { get; }
-
-			public RemapperRow(int index, RemapperSideScreen parent) {
-				// TODO This could probably be done as a relative layout eventually, but
-				// until PRelativePanel is added this is the best we can do
-				this.parent = parent;
-				Row = new PPanel("RemapperRow") {
-					Margin = new RectOffset(4, 4, 4, 4),
-					FlexSize = new Vector2(1.0f, 0.0f),
-				};
-				var RowBackground = new PPanel("RemapperRowBackground") {
-					FlexSize = new Vector2(1.0f, 0.0f)
-				};
-				RowBackground.OnRealize += gameObject => {
-					var img = gameObject.AddComponent<KImage>();
-					img.sprite = PUITuning.Images.GetSpriteByName("BitSelectorSideScreenRow");
-					img.type = Image.Type.Sliced;
-					img.color = new Color(1.0f, 1.0f, 1.0f);
-				};
-				Row.AddChild(RowBackground);
-				var RowInternal = new PPanel("RemapperRowInternal") {
-					Margin = new RectOffset(4, 4, 4, 4),
-					FlexSize = new Vector2(1.0f, 0.0f),
-				};
-				RowInternal.OnRealize += gameObject => {
-					var img = gameObject.AddComponent<KImage>();
-					img.sprite = PUITuning.Images.GetSpriteByName("overview_highlight_outline_sharp");
-					img.type = Image.Type.Sliced;
-					img.color = new Color(0.898f, 0.898f, 0.898f);
-				};
-				RowBackground.AddChild(RowInternal);
-				var RowInternalGrid = new PGridPanel("RemapperRowInternalGrid") {
-					Margin = new RectOffset(4, 4, 4, 4),
-					FlexSize = new Vector2(1.0f, 0.0f),
-				};
-				RowInternalGrid.AddRow(new GridRowSpec());
-				RowInternalGrid
-					.AddColumn(new GridColumnSpec(flex: 0.33f)).AddColumn(new GridColumnSpec())
-					.AddColumn(new GridColumnSpec(flex: 0.33f)).AddColumn(new GridColumnSpec())
-					.AddColumn(new GridColumnSpec(flex: 0.33f));
-				RowInternal.AddChild(RowInternalGrid);
-				RowInternalGrid.AddChild(new PSpacer(), new GridComponentSpec(0, 0));
-				RowInternalGrid.AddChild(new PLabel("Label") {
-					TextAlignment = TextAnchor.MiddleRight,
-					ToolTip = parent.tooltips[index],
-					Text = string.Format(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.
-					OUTPUT, parent.bitNames[index + 1].GetProperName()),
-					TextStyle = PUITuning.Fonts.TextDarkStyle
-				}, new GridComponentSpec(0, 1));
-				RowInternalGrid.AddChild(new PSpacer(), new GridComponentSpec(0, 2));
-				var cb = new PComboBox<BitOption>("Select") {
-					Content = parent.bitNames,
-					InitialItem = parent.bitNames[0],
-					ToolTip = parent.tooltips[index],
-					OnOptionSelected = (_, chosen) => parent.SetSignalMap(index, chosen),
-					TextStyle = PUITuning.Fonts.TextLightStyle,
-					DynamicSize = true
-				};
-				cb.OnRealize += (obj) => parent.bitSelects[index] = obj;
-				RowInternalGrid.AddChild(cb, new GridComponentSpec(0, 3));
-				RowInternalGrid.AddChild(new PSpacer(), new GridComponentSpec(0, 4));
 			}
 		}
 	}

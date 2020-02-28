@@ -141,8 +141,8 @@ namespace ONI_DenseLogic {
 					public static LocString BIT_4 = "Bit 4";
 					public static LocString OUTPUT = "Output {0}";
 					public static LocString TITLE = "Configure Signal Mapping";
-					public static LocString IDENTITY = "Set Identity";
-					public static LocString CLEAR = "Clear";
+					public static LocString IDENTITY = "Set Default";
+					public static LocString CLEAR = "Clear Mapping";
 				}
 			}
 		}
