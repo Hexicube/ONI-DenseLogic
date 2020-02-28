@@ -48,6 +48,19 @@ namespace ONI_DenseLogic {
 					public static LocString PORTOUT_INACTIVE = $"Writes {RED} signals to {RIBBON_CABLE}s.";
 				}
 
+				public static class DENSELOGICTEAM_LOGICSEVENSEGMENT {
+					public static LocString NAME = UI.FormatAsLink("Seven Segment Display",
+						LogicSevenSegmentConfig.ID);
+					public static LocString DESC = $"Giving the duplicants a way to show off their favorite numbers has never been easier.";
+					public static LocString EFFECT = $"Displays the value of a {RIBBON_CABLE} as a number 0 through 9.";
+					public static LocString LOGIC_PORT = "Numerical Input";
+					public static LocString INPUT_PORT_ACTIVE = $"Displays a non-zero number.";
+					public static LocString INPUT_PORT_INACTIVE = $"Displays zero.";
+					public static LocString OUTPUT_LOGIC_PORT = "Overflow";
+					public static LocString OUTPUT_PORT_ACTIVE = $"The input is larger than 9.";
+					public static LocString OUTPUT_PORT_INACTIVE = $"The input is less than or equal to 9.";
+				}
+
 				public static class DENSELOGICTEAM_LOGICNOR {
 					public static LocString NAME = ONI_UI.FormatAsLink("NOR Gate",
 						LogicGateNorConfig.ID);
