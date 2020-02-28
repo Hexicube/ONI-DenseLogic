@@ -49,7 +49,7 @@ namespace ONI_DenseLogic {
 				}
 
 				public static class DENSELOGICTEAM_LOGICSEVENSEGMENT {
-					public static LocString NAME = UI.FormatAsLink("Seven Segment Display",
+					public static LocString NAME = ONI_UI.FormatAsLink("Seven Segment Display",
 						LogicSevenSegmentConfig.ID);
 					public static LocString DESC = $"Giving the duplicants a way to show off their favorite numbers has never been easier.";
 					public static LocString EFFECT = $"Displays the value of a {RIBBON_CABLE} as a number 0 through 9.";
