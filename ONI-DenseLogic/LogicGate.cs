@@ -33,8 +33,10 @@ namespace ONI_DenseLogic {
 				(component, data) => component.OnLogicValueChanged(data));
 
 #pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable CS0649
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
+#pragma warning restore CS0649
 #pragma warning restore IDE0044
 
 		[Serialize]

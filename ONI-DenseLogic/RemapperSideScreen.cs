@@ -64,11 +64,14 @@ namespace ONI_DenseLogic {
 		}
 
 		protected override void OnPrefabInit() {
-			var margin = new RectOffset(4, 4, 4, 4);
-			var border = new PPanel() {
-				Margin = margin, Direction = PanelDirection.Vertical, FlexSize = Vector2.right,
-				Alignment = TextAnchor.UpperCenter, Spacing = 4
-			};
+			var margin = new RectOffset(8, 8, 8, 8);
+			// Update the parameters of the base BoxLayoutGroup
+			var baseLayout = gameObject.GetComponent<BoxLayoutGroup>();
+			if (baseLayout != null)
+				baseLayout.Params = new BoxLayoutParams() {
+					Margin = margin, Direction = PanelDirection.Vertical, Alignment =
+					TextAnchor.UpperCenter, Spacing = 8
+				};
 			tooltips[0] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_1;
 			tooltips[1] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_2;
 			tooltips[2] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_3;
@@ -79,14 +82,15 @@ namespace ONI_DenseLogic {
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_2);
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_3);
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_4);
-			var rowBG = PUITuning.Images.GetSpriteByName("BitSelectorSideScreenRow");
+			var rowBG = PUITuning.Images.GetSpriteByName("overview_highlight_outline_sharp");
 			for (int i = 0; i < SignalRemapper.BITS; i++) {
 				// This assignment is required for captures to get the right index
 				int index = i;
 				var row = new PPanel("Bit" + index) {
-					BackImage = rowBG, BackColor = Color.white, ImageMode = Image.Type.Sliced,
-					Alignment = TextAnchor.MiddleCenter, Direction = PanelDirection.Horizontal,
-					Spacing = 10, Margin = margin, FlexSize = Vector2.right
+					BackImage = rowBG, BackColor = new Color(0.898f, 0.898f, 0.898f),
+					ImageMode = Image.Type.Sliced, Alignment = TextAnchor.MiddleCenter,
+					Direction = PanelDirection.Horizontal, Spacing = 10, Margin = margin,
+					FlexSize = Vector2.right
 				}.AddChild(new PLabel("BitLabel") {
 					TextAlignment = TextAnchor.MiddleRight, ToolTip = tooltips[index],
 					Text = string.Format(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.
@@ -101,10 +105,10 @@ namespace ONI_DenseLogic {
 				};
 				cb.OnRealize += (obj) => bitSelects[index] = obj;
 				row.AddChild(cb);
-				border.AddChild(row);
+				row.AddTo(gameObject);
 			}
 			// Set default / Clear mapping
-			border.AddChild(new PPanel("BottomRow") {
+			new PPanel("BottomRow") {
 				Alignment = TextAnchor.MiddleCenter, Direction = PanelDirection.Horizontal,
 				Spacing = 10, Margin = margin
 			}.AddChild(new PButton() {
@@ -117,10 +121,9 @@ namespace ONI_DenseLogic {
 				TextStyle = PUITuning.Fonts.TextLightStyle, OnClick = SetBlankMap,
 				ToolTip = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.CLEAR,
 				Text = DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.CLEAR
-			}));
-			ContentContainer = border.Build();
+			}).AddTo(gameObject);
+			ContentContainer = gameObject;
 			base.OnPrefabInit();
-			ContentContainer.SetParent(gameObject);
 			LoadSignalMap();
 		}
 
