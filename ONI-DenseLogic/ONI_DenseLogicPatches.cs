@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using PeterHan.PLib;
 using PeterHan.PLib.UI;
 using System;
+using System.Linq;
 
 namespace ONI_DenseLogic {
 	/// <summary>
@@ -41,13 +42,6 @@ namespace ONI_DenseLogic {
 				PUIUtils.AddSideScreenContent<LogicGateSelectSideScreen>();
 				PUIUtils.AddSideScreenContent<FourBitSelectSideScreen>();
 				PUIUtils.AddSideScreenContent<RemapperSideScreen>();
-			}
-		}
-
-		[HarmonyPatch(typeof(LogicBitSelectorSideScreen), "RefreshToggles")]
-		public static class AAA {
-			internal static void Postfix(LogicBitSelectorSideScreen __instance) {
-				PUIUtils.DebugObjectTree(__instance.toggles_by_int[1].gameObject);
 			}
 		}
 
@@ -71,7 +65,7 @@ namespace ONI_DenseLogic {
 		}
 
 		[HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
-		public static class ONIDenseGateConfigurator {
+		public static class GeneratedBuildings_LoadGeneratedBuildings_Patch {
 			private const string CATEGORY_AUTOMATION = "Automation";
 
 			internal static void Prefix() {
@@ -89,6 +83,8 @@ namespace ONI_DenseLogic {
 					LogicGateXorConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicSevenSegmentConfig.ID,
 					LogicCounterConfig.ID);
+				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicDataConfig.ID,
+					LogicMemoryConfig.ID);
 			}
 		}
 
@@ -100,14 +96,58 @@ namespace ONI_DenseLogic {
 			Techs.TECH_GROUPING[tech] = newList;
 		}
 
-		[HarmonyPatch(typeof(Db), "Initialize")]
-		public static class InitDenseGate {
-			internal static void Prefix() {
-				AddToTech("DupeTrafficControl", LogicGateXnorConfig.ID);
+		[HarmonyPatch(typeof(Techs), "Load")]
+		public static class Techs_Load_Patch {
+			internal static void Postfix() {
+				AddToTech("DupeTrafficControl", LogicGateXnorConfig.ID, LogicDataConfig.ID);
 				AddToTech("Multiplexing", DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID, SignalRemapperConfig.ID);
 				AddToTech("LogicCircuits", LogicGateNorConfig.ID, LogicGateNandConfig.ID);
 				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID, LogicSevenSegmentConfig.ID);
 			}
 		}
+
+		[HarmonyPatch(typeof(Assets), "OnPrefabInit")]
+		public static class Assets_OnPrefabInit_Patch {
+			private sealed class Ordering {
+				public readonly string tech;
+				public readonly string id, id_after;
+
+				public Ordering(string tech, string id, string id_after) {
+					this.tech = tech;
+					this.id = id;
+					this.id_after = id_after;
+				}
+			}
+
+			private static List<Ordering> swaps = new List<Ordering>() {
+				new Ordering("DupeTrafficControl", LogicGateXnorConfig.ID, LogicGateXorConfig.ID),
+				new Ordering("DupeTrafficControl", LogicDataConfig.ID, LogicMemoryConfig.ID),
+				new Ordering("LogicCircuits", LogicGateNorConfig.ID, LogicGateOrConfig.ID),
+				new Ordering("LogicCircuits", LogicGateNandConfig.ID, LogicGateAndConfig.ID)
+			};
+
+			internal static void Postfix() {
+				foreach (Tech tech in Db.Get().Techs.resources) {
+					foreach (Ordering ordering in swaps) {
+						if (ordering.tech != tech.Id)
+							continue;
+						TechItem removed = null;
+						foreach (TechItem item in tech.unlockedItems) {
+							if (ordering.id == item.Id)
+								removed = item;
+						}
+						tech.unlockedItems.Remove(removed);
+						int pos = -1;
+						for (int i = 0; i < tech.unlockedItems.Count; i++) {
+							TechItem item = tech.unlockedItems[i];
+							if (ordering.id_after == item.Id)
+								pos = i + 1;
+						}
+						tech.unlockedItems.Insert(pos, removed);
+					}
+				}
+			}
+		}
+
 	}
 }

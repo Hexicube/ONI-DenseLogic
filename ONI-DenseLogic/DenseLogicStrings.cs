@@ -62,6 +62,19 @@ namespace ONI_DenseLogic {
 					public static LocString PORTOUT_INACTIVE = $"Writes a {RED} signal to the {AUTOMATION} wire.";
 				}
 
+				public static class DENSELOGICTEAM_LOGICDATA {
+					public static LocString NAME = ONI_UI.FormatAsLink("Data Latch",
+						LogicDataConfig.ID);
+					public static LocString DESC = $"A Memory stores an {AUTOMATION} signal received in the Data Port (D) when the Set Port (S) receives a {GREEN_SIGNAL}.";
+					public static LocString EFFECT = $"Contains an internal Memory, and will output whatever signal is stored in that Memory. Signals sent to the Inputs <i>only</i> affect the Memory, and do not pass through to the Output.\n\nSending a {GREEN_SIGNAL} to the Set Port (S) will set the memory to the value of the Data Port (D).";
+					public static LocString DATA_PORT = "DATA PORT (D)";
+					public static LocString DATA_PORT_ACTIVE = $"{GREEN_SIGNAL}: The internal Memory will be set to {GREEN} if the Set Port (S) receives a {GREEN_SIGNAL}";
+					public static LocString DATA_PORT_INACTIVE = $"{RED_SIGNAL}: The internal Memory will be set to {RED} if the Set Port (S) receives a {GREEN_SIGNAL}";
+					public static LocString SET_PORT = "SET PORT (S)";
+					public static LocString SET_PORT_ACTIVE = $"{GREEN_SIGNAL}: Set the internal Memory to the {AUTOMATION} signal received in the Data Port (D)";
+					public static LocString SET_PORT_INACTIVE = $"{RED_SIGNAL}: The {AUTOMATION} signal read from this Memory will not change";
+				}
+
 				public static class DENSELOGICTEAM_LOGICSEVENSEGMENT {
 					public static LocString NAME = ONI_UI.FormatAsLink("Seven Segment Display",
 						LogicSevenSegmentConfig.ID);
