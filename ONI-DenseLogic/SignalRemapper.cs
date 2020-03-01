@@ -18,18 +18,41 @@
 
 using KSerialization;
 using PeterHan.PLib;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public sealed class SignalRemapper : KMonoBehaviour, ISaveLoadable {
+	public sealed class SignalRemapper : KMonoBehaviour, ISaveLoadable, IRender200ms {
 		public static readonly HashedString INPUTID = new HashedString("SignalRemapper_IN");
 		public static readonly HashedString OUTPUTID = new HashedString("SignalRemapper_OUT");
 
+		public static readonly CellOffset INPUTOFFSET = new CellOffset(0, 0);
+		public static readonly CellOffset OUTPUTOFFSET = new CellOffset(1, 0);
+
+		private static readonly EventSystem.IntraObjectHandler<SignalRemapper>
+			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<SignalRemapper>(
+			(component, data) => component.OnLogicValueChanged(data));
+
 		public const int BITS = 4;
 		public const int NO_BIT = -1;
+
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable CS0649
+		[MyCmpReq]
+		private KBatchedAnimController kbac;
+
+		[MyCmpReq]
+		private LogicPorts ports;
+
+		[MyCmpGet]
+		private Rotatable rotatable;
+#pragma warning restore CS0649
+#pragma warning restore IDE0044
+
+		[Serialize]
+		private int inVal;
+		private int curOut;
 
 		[Serialize]
 		[SerializeField]
@@ -39,11 +62,36 @@ namespace ONI_DenseLogic {
 			bits = null;
 		}
 
+		private int GetActualCell(CellOffset offset) {
+			if (rotatable != null)
+				offset = rotatable.GetRotatedCellOffset(offset);
+			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
+		}
+
+		public bool GetBit(int pos) {
+			return pos > NO_BIT && (inVal & (1 << pos)) != 0;
+		}
+
 		public int GetBitMapping(int bit) {
-			int mapping = 0;
+			int mapping = NO_BIT;
 			if (bits != null && bit < bits.Count)
 				mapping = bits[bit].InRange(NO_BIT, BITS - 1);
 			return mapping;
+		}
+
+		private int GetRibbonValue(int wire) {
+			if (wire == 0) {
+				return 0;
+			} else if (wire == 0b1111) {
+				return 2;
+			} else {
+				return 1;
+			}
+		}
+
+		protected override void OnSpawn() {
+			base.OnSpawn();
+			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
 		}
 
 		protected override void OnPrefabInit() {
@@ -58,9 +106,50 @@ namespace ONI_DenseLogic {
 			}
 		}
 
+		public void OnLogicValueChanged(object data) {
+			var logicValueChanged = (LogicValueChanged)data;
+			if (logicValueChanged.portID == INPUTID) {
+				inVal = logicValueChanged.newValue;
+				UpdateLogicCircuit();
+			}
+		}
+
+		public void Render200ms(float dt) {
+			// hexi/test/peter: Do we have to do this here? Can we render only on state change?
+			UpdateVisuals();
+		}
+
+		public void SetBit(bool value, int pos) {
+			if (pos > NO_BIT) {
+				curOut &= ~(1 << pos);
+				if (value)
+					curOut |= 1 << pos;
+			}
+		}
+
 		public void SetBitMapping(int bit, int mapping) {
-			if (bits != null && bit < bits.Count)
+			if (bits != null && bit < bits.Count) {
 				bits[bit] = mapping.InRange(NO_BIT, BITS - 1);
+				UpdateLogicCircuit();
+			}
+		}
+
+		private void UpdateLogicCircuit() {
+			curOut = 0;
+			for (int i = 0; i < BITS; i++)
+				SetBit(GetBit(GetBitMapping(i)), i);
+			ports.SendSignal(OUTPUTID, curOut);
+			UpdateVisuals();
+		}
+
+		public void UpdateVisuals() {
+			int cell = GetActualCell(OUTPUTOFFSET);
+			// when there is not an output, we are supposed to play the off animation
+			if (Game.Instance.logicCircuitSystem.GetNetworkForCell(cell) is LogicCircuitNetwork) {
+				int state = GetRibbonValue(inVal) + 3 * GetRibbonValue(curOut);
+				kbac.Play("on_" + state, KAnim.PlayMode.Once, 1f, 0.0f);
+			} else
+				kbac.Play("off", KAnim.PlayMode.Once, 1f, 0.0f);
 		}
 	}
 }

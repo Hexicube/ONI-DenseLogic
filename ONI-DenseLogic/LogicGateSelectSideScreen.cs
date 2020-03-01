@@ -60,7 +60,6 @@ namespace ONI_DenseLogic {
 				TextStyle = PUITuning.Fonts.TextLightStyle,
 				ToolTip = "Logic: " + text,
 				Text = text,
-				DynamicSize = true,
 				FlexSize = Vector2.right,
 				OnClick = (obj) => SetGateType(type)
 			};
@@ -73,13 +72,7 @@ namespace ONI_DenseLogic {
 		}
 
 		public override bool IsValidForTarget(GameObject target) {
-			// peter: why are you using GetComponentSafe with the actual class
-			// rather than GetComponent with the interface like vanilla does?
-
-			// GetComponentSafe is force of habit as it is an extension that checks for
-			// disposed GameObject instances and will not NRE on those; in this case it
-			// probably matters not
-			return target.GetComponentSafe<DenseLogicGate>() != null;
+			return target.GetComponent<IConfigurableLogicGate>() != null;
 		}
 
 		protected override void OnPrefabInit() {
@@ -123,8 +116,12 @@ namespace ONI_DenseLogic {
 		}
 
 		public override void SetTarget(GameObject target) {
-			this.target = target.GetComponentSafe<DenseLogicGate>();
-			UpdateGateType();
+			if (target == null)
+				PUtil.LogError("Invalid target specified");
+			else {
+				this.target = target.GetComponent<IConfigurableLogicGate>();
+				UpdateGateType();
+			}
 		}
 
 		/// <summary>

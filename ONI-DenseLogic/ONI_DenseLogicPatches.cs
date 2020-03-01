@@ -44,13 +44,6 @@ namespace ONI_DenseLogic {
 			}
 		}
 
-		[HarmonyPatch(typeof(LogicBitSelectorSideScreen), "RefreshToggles")]
-		public static class AAA {
-			internal static void Postfix(LogicBitSelectorSideScreen __instance) {
-				PUIUtils.DebugObjectTree(__instance.toggles_by_int[1].gameObject);
-			}
-		}
-
 		private static void AddBuildingToPlanScreen(HashedString category, string building_id,
 				string building_after = null) {
 			if (building_after == null)

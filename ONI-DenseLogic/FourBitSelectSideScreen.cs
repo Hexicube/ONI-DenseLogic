@@ -30,16 +30,15 @@ namespace ONI_DenseLogic {
 	/// of a building with configurable bits.
 	/// </summary>
 	internal sealed class FourBitSelectSideScreen : SideScreenContent {
-
 		/// <summary>
 		/// The number of bits that can be set/visualized.
 		/// </summary>
 		public const int NUM_BITS = 4;
 
-		public readonly Vector2 MIN_PANEL_SIZE = new Vector2(300, 250);
+		private static readonly Vector2 MIN_PANEL_SIZE = new Vector2(300, 250);
 
-		private Color activeColor = new Color(0.3411765f, 0.7254902f, 0.3686275f);
-		private Color inactiveColor = new Color(0.9529412f, 0.2901961f, 0.2784314f);
+		private static readonly Color activeColor = new Color(0.3411765f, 0.7254902f, 0.3686275f);
+		private static readonly Color inactiveColor = new Color(0.9529412f, 0.2901961f, 0.2784314f);
 
 		/// <summary>
 		/// The bit toggles in the UI.
@@ -60,6 +59,22 @@ namespace ONI_DenseLogic {
 			target = null;
 		}
 
+		private void DisableAll(GameObject _) {
+			if (target != null) {
+				for (int i = 0; i < NUM_BITS; i++)
+					target.SetBit(false, i);
+				RefreshToggles();
+			}
+		}
+
+		private void EnableAll(GameObject _) {
+			if (target != null) {
+				for (int i = 0; i < NUM_BITS; i++)
+					target.SetBit(true, i);
+				RefreshToggles();
+			}
+		}
+
 		public override string GetTitle() {
 			return DenseLogicStrings.UI.UISIDESCREENS.FOURBITSELECT.TITLE;
 		}
@@ -69,127 +84,74 @@ namespace ONI_DenseLogic {
 		}
 
 		protected override void OnPrefabInit() {
-			var borderMargin = new RectOffset(1, 1, 0, 1);
-			var border = new PPanel() {
-				Margin = borderMargin,
-				Direction = PanelDirection.Vertical,
-				FlexSize = new Vector2(1.0f, 1.0f),
-				BackColor = new Color(0.0f, 0.0f, 0.0f),
-				Alignment = TextAnchor.UpperCenter
-			};
-			var margin = new RectOffset(4, 4, 4, 4);
-			var ss = new PPanel() {
-				Margin = margin,
-				Direction = PanelDirection.Vertical,
-				FlexSize = new Vector2(1.0f, 1.0f),
-				BackColor = new Color(1.0f, 1.0f, 1.0f),
-				Alignment = TextAnchor.UpperCenter
-			};
+			var margin = new RectOffset(8, 8, 8, 8);
+			// Update the parameters of the base BoxLayoutGroup
+			var baseLayout = gameObject.GetComponent<BoxLayoutGroup>();
+			if (baseLayout != null)
+				baseLayout.Params = new BoxLayoutParams() {
+					Margin = margin, Direction = PanelDirection.Vertical, Alignment =
+					TextAnchor.UpperCenter, Spacing = 8
+				};
 			for (int i = 0; i < NUM_BITS; i++) {
 				toggles[i] = new BitSelectRow(i);
-				ss.AddChild(toggles[i].Row);
+				toggles[i].Row.AddTo(gameObject);
 			}
-			ss.AddChild(new PPanel() {
-				Margin = margin,
-				Direction = PanelDirection.Horizontal,
-				FlexSize = new Vector2(1.0f, 1.0f),
-				Alignment = TextAnchor.UpperCenter,
-			}.AddChild(new PSpacer() { FlexSize = new Vector2(1.0f, 0.0f) })
-			.AddChild(new PButton() {
-				Color = PUITuning.Colors.ButtonBlueStyle,
-				Margin = new RectOffset(8, 8, 3, 3),
-				TextStyle = PUITuning.Fonts.TextLightStyle,
+			new PPanel("BottomRow") {
+				Alignment = TextAnchor.MiddleCenter, Direction = PanelDirection.Horizontal,
+				Spacing = 10, Margin = margin
+			}.AddChild(new PButton() {
+				Color = PUITuning.Colors.ButtonBlueStyle, Margin = new RectOffset(8, 8, 3, 3),
+				TextStyle = PUITuning.Fonts.TextLightStyle, OnClick = EnableAll,
 				ToolTip = DenseLogicStrings.UI.TOOLTIPS.FOURBITSELECT.ENABLE_ALL,
-				Text = DenseLogicStrings.UI.UISIDESCREENS.FOURBITSELECT.ENABLE_ALL,
-				OnClick = obj => {
-					if (target != null) {
-						target.SetBit(true, 0);
-						target.SetBit(true, 1);
-						target.SetBit(true, 2);
-						target.SetBit(true, 3);
-						RefreshToggles();
-					}
-				}
-			}).AddChild(new PSpacer() { FlexSize = new Vector2(0.5f, 0.0f) })
-			.AddChild(new PButton() {
-				Color = PUITuning.Colors.ButtonBlueStyle,
-				Margin = new RectOffset(8, 8, 3, 3),
-				TextStyle = PUITuning.Fonts.TextLightStyle,
+				Text = DenseLogicStrings.UI.UISIDESCREENS.FOURBITSELECT.ENABLE_ALL
+			}).AddChild(new PButton() {
+				Color = PUITuning.Colors.ButtonBlueStyle, Margin = new RectOffset(8, 8, 3, 3),
+				TextStyle = PUITuning.Fonts.TextLightStyle, OnClick = DisableAll,
 				ToolTip = DenseLogicStrings.UI.TOOLTIPS.FOURBITSELECT.DISABLE_ALL,
-				Text = DenseLogicStrings.UI.UISIDESCREENS.FOURBITSELECT.DISABLE_ALL,
-				OnClick = obj => {
+				Text = DenseLogicStrings.UI.UISIDESCREENS.FOURBITSELECT.DISABLE_ALL
+			}).AddTo(gameObject);
+			ContentContainer = gameObject;
+			foreach (var pair in toggles)
+				pair.Value.Toggle.onClick += () => {
 					if (target != null) {
-						target.SetBit(false, 0);
-						target.SetBit(false, 1);
-						target.SetBit(false, 2);
-						target.SetBit(false, 3);
-						RefreshToggles();
-					}
-				}
-			}).AddChild(new PSpacer() { FlexSize = new Vector2(1.0f, 0.0f) }));
-			border.AddChild(ss);
-			ContentContainer = border.Build();
-			foreach (KeyValuePair<int, BitSelectRow> keyValuePair in toggles) {
-				keyValuePair.Value.Toggle.onClick += () => {
-					if (target != null) {
-						target.SetBit(!target.GetBit(keyValuePair.Key), keyValuePair.Key);
+						target.SetBit(!target.GetBit(pair.Key), pair.Key);
 						RefreshToggles();
 					}
 				};
-			}
-			ContentContainer.SetMinUISize(MIN_PANEL_SIZE);
 			base.OnPrefabInit();
-			ContentContainer.SetParent(gameObject);
 			RefreshToggles();
 		}
 
 		public override void SetTarget(GameObject target) {
-			if (target == null) {
+			if (target == null)
 				PUtil.LogError("Invalid gameObject received");
-				return;
+			else {
+				this.target = target.GetComponent<IConfigurableFourBits>();
+				if (this.target == null)
+					PUtil.LogError("The gameObject received is not an IConfigurableFourBits");
+				else
+					RefreshToggles();
 			}
-			this.target = target.GetComponent<IConfigurableFourBits>();
-			if (this.target == null) {
-				PUtil.LogError("The gameObject received is not an IConfigurableFourBits");
-				return;
-			}
-			RefreshToggles();
 		}
 
 		/// <summary>
 		/// Updates the state of the bit toggles, based on the state in the target.
 		/// </summary>
 		private void RefreshToggles() {
-			if (target == null) {
-				return;
-			}
-			foreach (KeyValuePair<int, BitSelectRow> keyValuePair in toggles) {
-				bool bitOn = target.GetBit(keyValuePair.Key);
-				keyValuePair.Value.StateIcon.color = 
-					bitOn ? activeColor : inactiveColor;
-				keyValuePair.Value.StateText.SetText(
-					bitOn ? UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_ACTIVE : UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_INACTIVE);
-			}
+			if (target != null)
+				foreach (var pair in toggles) {
+					bool bitOn = target.GetBit(pair.Key);
+					pair.Value.StateIcon.color = 
+						bitOn ? activeColor : inactiveColor;
+					pair.Value.StateText.SetText(
+						bitOn ? UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_ACTIVE :
+						UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_INACTIVE);
+				}
 		}
 
 		private sealed class BitSelectRow {
-			/// <summary>
-			/// The panel containing this row
-			/// </summary>
-			public PPanel Row { get; }
-
-			public KButton Toggle;
-
-			public Image StateIcon;
-
-			public LocText BitName;
-
-			public LocText StateText;
-
-			public static ColorStyleSetting BitSelectColorStyle;
-			public static ColorStyleSetting BitSelectOutlineStyle;
-
-			private KImage outlineImage;
+			internal static readonly ColorStyleSetting BitSelectColorStyle;
+			internal static readonly ColorStyleSetting BitSelectOutlineStyle;
 
 			static BitSelectRow() {
 				BitSelectColorStyle = ScriptableObject.CreateInstance<ColorStyleSetting>();
@@ -202,79 +164,79 @@ namespace ONI_DenseLogic {
 				BitSelectOutlineStyle.hoverColor = new Color(0.91f, 0.81f, 0.85f);
 			}
 
+			public PPanel Row { get; }
+
+			public KButton Toggle { get; private set; }
+
+			public Image StateIcon { get; private set; }
+
+			public LocText StateText { get; private set; }
+
+			private KImage outlineImage;
+
 			public BitSelectRow(int pos) {
 				// TODO This could probably be done as a relative layout eventually, but
 				// until PRelativePanel is added this is the best we can do
-				Row = new PPanel("BitSelectRow") {
-					Margin = new RectOffset(4, 4, 4, 4),
-					FlexSize = new Vector2(1.0f, 0.0f),
+				Row = new PPanel("BitSelectRow_" + pos) {
+					FlexSize = Vector2.right, Direction = PanelDirection.Horizontal
 				};
-				var RowBackground = new PPanel("BitSelectRowBackground") {
-					FlexSize = new Vector2(1.0f, 0.0f)
-				};
-				RowBackground.OnRealize += gameObject => {
-					var img = gameObject.AddComponent<KImage>();
+				Row.OnRealize += gameObject => {
+					var img = gameObject.AddOrGet<KImage>();
+					// Since we need the color style setting this cannot be done with the
+					// stock BackImage
 					img.sprite = PUITuning.Images.GetSpriteByName("BitSelectorSideScreenRow");
 					img.type = Image.Type.Sliced;
 					img.colorStyleSetting = BitSelectColorStyle;
-					Toggle = gameObject.AddComponent<KButton>();
-					Toggle.soundPlayer = new ButtonSoundPlayer() {
-						Enabled = true
-					};
+					Toggle = gameObject.AddOrGet<KButton>();
+					Toggle.soundPlayer = new ButtonSoundPlayer() { Enabled = true };
 					Toggle.bgImage = img;
 					// this only works as long as the children are realized before the parents
 					// there is probably a better way to do this but this works under that assumption
 					Toggle.additionalKImages = new KImage[1] { outlineImage };
 				};
-				Row.AddChild(RowBackground);
-				var RowInternal = new PPanel("BitSelectRowInternal") {
-					Margin = new RectOffset(4, 4, 4, 4),
-					FlexSize = new Vector2(1.0f, 0.0f),
+				var RowInternal = new PGridPanel("BitSelectRowInternal") {
+					Margin = new RectOffset(8, 8, 8, 8),
+					FlexSize = Vector2.right,
 				};
 				RowInternal.OnRealize += gameObject => {
-					var img = gameObject.AddComponent<KImage>();
+					var img = gameObject.AddOrGet<KImage>();
+					// Again the color style is needed here
 					img.sprite = PUITuning.Images.GetSpriteByName("overview_highlight_outline_sharp");
 					img.type = Image.Type.Sliced;
 					img.colorStyleSetting = BitSelectOutlineStyle;
 					outlineImage = img;
 				};
-				RowBackground.AddChild(RowInternal);
-				var RowInternalGrid = new PGridPanel("BitSelectRowInternalGrid") {
-					Margin = new RectOffset(4, 4, 4, 4),
-					FlexSize = new Vector2(1.0f, 0.0f),
-				};
-				RowInternalGrid.AddRow(new GridRowSpec());
-				RowInternalGrid.AddColumn(new GridColumnSpec()).AddColumn(new GridColumnSpec())
-					.AddColumn(new GridColumnSpec(flex: 0.5f)).AddColumn(new GridColumnSpec()).AddColumn(new GridColumnSpec(flex: 1.0f));
-				RowInternal.AddChild(RowInternalGrid);
+				Row.AddChild(RowInternal);
+				RowInternal.AddRow(new GridRowSpec()).AddColumn(new GridColumnSpec(64.0f)).
+					AddColumn(new GridColumnSpec(flex: 0.33f)).
+					AddColumn(new GridColumnSpec(flex: 0.67f));
+				// Red or green square
 				var stateIcon = new PLabel("StateIcon") {
-					Margin = new RectOffset(6, 0, 6, 6),
+					Margin = new RectOffset(6, 6, 6, 6),
 					Sprite = PUITuning.Images.GetSpriteByName("web_box_shadow"),
 					SpriteSize = new Vector2(32, 32),
-					TextAlignment = TextAnchor.MiddleLeft
+					SpriteMode = Image.Type.Sliced
 				};
-				stateIcon.OnRealize += gameObject => {
+				stateIcon.OnRealize += gameObject =>
 					StateIcon = gameObject.GetComponentInChildren<Image>();
-					StateIcon.type = Image.Type.Sliced;
-				};
-				RowInternalGrid.AddChild(stateIcon, new GridComponentSpec(0, 0));
-				var bitName = new PLabel("BitName") {
-					Margin = new RectOffset(24, 0, 0, 0),
+				RowInternal.AddChild(stateIcon, new GridComponentSpec(0, 0) {
+					Alignment = TextAnchor.MiddleLeft
+				});
+				RowInternal.AddChild(new PLabel("BitName") {
 					Text = string.Format(UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.BIT, pos + 1),
-					TextStyle = PUITuning.Fonts.TextDarkStyle,
-					TextAlignment = TextAnchor.MiddleLeft
-				};
-				bitName.OnRealize += gameObject => BitName = gameObject.GetComponentInChildren<LocText>();
-				RowInternalGrid.AddChild(bitName, new GridComponentSpec(0, 1));
-				RowInternalGrid.AddChild(new PSpacer(), new GridComponentSpec(0, 2));
+					TextStyle = PUITuning.Fonts.TextDarkStyle
+				}, new GridComponentSpec(0, 1) {
+					Alignment = TextAnchor.MiddleLeft
+				});
 				var stateText = new PLabel("StateText") {
 					Text = UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_INACTIVE,
-					TextStyle = PUITuning.Fonts.TextDarkStyle,
-					TextAlignment = TextAnchor.MiddleLeft
+					TextStyle = PUITuning.Fonts.TextDarkStyle
 				};
-				stateText.OnRealize += gameObject => StateText = gameObject.GetComponentInChildren<LocText>();
-				RowInternalGrid.AddChild(stateText, new GridComponentSpec(0, 3));
-				RowInternalGrid.AddChild(new PSpacer(), new GridComponentSpec(0, 4));
+				stateText.OnRealize += gameObject =>
+					StateText = gameObject.GetComponentInChildren<LocText>();
+				RowInternal.AddChild(stateText, new GridComponentSpec(0, 2) {
+					Alignment = TextAnchor.MiddleLeft
+				});
 			}
 		}
 	}

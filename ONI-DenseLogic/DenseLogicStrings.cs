@@ -29,13 +29,14 @@ namespace ONI_DenseLogic {
 	public static class DenseLogicStrings {
 		public static class BUILDINGS {
 			// These will be resolved in the same order anyways so save some space
-			private static string GREEN = ONI_UI.FormatAsAutomationState("Green", AutomationState.Active);
-			private static string RED = ONI_UI.FormatAsAutomationState("Red", AutomationState.Standby);
-			private static string GREEN_SIGNAL = ONI_UI.FormatAsAutomationState("Green Signal", AutomationState.Active);
-			private static string RED_SIGNAL = ONI_UI.FormatAsAutomationState("Red Signal", AutomationState.Standby);
-			private static string AUTOMATION = ONI_UI.FormatAsLink("Automation", "LOGIC");
+			private static readonly string GREEN = ONI_UI.FormatAsAutomationState("Green", AutomationState.Active);
+			private static readonly string RED = ONI_UI.FormatAsAutomationState("Red", AutomationState.Standby);
+			private static readonly string GREEN_SIGNAL = ONI_UI.FormatAsAutomationState("Green Signal", AutomationState.Active);
+			private static readonly string RED_SIGNAL = ONI_UI.FormatAsAutomationState("Red Signal", AutomationState.Standby);
+			private static readonly string AUTOMATION = ONI_UI.FormatAsLink("Automation", "LOGIC");
+
 			// Already has a link
-			private static string RIBBON_CABLE = STRINGS.BUILDINGS.PREFABS.LOGICRIBBON.NAME;
+			private static readonly string RIBBON_CABLE = STRINGS.BUILDINGS.PREFABS.LOGICRIBBON.NAME;
 
 			public static class PREFABS {
 				public static class DENSELOGICTEAM_DENSEGATE {
@@ -162,6 +163,8 @@ namespace ONI_DenseLogic {
 					public static LocString BIT_2 = "Select input signal to use on Bit 2";
 					public static LocString BIT_3 = "Select input signal to use on Bit 3";
 					public static LocString BIT_4 = "Select input signal to use on Bit 4";
+					public static LocString IDENTITY = "Sets all bits to pass through as normal";
+					public static LocString CLEAR = "Stop all bits from passing through";
 				}
 			}
 
@@ -184,6 +187,8 @@ namespace ONI_DenseLogic {
 					public static LocString BIT_4 = "Bit 4";
 					public static LocString OUTPUT = "Output {0}";
 					public static LocString TITLE = "Configure Signal Mapping";
+					public static LocString IDENTITY = "Set Default";
+					public static LocString CLEAR = "Clear Mapping";
 				}
 			}
 		}
