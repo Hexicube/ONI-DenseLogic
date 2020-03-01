@@ -25,16 +25,13 @@ namespace ONI_DenseLogic {
 		public static string ID = "DenseLogicTeam_LogicSevenSegment";
 
 		public override BuildingDef CreateBuildingDef() {
-			string id = ID;
-			float[] tieR0_1 = TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER0;
-			string[] refinedMetals = TUNING.MATERIALS.REFINED_METALS;
-			EffectorValues none = TUNING.NOISE_POLLUTION.NONE;
-			EffectorValues tieR0_2 = TUNING.BUILDINGS.DECOR.PENALTY.TIER0;
-			EffectorValues noise = none;
-			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(id, 1, 3, "logic_SEVEN_kanim",
+			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 1, 3,
+				"logic_SEVEN_kanim",
 				TUNING.BUILDINGS.HITPOINTS.TIER1,
-				TUNING.BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2, tieR0_1, refinedMetals, 1600f, 
-				BuildLocationRule.Anywhere, tieR0_2, noise);
+				TUNING.BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER1,
+				TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
+				TUNING.MATERIALS.REFINED_METALS, 1600.0f, BuildLocationRule.Anywhere,
+				TUNING.BUILDINGS.DECOR.PENALTY.TIER1, TUNING.NOISE_POLLUTION.NOISY.TIER1);
 			buildingDef.Overheatable = false;
 			buildingDef.Floodable = false;
 			buildingDef.Entombable = false;
@@ -64,7 +61,7 @@ namespace ONI_DenseLogic {
 			};
 			SoundEventVolumeCache.instance.AddVolume("door_internal_kanim", "Open_DoorInternal", TUNING.NOISE_POLLUTION.NOISY.TIER3);
 			SoundEventVolumeCache.instance.AddVolume("door_internal_kanim", "Close_DoorInternal", TUNING.NOISE_POLLUTION.NOISY.TIER3);
-			GeneratedBuildings.RegisterWithOverlay(OverlayModes.Logic.HighlightItemIDs, LogicCounterConfig.ID);
+			GeneratedBuildings.RegisterWithOverlay(OverlayModes.Logic.HighlightItemIDs, ID);
 			return buildingDef;
 		}
 
