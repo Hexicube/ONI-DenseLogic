@@ -34,6 +34,10 @@ namespace ONI_DenseLogic {
 			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<SignalRemapper>(
 			(component, data) => component.OnLogicValueChanged(data));
 
+		private static readonly EventSystem.IntraObjectHandler<SignalRemapper>
+			OnCopySettingsDelegate = new EventSystem.IntraObjectHandler<SignalRemapper>(
+			(component, data) => component.OnCopySettings(data));
+
 		public const int BITS = 4;
 		public const int NO_BIT = -1;
 
@@ -92,13 +96,24 @@ namespace ONI_DenseLogic {
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
+			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+		}
+
+		private void OnCopySettings(object data) {
+			var mapper = (data as GameObject)?.GetComponent<SignalRemapper>();
+			if (mapper != null) {
+				bits.Clear();
+				for (int i = 0; i < BITS; i++)
+					bits.Add(mapper.GetBitMapping(i));
+				UpdateLogicCircuit();
+			}
 		}
 
 		protected override void OnPrefabInit() {
 			base.OnPrefabInit();
 			if (bits == null)
 				bits = new List<int>(BITS);
-			if (bits.Count <= BITS) {
+			if (bits.Count < BITS) {
 				// Default config: all -1 (none)
 				bits.Clear();
 				for (int i = 0; i < BITS; i++)

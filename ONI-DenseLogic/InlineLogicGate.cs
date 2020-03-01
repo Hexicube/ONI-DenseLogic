@@ -19,35 +19,26 @@
 
 using KSerialization;
 using PeterHan.PLib;
+using System;
 using UnityEngine;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public sealed class DenseLogicGate : KMonoBehaviour, ISaveLoadable, IRender200ms,
+	public sealed class InlineLogicGate : KMonoBehaviour, ISaveLoadable, IRender200ms,
 			IConfigurableLogicGate {
-		public static readonly HashedString INPUTID1 = new HashedString("DenseGate_IN1");
-		public static readonly HashedString INPUTID2 = new HashedString("DenseGate_IN2");
-		public static readonly HashedString OUTPUTID = new HashedString("DenseGate_OUT");
+		public static readonly HashedString PORTID = new HashedString("InlineGate_IO");
 
-		public static readonly CellOffset INPUTOFFSET1 = new CellOffset(0, 0);
-		public static readonly CellOffset INPUTOFFSET2 = new CellOffset(0, 2);
-		public static readonly CellOffset OUTPUTOFFSET = new CellOffset(1, 1);
+		public static readonly CellOffset OFFSET = CellOffset.none;
 
-		private static readonly EventSystem.IntraObjectHandler<DenseLogicGate>
-			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<DenseLogicGate>(
-			(component, data) => component.OnLogicValueChanged(data));
-
-		private static readonly EventSystem.IntraObjectHandler<DenseLogicGate>
-			OnCopySettingsDelegate = new EventSystem.IntraObjectHandler<DenseLogicGate>(
+		private static readonly EventSystem.IntraObjectHandler<InlineLogicGate>
+			OnCopySettingsDelegate = new EventSystem.IntraObjectHandler<InlineLogicGate>(
 			(component, data) => component.OnCopySettings(data));
 
 		private static readonly Color COLOR_ON = new Color(0.3411765f, 0.7254902f, 0.3686275f);
 		private static readonly Color COLOR_OFF = new Color(0.9529412f, 0.2901961f, 0.2784314f);
 		private static readonly Color COLOR_DISABLED = new Color(1.0f, 1.0f, 1.0f);
 
-		private static readonly KAnimHashedString[] IN_A = { "in_a1", "in_a2", "in_a3", "in_a4" };
-		private static readonly KAnimHashedString[] IN_B = { "in_b1", "in_b2", "in_b3", "in_b4" };
-		private static readonly KAnimHashedString[] OUT = { "out_1", "out_2", "out_3", "out_4" };
+		private static readonly KAnimHashedString[] PORT = { "port_1", "port_2", "port_3", "port_4" };
 
 		private static readonly KAnimHashedString GATE_OR = "or_gate";
 		private static readonly KAnimHashedString GATE_AND = "and_gate";
@@ -67,6 +58,8 @@ namespace ONI_DenseLogic {
 			}
 		}
 
+		internal LogicIOHandler InputHandler { get; private set; }
+
 #pragma warning disable IDE0044 // Add readonly modifier
 #pragma warning disable CS0649
 		[MyCmpReq]
@@ -81,15 +74,22 @@ namespace ONI_DenseLogic {
 #pragma warning restore IDE0044
 
 		[Serialize]
-		private int inVal1, inVal2;
-		private int curOut;
+		private int inVal;
 
 		[SerializeField]
 		[Serialize]
 		private LogicGateType mode;
 
-		internal DenseLogicGate() {
+		[SerializeField]
+		[Serialize]
+		private int inputBit1, inputBit2, outputBit;
+
+		internal InlineLogicGate() {
+			InputHandler = null;
 			mode = LogicGateType.And;
+			inputBit1 = 0;
+			inputBit2 = 1;
+			outputBit = 2;
 		}
 
 		private int GetActualCell(CellOffset offset) {
@@ -98,30 +98,29 @@ namespace ONI_DenseLogic {
 			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
 		}
 
+		private void OnCopySettings(object data) {
+			var gate = (data as GameObject)?.GetComponent<InlineLogicGate>();
+			if (gate != null) {
+				mode = gate.mode;
+				inputBit1 = gate.inputBit1;
+				inputBit2 = gate.inputBit2;
+				outputBit = gate.outputBit;
+				UpdateGateType();
+			}
+		}
+
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			gameObject.AddOrGet<CopyBuildingSettings>();
-			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
 			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+			InputHandler = new LogicIOHandler(this);
 			UpdateGateType();
 		}
 
-		public void OnLogicValueChanged(object data) {
-			var logicValueChanged = (LogicValueChanged)data;
-			if (logicValueChanged.portID == INPUTID1)
-				inVal1 = logicValueChanged.newValue;
-			else if (logicValueChanged.portID == INPUTID2)
-				inVal2 = logicValueChanged.newValue;
-			else
-				return;
-			UpdateLogicCircuit();
-		}
-
-		private void OnCopySettings(object data) {
-			var gate = (data as GameObject)?.GetComponent<DenseLogicGate>();
-			if (gate != null) {
-				mode = gate.mode;
-				UpdateGateType();
+		internal void OnLogicValueChanged(int newValue) {
+			if (newValue != inVal) {
+				inVal = newValue;
+				UpdateLogicCircuit();
 			}
 		}
 
@@ -136,6 +135,8 @@ namespace ONI_DenseLogic {
 		}
 
 		private void UpdateLogicCircuit() {
+			int inVal1 = (inVal >> inputBit1) & 0x1, inVal2 = (inVal >> inputBit2) & 0x1,
+				curOut;
 			if (mode == LogicGateType.Or)
 				curOut = inVal1 | inVal2;
 			else if (mode == LogicGateType.And)
@@ -150,15 +151,14 @@ namespace ONI_DenseLogic {
 				curOut = ~(inVal1 ^ inVal2);
 			else {
 				// should never occur
-				PUtil.LogWarning("Unknown DenseLogicGate operand " + mode);
+				PUtil.LogWarning("Unknown InlineLogicGate operand " + mode);
 				curOut = 0;
 			}
-			ports.SendSignal(OUTPUTID, curOut);
+			ports.SendSignal(PORTID, curOut << outputBit);
 			UpdateVisuals();
 		}
 
 		public void Render200ms(float dt) {
-			// hexi/test/peter: Do we have to do this here? Can we render only on state change?
 			UpdateVisuals();
 		}
 
@@ -188,24 +188,42 @@ namespace ONI_DenseLogic {
 
 		public void UpdateVisuals() {
 			// when there is not an output, we are supposed to play the off animation
-			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OUTPUTOFFSET)) is LogicCircuitNetwork)) {
+			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OFFSET)) is LogicCircuitNetwork)) {
 				SetSymbolsOff();
-				for (int a = 0; a < 4; a++) {
-					kbac.SetSymbolTint(IN_A[a], COLOR_DISABLED);
-					kbac.SetSymbolTint(IN_B[a], COLOR_DISABLED);
-					kbac.SetSymbolTint(OUT[a], COLOR_DISABLED);
-				}
+				for (int a = 0; a < 4; a++)
+					kbac.SetSymbolTint(PORT[a], COLOR_DISABLED);
 			} else {
 			// otherwise set the colors of the lamps and of the individual wires on the gate
-				SetSymbolVisibility(0, inVal1);
-				SetSymbolVisibility(1, inVal2);
-				SetSymbolVisibility(2, curOut);
+				SetSymbolVisibility(0, inVal);
 				for (int a = 0; a < 4; a++) {
 					int mask = 1 << a;
-					kbac.SetSymbolTint(IN_A[a], (inVal2 & mask) != 0 ? COLOR_ON : COLOR_OFF);
-					kbac.SetSymbolTint(IN_B[a], (inVal1 & mask) != 0 ? COLOR_ON : COLOR_OFF);
-					kbac.SetSymbolTint(OUT[a], (curOut & mask) != 0 ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(PORT[a], (inVal & mask) != 0 ? COLOR_ON : COLOR_OFF);
 				}
+			}
+		}
+
+		// Handles "input" logic events on an "output" type port.
+		internal sealed class LogicIOHandler : ILogicEventReceiver {
+			private readonly int cell;
+
+			private readonly InlineLogicGate gate;
+
+			public LogicIOHandler(InlineLogicGate gate) {
+				this.gate = gate ?? throw new ArgumentNullException("gate");
+				cell = gate.GetActualCell(OFFSET);
+			}
+
+			public int GetLogicCell() {
+				return cell;
+			}
+
+			public void OnLogicNetworkConnectionChanged(bool connected) {
+				// The gate does not display a "missing connection"
+			}
+
+			public void ReceiveLogicEvent(int value) {
+				if (gate != null)
+					gate.OnLogicValueChanged(value);
 			}
 		}
 	}

@@ -17,10 +17,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-using STRINGS;
-
 using ONI_UI = STRINGS.UI;
-using AutomationState = STRINGS.UI.AutomationState;
 
 namespace ONI_DenseLogic {
 	/// <summary>
@@ -29,10 +26,10 @@ namespace ONI_DenseLogic {
 	public static class DenseLogicStrings {
 		public static class BUILDINGS {
 			// These will be resolved in the same order anyways so save some space
-			private static readonly string GREEN = ONI_UI.FormatAsAutomationState("Green", AutomationState.Active);
-			private static readonly string RED = ONI_UI.FormatAsAutomationState("Red", AutomationState.Standby);
-			private static readonly string GREEN_SIGNAL = ONI_UI.FormatAsAutomationState("Green Signal", AutomationState.Active);
-			private static readonly string RED_SIGNAL = ONI_UI.FormatAsAutomationState("Red Signal", AutomationState.Standby);
+			private static readonly string GREEN = ONI_UI.FormatAsAutomationState("Green", ONI_UI.AutomationState.Active);
+			private static readonly string RED = ONI_UI.FormatAsAutomationState("Red", ONI_UI.AutomationState.Standby);
+			private static readonly string GREEN_SIGNAL = ONI_UI.FormatAsAutomationState("Green Signal", ONI_UI.AutomationState.Active);
+			private static readonly string RED_SIGNAL = ONI_UI.FormatAsAutomationState("Red Signal", ONI_UI.AutomationState.Standby);
 			// Already has a link
 			private static readonly string RIBBON_CABLE = STRINGS.BUILDINGS.PREFABS.LOGICRIBBON.NAME;
 
@@ -46,6 +43,17 @@ namespace ONI_DenseLogic {
 					public static LocString PORTIN_INACTIVE = $"Reads {RED} signals from {RIBBON_CABLE}s.";
 					public static LocString PORTOUT_ACTIVE = $"Writes {GREEN} signals to {RIBBON_CABLE}s.";
 					public static LocString PORTOUT_INACTIVE = $"Writes {RED} signals to {RIBBON_CABLE}s.";
+				}
+
+				public static class DENSELOGICTEAM_INLINEGATE {
+					public static LocString NAME = ONI_UI.FormatAsLink("Inline Logic Gate",
+						InlineLogicGateConfig.ID);
+					public static LocString DESC = $"Just when we thought that Moore's law could go no further, Banhi found a way to make logic gates smaller than ever.";
+					public static LocString EFFECT = $"Performs logic on the selected bits in {RIBBON_CABLE} and outputs the result to another selected bit.\n\nAND:\nOutputs {GREEN} when both Input A <b>AND</b> Input B are receiving {GREEN}.\n\nOR:\nOutputs {GREEN} when either Input A <b>OR</b> Input B are receiving {GREEN}.\n\nXOR:\nOutputs {GREEN} when <b>EXACTLY ONE</b> of Input A and Input B are receiving {GREEN}.\n\nOutputs {RED_SIGNAL}s if none of the above are true.";
+					public static LocString PORT_ACTIVE = $"Reads and writes {GREEN} signals from {RIBBON_CABLE}s.";
+					public static LocString PORT_INACTIVE = $"Reads and writes {RED} signals from {RIBBON_CABLE}s.";
+
+					public static LocString LOGIC_PORT_IO = "Bit Reading and Writing";
 				}
 
 				public static class DENSELOGICTEAM_LOGICSEVENSEGMENT {
