@@ -44,7 +44,7 @@
       <HintPath>E:\steamlib\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="PLib, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PLib.3.3.2-beta\lib\net40\PLib.dll</HintPath>
+      <HintPath>..\packages\PLib.3.3.5-beta\lib\net40\PLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -74,6 +74,7 @@
     <Compile Include="DenseInput.cs" />
     <Compile Include="LogicData.cs" />
     <Compile Include="LogicDataConfig.cs" />
+    <Compile Include="IConfigurableFourBits.cs" />
     <Compile Include="RemapperSideScreen.cs" />
     <Compile Include="SignalRemapper.cs" />
     <Compile Include="SignalRemapperConfig.cs" />
@@ -83,7 +84,6 @@
     <Compile Include="DenseLogicGate.cs" />
     <Compile Include="DenseMultiplexer.cs" />
     <Compile Include="DenseMultiplexerConfig.cs" />
-    <Compile Include="IConfigurableFourBits.cs" />
     <Compile Include="LogicGate.cs" />
     <Compile Include="LogicGateNandConfig.cs" />
     <Compile Include="LogicGateNorConfig.cs" />

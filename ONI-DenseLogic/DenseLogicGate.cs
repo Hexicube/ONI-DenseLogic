@@ -67,10 +67,10 @@ namespace ONI_DenseLogic {
 		}
 
 #pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable CS0649
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
-		[MyCmpAdd]
-		private CopyBuildingSettings copyBuildingSettings;
+#pragma warning restore CS0649
 #pragma warning restore IDE0044
 
 		[Serialize]
@@ -93,6 +93,7 @@ namespace ONI_DenseLogic {
 
 		protected override void OnSpawn() {
 			base.OnSpawn();
+			gameObject.AddOrGet<CopyBuildingSettings>();
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
 			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
 			UpdateGateType();

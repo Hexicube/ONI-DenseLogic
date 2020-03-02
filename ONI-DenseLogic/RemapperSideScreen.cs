@@ -22,9 +22,11 @@ using PeterHan.PLib.UI;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ONI_DenseLogic {
 	internal sealed class RemapperSideScreen : SideScreenContent {
+		private readonly string[] tooltips;
 		private readonly IList<BitOption> bitNames;
 
 		private readonly GameObject[] bitSelects;
@@ -32,7 +34,8 @@ namespace ONI_DenseLogic {
 		private SignalRemapper target;
 
 		internal RemapperSideScreen() {
-			bitNames = new List<BitOption>();
+			tooltips = new string[SignalRemapper.BITS];
+			bitNames = new List<BitOption>(1 + SignalRemapper.BITS);
 			bitSelects = new GameObject[SignalRemapper.BITS];
 			target = null;
 		}
@@ -61,50 +64,79 @@ namespace ONI_DenseLogic {
 		}
 
 		protected override void OnPrefabInit() {
-			RectOffset lblMargin = new RectOffset(0, 10, 0, 0), rowMargin = new RectOffset(0,
-				0, 5, 5);
-			var ss = new PGridPanel("SignalRemap") {
-				Margin = new RectOffset(4, 4, 4, 4), FlexSize = Vector2.right
-			}.AddColumn(new GridColumnSpec(flex: 0.5f)).
-				AddColumn(new GridColumnSpec(flex: 0.5f));
-			var tooltips = new string[] {
-				DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_1,
-				DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_2,
-				DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_3,
-				DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_4,
-			};
+			var margin = new RectOffset(8, 8, 8, 8);
+			// Update the parameters of the base BoxLayoutGroup
+			var baseLayout = gameObject.GetComponent<BoxLayoutGroup>();
+			if (baseLayout != null)
+				baseLayout.Params = new BoxLayoutParams() {
+					Margin = margin, Direction = PanelDirection.Vertical, Alignment =
+					TextAnchor.UpperCenter, Spacing = 8
+				};
+			tooltips[0] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_1;
+			tooltips[1] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_2;
+			tooltips[2] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_3;
+			tooltips[3] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_4;
 			// Can be safely shared
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_NONE);
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_1);
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_2);
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_3);
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_4);
+			var rowBG = PUITuning.Images.GetSpriteByName("overview_highlight_outline_sharp");
 			for (int i = 0; i < SignalRemapper.BITS; i++) {
-				// Important! This assignment is required to ensure that the closure created
-				// for OnRealize binds the right value of i
+				// This assignment is required for captures to get the right index
 				int index = i;
-				ss.AddRow(new GridRowSpec()).AddChild(new PLabel("Label") {
+				var row = new PPanel("Bit" + index) {
+					BackImage = rowBG, BackColor = new Color(0.898f, 0.898f, 0.898f),
+					ImageMode = Image.Type.Sliced, Alignment = TextAnchor.MiddleCenter,
+					Direction = PanelDirection.Horizontal, Spacing = 10, Margin = margin,
+					FlexSize = Vector2.right
+				}.AddChild(new PLabel("BitLabel") {
 					TextAlignment = TextAnchor.MiddleRight, ToolTip = tooltips[index],
 					Text = string.Format(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.
-					OUTPUT, bitNames[index + 1].GetProperName()),
-					TextStyle = PUITuning.Fonts.TextDarkStyle
-				}, new GridComponentSpec(index, 0) {
-					Alignment = TextAnchor.MiddleRight, Margin = lblMargin
+					OUTPUT, bitNames[index + 1].GetProperName()), TextStyle = PUITuning.Fonts.
+					TextDarkStyle
 				});
-				var cb = new PComboBox<BitOption>("Select") {
+				var cb = new PComboBox<BitOption>("BitSelect") {
 					Content = bitNames, InitialItem = bitNames[0], ToolTip = tooltips[index],
 					OnOptionSelected = (_, chosen) => SetSignalMap(index, chosen),
-					TextStyle = PUITuning.Fonts.TextLightStyle, DynamicSize = true
+					TextStyle = PUITuning.Fonts.TextLightStyle, TextAlignment = TextAnchor.
+					MiddleLeft
 				};
 				cb.OnRealize += (obj) => bitSelects[index] = obj;
-				ss.AddChild(cb, new GridComponentSpec(index, 1) {
-					Alignment = TextAnchor.MiddleLeft, Margin = rowMargin
-				});
+				row.AddChild(cb);
+				row.AddTo(gameObject);
 			}
-			ContentContainer = ss.Build();
+			// Set default / Clear mapping
+			new PPanel("BottomRow") {
+				Alignment = TextAnchor.MiddleCenter, Direction = PanelDirection.Horizontal,
+				Spacing = 10, Margin = margin
+			}.AddChild(new PButton() {
+				Color = PUITuning.Colors.ButtonBlueStyle, Margin = new RectOffset(8, 8, 3, 3),
+				TextStyle = PUITuning.Fonts.TextLightStyle, OnClick = SetDefaultMap,
+				ToolTip = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.IDENTITY,
+				Text = DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.IDENTITY
+			}).AddChild(new PButton() {
+				Color = PUITuning.Colors.ButtonBlueStyle, Margin = new RectOffset(8, 8, 3, 3),
+				TextStyle = PUITuning.Fonts.TextLightStyle, OnClick = SetBlankMap,
+				ToolTip = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.CLEAR,
+				Text = DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.CLEAR
+			}).AddTo(gameObject);
+			ContentContainer = gameObject;
 			base.OnPrefabInit();
-			ContentContainer.SetParent(gameObject);
 			LoadSignalMap();
+		}
+
+		private void SetBlankMap(GameObject _) {
+			if (target != null)
+				for (int i = 0; i < SignalRemapper.BITS; i++)
+					SetSignalMap(i, bitNames[0]);
+		}
+
+		private void SetDefaultMap(GameObject _) {
+			if (target != null)
+				for (int i = 0; i < SignalRemapper.BITS; i++)
+					SetSignalMap(i, bitNames[i + 1]);
 		}
 
 		private void SetSignalMap(int index, BitOption chosen) {
