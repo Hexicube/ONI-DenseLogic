@@ -26,8 +26,8 @@ namespace ONI_DenseLogic {
 		public const ObjectLayer LAYER = ObjectLayer.LogicGates;
 
 		public override BuildingDef CreateBuildingDef() {
-			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 3,
-				"dense_MULTI_kanim", 
+			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 1, 1,
+				"dense_INLINE_kanim", 
 				TUNING.BUILDINGS.HITPOINTS.TIER1, 
 				TUNING.BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER1, 
 				TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER1,
@@ -36,7 +36,6 @@ namespace ONI_DenseLogic {
 			buildingDef.Overheatable = false;
 			buildingDef.Floodable = false;
 			buildingDef.Entombable = false;
-			// It is supposed to be 1x1...
 			buildingDef.PermittedRotations = PermittedRotations.Unrotatable;
 			buildingDef.ViewMode = OverlayModes.Logic.ID;
 			buildingDef.AudioCategory = "Metal";

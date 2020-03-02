@@ -17,7 +17,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+using STRINGS;
+
 using ONI_UI = STRINGS.UI;
+using AutomationState = STRINGS.UI.AutomationState;
 
 namespace ONI_DenseLogic {
 	/// <summary>
@@ -26,10 +29,12 @@ namespace ONI_DenseLogic {
 	public static class DenseLogicStrings {
 		public static class BUILDINGS {
 			// These will be resolved in the same order anyways so save some space
-			private static readonly string GREEN = ONI_UI.FormatAsAutomationState("Green", ONI_UI.AutomationState.Active);
-			private static readonly string RED = ONI_UI.FormatAsAutomationState("Red", ONI_UI.AutomationState.Standby);
-			private static readonly string GREEN_SIGNAL = ONI_UI.FormatAsAutomationState("Green Signal", ONI_UI.AutomationState.Active);
-			private static readonly string RED_SIGNAL = ONI_UI.FormatAsAutomationState("Red Signal", ONI_UI.AutomationState.Standby);
+			private static readonly string GREEN = ONI_UI.FormatAsAutomationState("Green", AutomationState.Active);
+			private static readonly string RED = ONI_UI.FormatAsAutomationState("Red", AutomationState.Standby);
+			private static readonly string GREEN_SIGNAL = ONI_UI.FormatAsAutomationState("Green Signal", AutomationState.Active);
+			private static readonly string RED_SIGNAL = ONI_UI.FormatAsAutomationState("Red Signal", AutomationState.Standby);
+			private static readonly string AUTOMATION = ONI_UI.FormatAsLink("Automation", "LOGIC");
+
 			// Already has a link
 			private static readonly string RIBBON_CABLE = STRINGS.BUILDINGS.PREFABS.LOGICRIBBON.NAME;
 
@@ -39,10 +44,23 @@ namespace ONI_DenseLogic {
 						DenseLogicGateConfig.ID);
 					public static LocString DESC = $"Banhi told us she didn't like the old logic gates. Banhi is weird.";
 					public static LocString EFFECT = $"Switches between different logic functions easily in the ONI_UI.\n\nPerforms logic on each bit in {RIBBON_CABLE} based on the specified mode.\n\nAND:\nOutputs {GREEN} when both Input A <b>AND</b> Input B are receiving {GREEN}.\n\nOR:\nOutputs {GREEN} when either Input A <b>OR</b> Input B are receiving {GREEN}.\n\nXOR:\nOutputs {GREEN} when <b>EXACTLY ONE</b> of Input A and Input B are receiving {GREEN}.\n\nOutputs {RED_SIGNAL}s if none of the above are true.";
-					public static LocString PORTIN_ACTIVE = $"Reads {GREEN} signals from {RIBBON_CABLE}s.";
-					public static LocString PORTIN_INACTIVE = $"Reads {RED} signals from {RIBBON_CABLE}s.";
-					public static LocString PORTOUT_ACTIVE = $"Writes {GREEN} signals to {RIBBON_CABLE}s.";
-					public static LocString PORTOUT_INACTIVE = $"Writes {RED} signals to {RIBBON_CABLE}s.";
+					public static LocString INPUT_LOGIC_PORT_ONE = "4-Bit Input A";
+					public static LocString INPUT_LOGIC_PORT_TWO = "4-Bit Input B";
+					public static LocString OUTPUT_LOGIC_PORT = "4-Bit Logic Output";
+					public static LocString PORTIN_ACTIVE = $"Reads {GREEN} signals from the {RIBBON_CABLE}.";
+					public static LocString PORTIN_INACTIVE = $"Reads {RED} signals from the {RIBBON_CABLE}.";
+					public static LocString PORTOUT_ACTIVE = $"Writes {GREEN} signals to the {RIBBON_CABLE}.";
+					public static LocString PORTOUT_INACTIVE = $"Writes {RED} signals to the {RIBBON_CABLE}.";
+				}
+
+				public static class DENSELOGICTEAM_LOGICGATE {
+					public static LocString INPUT_LOGIC_PORT_ONE = "Input A";
+					public static LocString INPUT_LOGIC_PORT_TWO = "Input B";
+					public static LocString OUTPUT_LOGIC_PORT = "Logic Output";
+					public static LocString PORTIN_ACTIVE = $"Reads a {GREEN} signal from the {AUTOMATION} wire.";
+					public static LocString PORTIN_INACTIVE = $"Reads a {RED} signal from the {AUTOMATION} wire.";
+					public static LocString PORTOUT_ACTIVE = $"Writes a {GREEN} signal to the {AUTOMATION} wire.";
+					public static LocString PORTOUT_INACTIVE = $"Writes a {RED} signal to the {AUTOMATION} wire.";
 				}
 
 				public static class DENSELOGICTEAM_INLINEGATE {
@@ -62,11 +80,11 @@ namespace ONI_DenseLogic {
 					public static LocString DESC = $"Giving the duplicants a way to show off their favorite numbers has never been easier.";
 					public static LocString EFFECT = $"Displays the value of a {RIBBON_CABLE} as a number 0 through 9.";
 					public static LocString LOGIC_PORT = "Numerical Input";
-					public static LocString INPUT_PORT_ACTIVE = $"Displays a non-zero number.";
-					public static LocString INPUT_PORT_INACTIVE = $"Displays zero.";
+					public static LocString INPUT_PORT_ACTIVE = $"{GREEN_SIGNAL}: Displays a non-zero number.";
+					public static LocString INPUT_PORT_INACTIVE = $"{RED_SIGNAL}: Displays zero.";
 					public static LocString OUTPUT_LOGIC_PORT = "Overflow";
-					public static LocString OUTPUT_PORT_ACTIVE = $"The input is larger than 9.";
-					public static LocString OUTPUT_PORT_INACTIVE = $"The input is less than or equal to 9.";
+					public static LocString OUTPUT_PORT_ACTIVE = $"Outputs a {GREEN_SIGNAL} if the input is larger than 9.";
+					public static LocString OUTPUT_PORT_INACTIVE = $"Outputs a {RED_SIGNAL} if the input is less than or equal to 9.";
 				}
 
 				public static class DENSELOGICTEAM_LOGICNOR {
@@ -90,25 +108,43 @@ namespace ONI_DenseLogic {
 					public static LocString EFFECT = $"Outputs a {RED_SIGNAL} if exactly one of its Inputs is receiving {GREEN}.\n\nOutputs a {GREEN_SIGNAL} if both or neither Inputs are receiving {GREEN}.";
 				}
 
+				public static class DENSELOGICTEAM_GENERALMULTIPLEXER {
+					public static LocString INPUT_LOGIC_PORT = "1-Bit Input";
+					public static LocString INPUT_LOGIC_PORT_RIBBON = "4-Bit Input";
+					public static LocString CONTROL_LOGIC_PORT_ONE = "Control Input A";
+					public static LocString CONTROL_LOGIC_PORT_TWO = "Control Input B";
+					public static LocString OUTPUT_LOGIC_PORT = "1-Bit Selection";
+					public static LocString OUTPUT_LOGIC_PORT_RIBBON = "4-Bit Selection";
+					public static LocString INPUT_PORT_ACTIVE = $"{GREEN_SIGNAL}: Passes a {GREEN_SIGNAL} to the selected bit of the output.";
+					public static LocString INPUT_PORT_INACTIVE = $"{RED_SIGNAL}: Passes a {RED_SIGNAL} to the selected bit of the output.";
+					public static LocString INPUT_PORT_ACTIVE_RIBBON = $"{GREEN_SIGNAL}: Provides some {GREEN} bits to select from.";
+					public static LocString INPUT_PORT_INACTIVE_RIBBON = $"{RED_SIGNAL}: PRovides {RED} bits to select from.";
+					public static LocString OUTPUT_PORT_ACTIVE = $"{GREEN_SIGNAL}: The selected bit is {GREEN}.";
+					public static LocString OUTPUT_PORT_INACTIVE = $"{RED_SIGNAL}: The selected bit is {RED}.";
+					public static LocString CONTROL_PORT_ACTIVE = $"{GREEN_SIGNAL}: Selects which bit to pass through/onto.";
+					public static LocString CONTROL_PORT_INACTIVE = $"{RED_SIGNAL}: Selects which bit to pass through/onto.";
+				}
+
 				public static class DENSELOGICTEAM_DENSEMULTIPLEXER {
 					public static LocString NAME = ONI_UI.FormatAsLink("Dense Multiplexer",
 						DenseMultiplexerConfig.ID);
-					public static LocString DESC = $"A 4-bit multiplexer with {RIBBON_CABLE} as input.";
+					public static LocString DESC = $"A 4-Bit multiplexer with {RIBBON_CABLE} as input.";
 					public static LocString EFFECT = $"Controls which bit of the input {RIBBON_CABLE} is sent to the output using two control inputs.";
 				}
 
 				public static class DENSELOGICTEAM_DENSEDEMULTIPLEXER {
 					public static LocString NAME = ONI_UI.FormatAsLink("Dense DeMultiplexer",
 						DenseDeMultiplexerConfig.ID);
-					public static LocString DESC = $"A 4-bit multiplexer with {RIBBON_CABLE} as output.";
+					public static LocString DESC = $"A 4-Bit multiplexer with {RIBBON_CABLE} as output.";
 					public static LocString EFFECT = $"Controls which bit of the output {RIBBON_CABLE} the input is sent to using two control inputs.";
 				}
 
 				public static class DENSELOGICTEAM_DENSEINPUT {
 					public static LocString NAME = ONI_UI.FormatAsLink("Signal Multiswitch",
 						DenseInputConfig.ID);
-					public static LocString DESC = $"A 4-bit constant input with {RIBBON_CABLE} as output.";
-					public static LocString EFFECT = $"Sends a configurable 4-bit signal on an {ONI_UI.FormatAsLink("Automation", "LOGIC")} grid.\n\n{RIBBON_CABLE} must be used as the output wire to avoid overloading."; 
+					public static LocString DESC = $"A 4-Bit constant input with {RIBBON_CABLE} as output.";
+					public static LocString EFFECT = $"Sends a configurable 4-Bit signal on an {AUTOMATION} grid.\n\n{RIBBON_CABLE} must be used as the output wire to avoid overloading.";
+					public static LocString LOGIC_PORT_OUTPUT = $"Multisignal Toggle";
 					public static LocString PORTOUT_ACTIVE = $"Writes {GREEN} signals to some bits of the {RIBBON_CABLE}.";
 					public static LocString PORTOUT_INACTIVE = $"Writes {RED} signals to some bits of the {RIBBON_CABLE}.";
 				}
@@ -117,7 +153,7 @@ namespace ONI_DenseLogic {
 					public static LocString NAME = ONI_UI.FormatAsLink("Signal Remapper",
 						SignalRemapperConfig.ID);
 					public static LocString DESC = $"Repeats the signals on its {RIBBON_CABLE} input to its {RIBBON_CABLE} output in a different order.";
-					public static LocString EFFECT = $"Rearranges the order of signals from one {ONI_UI.FormatAsLink("Automation", "LOGIC")} grid to another.\n\n{RIBBON_CABLE} must be used as both the input and output wire to avoid overloading.";
+					public static LocString EFFECT = $"Rearranges the order of signals from one {AUTOMATION} grid to another.\n\n{RIBBON_CABLE} must be used as both the input and output wire to avoid overloading.";
 					public static LocString PORTIN_ACTIVE = $"Reads {GREEN} signals from {RIBBON_CABLE}s.";
 					public static LocString PORTIN_INACTIVE = $"Reads {RED} signals from {RIBBON_CABLE}s.";
 					public static LocString PORTOUT_ACTIVE = $"Writes {GREEN} signals to each bit of the output {RIBBON_CABLE} when the configured input {RIBBON_CABLE} bit is sending {GREEN}.";

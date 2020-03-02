@@ -38,15 +38,17 @@ namespace ONI_DenseLogic {
 		private static readonly Color COLOR_OFF = new Color(0.9529412f, 0.2901961f, 0.2784314f);
 		private static readonly Color COLOR_DISABLED = new Color(1.0f, 1.0f, 1.0f);
 
-		private static readonly KAnimHashedString[] PORT = { "port_1", "port_2", "port_3", "port_4" };
+		private static readonly KAnimHashedString[] IN_A = { "in_a1", "in_a2", "in_a3", "in_a4" };
+		private static readonly KAnimHashedString[] IN_B = { "in_b1", "in_b2", "in_b3", "in_b4" };
+		private static readonly KAnimHashedString[] OUT = { "out_1", "out_2", "out_3", "out_4" };
 
-		private static readonly KAnimHashedString GATE_OR = "or_gate";
-		private static readonly KAnimHashedString GATE_AND = "and_gate";
-		private static readonly KAnimHashedString GATE_XOR = "xor_gate";
+		private static readonly KAnimHashedString GATE_OR = "or";
+		private static readonly KAnimHashedString GATE_AND = "and";
+		private static readonly KAnimHashedString GATE_XOR = "xor";
 
-		private static readonly KAnimHashedString GATE_XNOR = "xnor_gate";
-		private static readonly KAnimHashedString GATE_NAND = "nand_gate";
-		private static readonly KAnimHashedString GATE_NOR = "nor_gate";
+		private static readonly KAnimHashedString GATE_XNOR = "xnor";
+		private static readonly KAnimHashedString GATE_NAND = "nand";
+		private static readonly KAnimHashedString GATE_NOR = "nor";
 
 		public LogicGateType GateType {
 			get {
@@ -154,6 +156,7 @@ namespace ONI_DenseLogic {
 				PUtil.LogWarning("Unknown InlineLogicGate operand " + mode);
 				curOut = 0;
 			}
+			curOut &= 0x1;
 			ports.SendSignal(PORTID, curOut << outputBit);
 			UpdateVisuals();
 		}
@@ -162,14 +165,17 @@ namespace ONI_DenseLogic {
 			UpdateVisuals();
 		}
 
-		private void SetSymbolVisibility(int pos, int wire) {
+		private int GetSingleValue(int wire) {
+			return wire & 0b1;
+		}
+
+		private void SetSymbolVisibility(int pos, int wire, int bit) {
 			int color;
-			if (wire == 0) {
-				color = 2;
-			} else if (wire == 0b1111) {
-				color = 0;
-			} else {
+			int singleValue = GetSingleValue(wire >> bit);
+			if (singleValue == 0) {
 				color = 1;
+			} else {
+				color = 0;
 			}
 			for (int i = 0; i < 4; i++) {
 				kbac.SetSymbolVisiblity($"light_bloom_{pos}_{i}", false);
@@ -178,11 +184,11 @@ namespace ONI_DenseLogic {
 		}
 
 		private void SetSymbolsOff() {
-			for (int pos = 0; pos < 3; pos++) {
-				for (int i = 0; i < 4; i++) {
+			for (int pos = 0; pos < 4; pos++) {
+				for (int i = 0; i < 3; i++) {
 					kbac.SetSymbolVisiblity($"light_bloom_{pos}_{i}", false);
 				}
-				kbac.SetSymbolVisiblity($"light_bloom_{pos}_3", true);
+				kbac.SetSymbolVisiblity($"light_bloom_{pos}_2", true);
 			}
 		}
 
@@ -190,14 +196,27 @@ namespace ONI_DenseLogic {
 			// when there is not an output, we are supposed to play the off animation
 			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OFFSET)) is LogicCircuitNetwork)) {
 				SetSymbolsOff();
-				for (int a = 0; a < 4; a++)
-					kbac.SetSymbolTint(PORT[a], COLOR_DISABLED);
+				for (int a = 0; a < 4; a++) {
+					kbac.SetSymbolVisiblity(IN_A[a], false);
+					kbac.SetSymbolVisiblity(IN_B[a], false);
+					kbac.SetSymbolVisiblity(OUT[a], false);
+				}
 			} else {
-			// otherwise set the colors of the lamps and of the individual wires on the gate
-				SetSymbolVisibility(0, inVal);
+				// otherwise set the colors of the lamps and of the individual wires on the gate
+				SetSymbolVisibility(0, inVal, 0);
+				SetSymbolVisibility(1, inVal, 1);
+				SetSymbolVisibility(2, inVal, 2);
+				SetSymbolVisibility(3, inVal, 3);
 				for (int a = 0; a < 4; a++) {
 					int mask = 1 << a;
-					kbac.SetSymbolTint(PORT[a], (inVal & mask) != 0 ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(IN_A[a], (inVal & mask) != 0 ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(IN_B[a], (inVal & mask) != 0 ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(OUT[a], (inVal & mask) != 0 ? COLOR_ON : COLOR_OFF);
+				}
+				for (int a = 0; a < 4; a++) {
+					kbac.SetSymbolVisiblity(IN_A[a], inputBit1 == a);
+					kbac.SetSymbolVisiblity(IN_B[a], inputBit2 == a);
+					kbac.SetSymbolVisiblity(OUT[a], outputBit == a);
 				}
 			}
 		}
