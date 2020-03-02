@@ -64,7 +64,7 @@ namespace ONI_DenseLogic {
 		}
 
 		[HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
-		public static class ONIDenseGateConfigurator {
+		public static class InitPlanScreen {
 			private const string CATEGORY_AUTOMATION = "Automation";
 
 			internal static void Prefix() {
@@ -80,6 +80,8 @@ namespace ONI_DenseLogic {
 					LogicGateAndConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateXnorConfig.ID,
 					LogicGateXorConfig.ID);
+				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, InlineLogicGateConfig.ID,
+					LogicGateXnorConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicSevenSegmentConfig.ID,
 					LogicCounterConfig.ID);
 			}
@@ -94,12 +96,40 @@ namespace ONI_DenseLogic {
 		}
 
 		[HarmonyPatch(typeof(Db), "Initialize")]
-		public static class InitDenseGate {
+		public static class InitTechTree {
 			internal static void Prefix() {
 				AddToTech("DupeTrafficControl", LogicGateXnorConfig.ID);
 				AddToTech("Multiplexing", DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID, SignalRemapperConfig.ID);
 				AddToTech("LogicCircuits", LogicGateNorConfig.ID, LogicGateNandConfig.ID);
-				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID, LogicSevenSegmentConfig.ID);
+				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID, LogicSevenSegmentConfig.ID, InlineLogicGateConfig.ID);
+			}
+		}
+
+		[HarmonyPatch(typeof(LogicCircuitNetwork), "AddItem")]
+		public static class AddLogicIOPorts {
+			internal static void Postfix(int cell, object item, List<ILogicEventReceiver>
+					___receivers) {
+				if (item is ILogicEventSender) {
+					// Check to see if it occupies an inline logic gate cell
+					var handler = Grid.Objects[cell, (int)InlineLogicGateConfig.LAYER].
+						GetComponentSafe<InlineLogicGate>()?.InputHandler;
+					if (handler != null)
+						___receivers.Add(handler);
+				}
+			}
+		}
+
+		[HarmonyPatch(typeof(LogicCircuitNetwork), "RemoveItem")]
+		public static class RemoveLogicIOPorts {
+			internal static void Postfix(int cell, object item, List<ILogicEventReceiver>
+					___receivers) {
+				if (item is ILogicEventSender) {
+					// Check to see if it occupies an inline logic gate cell
+					var handler = Grid.Objects[cell, (int)InlineLogicGateConfig.LAYER].
+						GetComponentSafe<InlineLogicGate>()?.InputHandler;
+					if (handler != null)
+						___receivers.Remove(handler);
+				}
 			}
 		}
 	}
