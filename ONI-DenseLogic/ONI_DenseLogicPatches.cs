@@ -38,6 +38,7 @@ namespace ONI_DenseLogic {
 		[HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
 		public static class SideScreenCreator {
 			internal static void Postfix() {
+				PUIUtils.AddSideScreenContent<InlineGateSideScreen>();
 				PUIUtils.AddSideScreenContent<LogicGateSelectSideScreen>();
 				PUIUtils.AddSideScreenContent<FourBitSelectSideScreen>();
 				PUIUtils.AddSideScreenContent<RemapperSideScreen>();

@@ -71,7 +71,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitOption.cs" />
     <Compile Include="DenseInput.cs" />
+    <Compile Include="IInlineSelectable.cs" />
+    <Compile Include="InlineGateSideScreen.cs" />
     <Compile Include="InlineLogicGateConfig.cs" />
     <Compile Include="InlineLogicGate.cs" />
     <Compile Include="IConfigurableFourBits.cs" />

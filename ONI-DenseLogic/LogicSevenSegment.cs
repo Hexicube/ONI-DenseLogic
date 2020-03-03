@@ -16,6 +16,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 using KSerialization;
 using UnityEngine;
 
@@ -36,6 +37,9 @@ namespace ONI_DenseLogic {
 #pragma warning disable CS0649
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
+
+		[MyCmpReq]
+		private LogicPorts ports;
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
 
@@ -47,7 +51,9 @@ namespace ONI_DenseLogic {
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
-			meter = new MeterController(kbac, "meter_target", kbac.FlipY ? "meter_dn" : "meter_up", Meter.Offset.UserSpecified, Grid.SceneLayer.LogicGatesFront, Vector3.zero, null);
+			meter = new MeterController(kbac, "meter_target", kbac.FlipY ? "meter_dn" :
+				"meter_up", Meter.Offset.UserSpecified, Grid.SceneLayer.LogicGatesFront,
+				Vector3.zero, null);
 			UpdateMeter();
 		}
 
@@ -67,21 +73,18 @@ namespace ONI_DenseLogic {
 
 		private void UpdateLogicCircuit() {
 			curOut = inVal > 9 ? 1 : 0;
-			GetComponent<LogicPorts>().SendSignal(OUTPUTID, curOut);
+			ports.SendSignal(OUTPUTID, curOut);
 			UpdateVisuals();
 		}
 
 		public void Render200ms(float dt) {
-			// hexi/test/peter: Do we have to do this here? Can we render only on state change?
 			UpdateMeter();
 			UpdateVisuals();
 		}
 
 		public void UpdateVisuals() {
 			int num0 = inVal > 0 ? 1 : 0;
-			int num1 = curOut;
-			int state = num0 + 4 * num1;
-			kbac.Play("on_" + state, KAnim.PlayMode.Once, 1f, 0.0f);
+			kbac.Play("on_" + (num0 + 4 * curOut), KAnim.PlayMode.Once, 1f, 0.0f);
 		}
 	}
 }

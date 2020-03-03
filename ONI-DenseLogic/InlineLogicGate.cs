@@ -25,9 +25,8 @@ using UnityEngine;
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
 	public sealed class InlineLogicGate : KMonoBehaviour, ISaveLoadable, IRender200ms,
-			IConfigurableLogicGate {
+			IConfigurableLogicGate, IInlineSelectable {
 		public static readonly HashedString PORTID = new HashedString("InlineGate_IO");
-
 		public static readonly CellOffset OFFSET = CellOffset.none;
 
 		private static readonly EventSystem.IntraObjectHandler<InlineLogicGate>
@@ -36,7 +35,6 @@ namespace ONI_DenseLogic {
 
 		private static readonly Color COLOR_ON = new Color(0.3411765f, 0.7254902f, 0.3686275f);
 		private static readonly Color COLOR_OFF = new Color(0.9529412f, 0.2901961f, 0.2784314f);
-		private static readonly Color COLOR_DISABLED = new Color(1.0f, 1.0f, 1.0f);
 
 		private static readonly KAnimHashedString[] IN_A = { "in_a1", "in_a2", "in_a3", "in_a4" };
 		private static readonly KAnimHashedString[] IN_B = { "in_b1", "in_b2", "in_b3", "in_b4" };
@@ -60,7 +58,37 @@ namespace ONI_DenseLogic {
 			}
 		}
 
-		internal LogicIOHandler InputHandler { get; private set; }
+		public int InputBit1 {
+			get {
+				return inputBit1;
+			}
+			set {
+				inputBit1 = value.InRange(0, DenseLogicGate.NUM_BITS - 1);
+				UpdateLogicCircuit();
+			}
+		}
+
+		public int InputBit2 {
+			get {
+				return inputBit2;
+			}
+			set {
+				inputBit2 = value.InRange(0, DenseLogicGate.NUM_BITS - 1);
+				UpdateLogicCircuit();
+			}
+		}
+
+		public int OutputBit {
+			get {
+				return outputBit;
+			}
+			set {
+				outputBit = value.InRange(0, DenseLogicGate.NUM_BITS - 1);
+				UpdateLogicCircuit();
+			}
+		}
+
+		internal ILogicEventReceiver InputHandler { get; private set; }
 
 #pragma warning disable IDE0044 // Add readonly modifier
 #pragma warning disable CS0649
@@ -137,27 +165,27 @@ namespace ONI_DenseLogic {
 		}
 
 		private void UpdateLogicCircuit() {
-			int inVal1 = (inVal >> inputBit1) & 0x1, inVal2 = (inVal >> inputBit2) & 0x1,
-				curOut;
-			if (mode == LogicGateType.Or)
-				curOut = inVal1 | inVal2;
-			else if (mode == LogicGateType.And)
-				curOut = inVal1 & inVal2;
-			else if (mode == LogicGateType.Xor)
-				curOut = inVal1 ^ inVal2;
-			else if (mode == LogicGateType.Nor)
-				curOut = ~(inVal1 | inVal2);
-			else if (mode == LogicGateType.Nand)
-				curOut = ~(inVal1 & inVal2);
-			else if (mode == LogicGateType.Xnor)
-				curOut = ~(inVal1 ^ inVal2);
-			else {
-				// should never occur
-				PUtil.LogWarning("Unknown InlineLogicGate operand " + mode);
-				curOut = 0;
+			int curOut = 0;
+			if (inputBit1 != outputBit && inputBit2 != outputBit) {
+				int inVal1 = inVal >> inputBit1, inVal2 = inVal >> inputBit2;
+				if (mode == LogicGateType.Or)
+					curOut = inVal1 | inVal2;
+				else if (mode == LogicGateType.And)
+					curOut = inVal1 & inVal2;
+				else if (mode == LogicGateType.Xor)
+					curOut = inVal1 ^ inVal2;
+				else if (mode == LogicGateType.Nor)
+					curOut = ~(inVal1 | inVal2);
+				else if (mode == LogicGateType.Nand)
+					curOut = ~(inVal1 & inVal2);
+				else if (mode == LogicGateType.Xnor)
+					curOut = ~(inVal1 ^ inVal2);
+				else
+					// should never occur
+					PUtil.LogWarning("Unknown InlineLogicGate operand " + mode);
+				curOut = (curOut & 0x1) << outputBit;
 			}
-			curOut &= 0x1;
-			ports.SendSignal(PORTID, curOut << outputBit);
+			ports.SendSignal(PORTID, curOut);
 			UpdateVisuals();
 		}
 
@@ -177,14 +205,14 @@ namespace ONI_DenseLogic {
 			} else {
 				color = 0;
 			}
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 3; i++) {
 				kbac.SetSymbolVisiblity($"light_bloom_{pos}_{i}", false);
 			}
 			kbac.SetSymbolVisiblity($"light_bloom_{pos}_{color}", true);
 		}
 
 		private void SetSymbolsOff() {
-			for (int pos = 0; pos < 4; pos++) {
+			for (int pos = 0; pos < DenseLogicGate.NUM_BITS; pos++) {
 				for (int i = 0; i < 3; i++) {
 					kbac.SetSymbolVisiblity($"light_bloom_{pos}_{i}", false);
 				}
@@ -196,27 +224,23 @@ namespace ONI_DenseLogic {
 			// when there is not an output, we are supposed to play the off animation
 			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OFFSET)) is LogicCircuitNetwork)) {
 				SetSymbolsOff();
-				for (int a = 0; a < 4; a++) {
-					kbac.SetSymbolVisiblity(IN_A[a], false);
-					kbac.SetSymbolVisiblity(IN_B[a], false);
-					kbac.SetSymbolVisiblity(OUT[a], false);
+				for (int bit = 0; bit < DenseLogicGate.NUM_BITS; bit++) {
+					kbac.SetSymbolVisiblity(IN_A[bit], false);
+					kbac.SetSymbolVisiblity(IN_B[bit], false);
+					kbac.SetSymbolVisiblity(OUT[bit], false);
 				}
 			} else {
 				// otherwise set the colors of the lamps and of the individual wires on the gate
-				SetSymbolVisibility(0, inVal, 0);
-				SetSymbolVisibility(1, inVal, 1);
-				SetSymbolVisibility(2, inVal, 2);
-				SetSymbolVisibility(3, inVal, 3);
-				for (int a = 0; a < 4; a++) {
-					int mask = 1 << a;
-					kbac.SetSymbolTint(IN_A[a], (inVal & mask) != 0 ? COLOR_ON : COLOR_OFF);
-					kbac.SetSymbolTint(IN_B[a], (inVal & mask) != 0 ? COLOR_ON : COLOR_OFF);
-					kbac.SetSymbolTint(OUT[a], (inVal & mask) != 0 ? COLOR_ON : COLOR_OFF);
-				}
-				for (int a = 0; a < 4; a++) {
-					kbac.SetSymbolVisiblity(IN_A[a], inputBit1 == a);
-					kbac.SetSymbolVisiblity(IN_B[a], inputBit2 == a);
-					kbac.SetSymbolVisiblity(OUT[a], outputBit == a);
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
+					SetSymbolVisibility(i, inVal, i);
+				for (int bit = 0; bit < DenseLogicGate.NUM_BITS; bit++) {
+					int mask = 1 << bit;
+					kbac.SetSymbolTint(IN_A[bit], (inVal & mask) != 0 ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(IN_B[bit], (inVal & mask) != 0 ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(OUT[bit], (inVal & mask) != 0 ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolVisiblity(IN_A[bit], inputBit1 == bit);
+					kbac.SetSymbolVisiblity(IN_B[bit], inputBit2 == bit);
+					kbac.SetSymbolVisiblity(OUT[bit], outputBit == bit);
 				}
 			}
 		}

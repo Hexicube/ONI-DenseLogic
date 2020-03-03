@@ -34,7 +34,7 @@ namespace ONI_DenseLogic {
 			buildingDef.PermittedRotations = PermittedRotations.R360;
 			buildingDef.ViewMode = OverlayModes.Logic.ID;
 			buildingDef.AudioCategory = "Metal";
-			buildingDef.ObjectLayer = ObjectLayer.LogicGates;
+			buildingDef.ObjectLayer = ObjectLayer.LogicGate;
 			buildingDef.SceneLayer = Grid.SceneLayer.LogicGates;
 			buildingDef.ThermalConductivity = 0.05f;
 			buildingDef.BaseTimeUntilRepair = -1.0f;

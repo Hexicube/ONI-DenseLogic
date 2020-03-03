@@ -23,7 +23,7 @@ using UnityEngine;
 namespace ONI_DenseLogic {
 	public class InlineLogicGateConfig : IBuildingConfig {
 		public const string ID = "DenseLogicTeam_InlineGate";
-		public const ObjectLayer LAYER = ObjectLayer.LogicGates;
+		public const ObjectLayer LAYER = ObjectLayer.LogicGate;
 
 		public override BuildingDef CreateBuildingDef() {
 			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 1, 1,

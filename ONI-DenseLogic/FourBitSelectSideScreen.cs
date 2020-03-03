@@ -30,20 +30,13 @@ namespace ONI_DenseLogic {
 	/// of a building with configurable bits.
 	/// </summary>
 	internal sealed class FourBitSelectSideScreen : SideScreenContent {
-		/// <summary>
-		/// The number of bits that can be set/visualized.
-		/// </summary>
-		public const int NUM_BITS = 4;
-
-		private static readonly Vector2 MIN_PANEL_SIZE = new Vector2(300, 250);
-
-		private static readonly Color activeColor = new Color(0.3411765f, 0.7254902f, 0.3686275f);
-		private static readonly Color inactiveColor = new Color(0.9529412f, 0.2901961f, 0.2784314f);
+		private static readonly Color ACTIVE_COLOR = new Color(0.3411765f, 0.7254902f, 0.3686275f);
+		private static readonly Color INACTIVE_COLOR = new Color(0.9529412f, 0.2901961f, 0.2784314f);
 
 		/// <summary>
 		/// The bit toggles in the UI.
 		/// </summary>
-		private readonly Dictionary<int, BitSelectRow> toggles;
+		private readonly IList<BitSelectRow> toggles;
 
 		/// <summary>
 		/// The selected building with bits to modify/visualize.
@@ -51,7 +44,7 @@ namespace ONI_DenseLogic {
 		private IConfigurableFourBits target;
 
 		internal FourBitSelectSideScreen() {
-			toggles = new Dictionary<int, BitSelectRow>();
+			toggles = new List<BitSelectRow>(DenseLogicGate.NUM_BITS);
 			target = null;
 		}
 
@@ -61,7 +54,7 @@ namespace ONI_DenseLogic {
 
 		private void DisableAll(GameObject _) {
 			if (target != null) {
-				for (int i = 0; i < NUM_BITS; i++)
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
 					target.SetBit(false, i);
 				RefreshToggles();
 			}
@@ -69,8 +62,15 @@ namespace ONI_DenseLogic {
 
 		private void EnableAll(GameObject _) {
 			if (target != null) {
-				for (int i = 0; i < NUM_BITS; i++)
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
 					target.SetBit(true, i);
+				RefreshToggles();
+			}
+		}
+
+		private void FlipBit(int bit) {
+			if (target != null) {
+				target.SetBit(!target.GetBit(bit), bit);
 				RefreshToggles();
 			}
 		}
@@ -92,9 +92,14 @@ namespace ONI_DenseLogic {
 					Margin = margin, Direction = PanelDirection.Vertical, Alignment =
 					TextAnchor.UpperCenter, Spacing = 8
 				};
-			for (int i = 0; i < NUM_BITS; i++) {
-				toggles[i] = new BitSelectRow(i);
-				toggles[i].Row.AddTo(gameObject);
+			toggles.Clear();
+			for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
+				// Capture the right value!
+				int index = i;
+				var row = new BitSelectRow(index);
+				toggles.Add(row);
+				row.Row.AddTo(gameObject);
+				row.Toggle.onClick += () => FlipBit(index);
 			}
 			new PPanel("BottomRow") {
 				Alignment = TextAnchor.MiddleCenter, Direction = PanelDirection.Horizontal,
@@ -111,13 +116,6 @@ namespace ONI_DenseLogic {
 				Text = DenseLogicStrings.UI.UISIDESCREENS.FOURBITSELECT.DISABLE_ALL
 			}).AddTo(gameObject);
 			ContentContainer = gameObject;
-			foreach (var pair in toggles)
-				pair.Value.Toggle.onClick += () => {
-					if (target != null) {
-						target.SetBit(!target.GetBit(pair.Key), pair.Key);
-						RefreshToggles();
-					}
-				};
 			base.OnPrefabInit();
 			RefreshToggles();
 		}
@@ -139,12 +137,12 @@ namespace ONI_DenseLogic {
 		/// </summary>
 		private void RefreshToggles() {
 			if (target != null)
-				foreach (var pair in toggles) {
-					bool bitOn = target.GetBit(pair.Key);
-					pair.Value.StateIcon.color = 
-						bitOn ? activeColor : inactiveColor;
-					pair.Value.StateText.SetText(
-						bitOn ? UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_ACTIVE :
+				for (int i = 0; i < toggles.Count; i++) {
+					bool bitOn = target.GetBit(i);
+					var row = toggles[i];
+					row.StateIcon.color = bitOn ? ACTIVE_COLOR : INACTIVE_COLOR;
+					row.StateText.SetText(bitOn ?
+						UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_ACTIVE :
 						UI.UISIDESCREENS.LOGICBITSELECTORSIDESCREEN.STATE_INACTIVE);
 				}
 		}

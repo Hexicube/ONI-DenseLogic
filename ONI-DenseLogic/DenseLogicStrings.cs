@@ -169,25 +169,39 @@ namespace ONI_DenseLogic {
 					public static LocString DISABLE_ALL = "Disables all bits";
 				}
 
+				public static class INLINELOGIC {
+					public static LocString INPUT_ONE = "Select input bit to use for Logic Input 1";
+					public static LocString INPUT_TWO = "Select input bit to use for Logic Input 2";
+					public static LocString OUTPUT = "Select bit to output logic result";
+				}
+
 				public static class SIGNALREMAPPER {
-					public static LocString BIT_1 = "Select input signal to use on Bit 1";
-					public static LocString BIT_2 = "Select input signal to use on Bit 2";
-					public static LocString BIT_3 = "Select input signal to use on Bit 3";
-					public static LocString BIT_4 = "Select input signal to use on Bit 4";
+					public static LocString BIT_1 = "Select input bit to use on Output Bit 1";
+					public static LocString BIT_2 = "Select input bit to use on Output Bit 2";
+					public static LocString BIT_3 = "Select input bit to use on Output Bit 3";
+					public static LocString BIT_4 = "Select input bit to use on Output Bit 4";
 					public static LocString IDENTITY = "Sets all bits to pass through as normal";
 					public static LocString CLEAR = "Stop all bits from passing through";
 				}
 			}
 
 			public static class UISIDESCREENS {
-				public static class GATESELECT {
-					public static LocString TITLE = "Select Logic Function";
-				}
-
 				public static class FOURBITSELECT {
 					public static LocString ENABLE_ALL = "Set";
 					public static LocString DISABLE_ALL = "Clear";
 					public static LocString TITLE = "Set Provided Signal";
+				}
+
+				public static class GATESELECT {
+					public static LocString TITLE = "Select Logic Function";
+				}
+
+				public static class INLINELOGIC {
+					public static LocString INPUT_ONE = "Input 1";
+					public static LocString INPUT_TWO = "Input 2";
+					public static LocString INVALID_BITS = "Output bit must be different!";
+					public static LocString OUTPUT = "Output";
+					public static LocString TITLE = "Configure Inline Logic Gate";
 				}
 
 				public static class SIGNALREMAPPER {
