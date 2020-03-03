@@ -70,10 +70,9 @@ namespace ONI_DenseLogic {
 			private const string CATEGORY_AUTOMATION = "Automation";
 
 			internal static void Prefix() {
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseLogicGateConfig.ID);
 				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseMultiplexerConfig.ID);
 				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseDeMultiplexerConfig.ID);
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, SignalRemapperConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseLogicGateConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseInputConfig.ID,
 					LogicSwitchConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateNorConfig.ID,
@@ -84,6 +83,8 @@ namespace ONI_DenseLogic {
 					LogicGateXorConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, InlineLogicGateConfig.ID,
 					LogicGateXnorConfig.ID);
+				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, SignalRemapperConfig.ID,
+					InlineLogicGateConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicSevenSegmentConfig.ID,
 					LogicCounterConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicDataConfig.ID,
@@ -103,9 +104,9 @@ namespace ONI_DenseLogic {
 		public static class Techs_Load_Patch {
 			internal static void Postfix() {
 				AddToTech("DupeTrafficControl", LogicGateXnorConfig.ID, LogicDataConfig.ID);
-				AddToTech("Multiplexing", DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID, SignalRemapperConfig.ID);
+				AddToTech("Multiplexing", DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID);
 				AddToTech("LogicCircuits", LogicGateNorConfig.ID, LogicGateNandConfig.ID);
-				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID, LogicSevenSegmentConfig.ID, InlineLogicGateConfig.ID);
+				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID, LogicSevenSegmentConfig.ID, InlineLogicGateConfig.ID, SignalRemapperConfig.ID);
 			}
 		}
 
@@ -143,7 +144,8 @@ namespace ONI_DenseLogic {
 				new Ordering("DupeTrafficControl", LogicGateXnorConfig.ID, LogicGateXorConfig.ID),
 				new Ordering("DupeTrafficControl", LogicDataConfig.ID, LogicMemoryConfig.ID),
 				new Ordering("LogicCircuits", LogicGateNorConfig.ID, LogicGateOrConfig.ID),
-				new Ordering("LogicCircuits", LogicGateNandConfig.ID, LogicGateAndConfig.ID)
+				new Ordering("LogicCircuits", LogicGateNandConfig.ID, LogicGateAndConfig.ID),
+				new Ordering("Multiplexing", DenseDeMultiplexerConfig.ID, DenseMultiplexerConfig.ID)
 			};
 
 			internal static void Postfix() {
