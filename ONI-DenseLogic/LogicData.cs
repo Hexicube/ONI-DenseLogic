@@ -35,12 +35,12 @@ namespace ONI_DenseLogic {
 			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<LogicData>(
 			(component, data) => component.OnLogicValueChanged(data));
 
-#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable IDE0044, CS0649 // Add readonly modifier
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
 		[MyCmpGet]
 		private LogicPorts ports;
-#pragma warning restore IDE0044
+#pragma warning restore IDE0044, CS0649
 
 		[Serialize]
 		private int value;

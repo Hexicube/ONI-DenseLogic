@@ -33,8 +33,7 @@ namespace ONI_DenseLogic {
 				OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<LogicGate>(
 				(component, data) => component.OnLogicValueChanged(data));
 
-#pragma warning disable IDE0044 // Add readonly modifier
-#pragma warning disable CS0649
+#pragma warning disable IDE0044, CS0649 // Add readonly modifier
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
 
@@ -43,8 +42,7 @@ namespace ONI_DenseLogic {
 
 		[MyCmpGet]
 		private Rotatable rotatable;
-#pragma warning restore CS0649
-#pragma warning restore IDE0044
+#pragma warning restore IDE0044, CS0649
 
 		[Serialize]
 		private int inVal1, inVal2;
