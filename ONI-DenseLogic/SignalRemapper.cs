@@ -34,6 +34,15 @@ namespace ONI_DenseLogic {
 			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<SignalRemapper>(
 			(component, data) => component.OnLogicValueChanged(data));
 
+		private static readonly Color COLOR_ON = new Color(0.3411765f, 0.7254902f, 0.3686275f);
+		private static readonly Color COLOR_OFF = new Color(0.9529412f, 0.2901961f, 0.2784314f);
+		private static readonly Color COLOR_DISABLED = new Color(1.0f, 1.0f, 1.0f);
+
+		private static readonly KAnimHashedString[] IN_DOT = { "b1", "b2", "b3", "b4" };
+		private static readonly KAnimHashedString[] OUT_DOT = { "c1", "c2", "c3", "c4" };
+		private static readonly KAnimHashedString[] IN_LINE = { "in1", "in2", "in3", "in4" };
+		private static readonly KAnimHashedString[] OUT_LINE = { "out1", "out2", "out3", "out4" };
+
 		public const int BITS = 4;
 		public const int NO_BIT = -1;
 
@@ -77,16 +86,6 @@ namespace ONI_DenseLogic {
 			if (bits != null && bit < bits.Count)
 				mapping = bits[bit].InRange(NO_BIT, BITS - 1);
 			return mapping;
-		}
-
-		private int GetRibbonValue(int wire) {
-			if (wire == 0) {
-				return 0;
-			} else if (wire == 0b1111) {
-				return 2;
-			} else {
-				return 1;
-			}
 		}
 
 		protected override void OnSpawn() {
@@ -142,14 +141,58 @@ namespace ONI_DenseLogic {
 			UpdateVisuals();
 		}
 
+		private string ConnectingSymbol(int posIn, int posOut) {
+			return $"a{posOut+1}_{posIn+1}";
+		}
+
+		private string Light(int pos, int state) {
+			return $"light_bloom_{pos}_{state}";
+		}
+
+		private bool BitOn(int wire, int pos) {
+			return (wire & (0x1 << pos)) > 0;
+		}
+
 		public void UpdateVisuals() {
 			int cell = GetActualCell(OUTPUTOFFSET);
 			// when there is not an output, we are supposed to play the off animation
 			if (Game.Instance.logicCircuitSystem.GetNetworkForCell(cell) is LogicCircuitNetwork) {
-				int state = GetRibbonValue(inVal) + 3 * GetRibbonValue(curOut);
-				kbac.Play("on_" + state, KAnim.PlayMode.Once, 1f, 0.0f);
-			} else
+				for (int i = 0; i < 4; i++) {
+					kbac.SetSymbolTint(IN_DOT[i], BitOn(inVal, i) ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(IN_LINE[i], BitOn(inVal, i) ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(OUT_DOT[i], BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(OUT_LINE[i], BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
+				}
+				for (int i = 0; i < 8; i++) {
+					kbac.SetSymbolVisiblity(Light(i, 0), false);
+					kbac.SetSymbolVisiblity(Light(i, 1), false);
+				}
+				for (int i = 0; i< 4; i++) {
+					kbac.SetSymbolVisiblity(Light(i, BitOn(inVal, i) ? 0 : 1), true);
+					kbac.SetSymbolVisiblity(Light(4 + i, BitOn(curOut, i) ? 0 : 1), true);
+				}
+				for (int i = 0; i < 4; i++) {
+					for (int j = 0; j < 4; j++) {
+						kbac.SetSymbolVisiblity(ConnectingSymbol(i, j), false);
+					}
+				}
+				for (int i = 0; i < 4; i++) {
+					string symbol = ConnectingSymbol(bits[i], i);
+					kbac.SetSymbolVisiblity(symbol, true);
+					kbac.SetSymbolTint(symbol, BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
+				}
+				kbac.Play("on", KAnim.PlayMode.Once, 1f, 0.0f);
+			} else {
+				// set symbol tints to off
+				for (int i = 0; i < 4; i++) {
+					kbac.SetSymbolTint(IN_DOT[i], COLOR_DISABLED);
+					kbac.SetSymbolTint(IN_LINE[i], COLOR_DISABLED);
+					kbac.SetSymbolTint(OUT_DOT[i], COLOR_DISABLED);
+					kbac.SetSymbolTint(OUT_LINE[i], COLOR_DISABLED);
+				}
 				kbac.Play("off", KAnim.PlayMode.Once, 1f, 0.0f);
+			}
+				
 		}
 	}
 }
