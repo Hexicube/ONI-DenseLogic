@@ -28,8 +28,8 @@ namespace ONI_DenseLogic {
 		public static readonly HashedString SETID = new HashedString("LogicData_SET");
 
 		public static readonly CellOffset READOFFSET = new CellOffset(0, 1);
-		public static readonly CellOffset DATAOFFSET = new CellOffset(0, 0);
-		public static readonly CellOffset SETOFFSET = new CellOffset(1, 0);
+		public static readonly CellOffset DATAOFFSET = new CellOffset(1, 0);
+		public static readonly CellOffset SETOFFSET = new CellOffset(0, 0);
 
 		private static readonly EventSystem.IntraObjectHandler<LogicData>
 			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<LogicData>(
