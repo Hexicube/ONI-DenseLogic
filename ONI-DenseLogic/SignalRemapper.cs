@@ -93,6 +93,7 @@ namespace ONI_DenseLogic {
 
 		protected override void OnSpawn() {
 			base.OnSpawn();
+			gameObject.AddOrGet<CopyBuildingSettings>();
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
 			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
 		}
