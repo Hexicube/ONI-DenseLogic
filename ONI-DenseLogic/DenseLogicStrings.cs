@@ -130,10 +130,10 @@ namespace ONI_DenseLogic {
 					public static LocString OUTPUT_LOGIC_PORT_RIBBON = "4-Bit Selection";
 					public static LocString INPUT_PORT_ACTIVE = $"{GREEN_SIGNAL}: Passes a {GREEN_SIGNAL} to the selected bit of the output.";
 					public static LocString INPUT_PORT_INACTIVE = $"{RED_SIGNAL}: Passes a {RED_SIGNAL} to the selected bit of the output.";
-					public static LocString INPUT_PORT_ACTIVE_RIBBON = $"{GREEN_SIGNAL}: Provides some {GREEN} bits to select from.";
-					public static LocString INPUT_PORT_INACTIVE_RIBBON = $"{RED_SIGNAL}: PRovides {RED} bits to select from.";
-					public static LocString OUTPUT_PORT_ACTIVE = $"{GREEN_SIGNAL}: The selected bit is {GREEN}.";
-					public static LocString OUTPUT_PORT_INACTIVE = $"{RED_SIGNAL}: The selected bit is {RED}.";
+					public static LocString INPUT_PORT_ACTIVE_RIBBON = $"{GREEN_SIGNAL}: Provides {GREEN} as selectable bits.";
+					public static LocString INPUT_PORT_INACTIVE_RIBBON = $"{RED_SIGNAL}: Provides {RED} as selectable bits.";
+					public static LocString OUTPUT_PORT_ACTIVE = $"{GREEN_SIGNAL}: The bit is selected and is {GREEN}.";
+					public static LocString OUTPUT_PORT_INACTIVE = $"{RED_SIGNAL}: The bit is not selected bit or is {RED}.";
 					public static LocString CONTROL_PORT_ACTIVE = $"{GREEN_SIGNAL}: Selects which bit to pass through/onto.";
 					public static LocString CONTROL_PORT_INACTIVE = $"{RED_SIGNAL}: Selects which bit to pass through/onto.";
 				}
