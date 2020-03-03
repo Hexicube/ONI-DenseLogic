@@ -1,0 +1,33 @@
+[h1]Automation Expanded[/h1]
+
+[b]Banhi's Automation Innovation Pack[/b] brought us incredible new 4-Bit [b]Automation[/b] wires to [b]Oxygen Not Included[/b] but [b]Klei[/b] left us without many tools for using these new wires.
+This [b]Automation Expansion Pack[/b] introduces a variety of new [b]Automation[/b] buildings to work with the 4-Bit wires. All new buildings come with custom art and user interfaces deisgned to match the base game [b]Automation[/b] look.
+
+[h1]New Buildings ([b]Automation Ribbon[/b])[/h1]
+
+[list]
+[*] [b]Signal Multiswitch[/b]: a 4-Bit analogue of the [b]Signal Switch[/b]. Sends a signal to every bit of an [b]Automation Ribbon[/b]. Configurable with simple UI upon clicking the building. Settings copyable to other [b]Signal Multiswitches[/b].
+[*] [b]Ribbon Rearranger[/b]: rearranges the order of the signals transmitted by an [b]Automation Ribbon[/b], e.g. swaps the value of bit 1 with bit 3. Configurable with simple UI upon clicking the building. Settings copyable to other [b]Ribbon Rearrangers[/b].
+[*] [b]Dense Multigate[/b]: configurable logic gate for [b]Automation Ribbon[/b] inputs and output. Logic gate type is switchable (between AND, OR, XOR, NAND, NOR, XNOR) using simple UI upon clicking the building. Logic gate type is copyable to other [b]Dense Multigate[/b].
+[*] [b]Inline Logic Gate[/b]: an incredibly small logic gate only 1 tile in size. Uses a single connection to an [b]Automation Ribbon[/b] for both its inputs and output, e.g. computes the AND of bit 1 and bit 4 and outputs to bit 2. Logic gate type and inputs/output bits configurable with simple UI upon clicking the building. Settings copyable to other [b]Inline Logic Gates[/b].
+[*] [b]Dense (De)Multiplexer[/b]: smaller variants on the [b]Signal Selector[/b] and [b]Signal Distributor[/b]. Only 2x2 tiles in size by taking input/output as an [b]Automation Ribbon[/b].
+[*] [b]Seven Segment Display[/b]: displays the value of an [b]Automation Ribbon[/b] treated as a binary number. Shows digits 0 through 9. Has an overflow output if input digit is between 10 through 15.
+[/list]
+
+[h1]New Buildings ([b]Automation Wire[/b])[/h1]
+
+[list]
+[*] [b]Data Latch[/b]: like the [b]Memory Toggle[/b] but instead of functioning as a SR-latch, functions as a D-latch with a data line and set line. Works with [b]Automation Ribbons[/b] for the data and output lines too.
+[*] [b]NAND,NOR,XNOR Gate[/b]: three separate buildings. Functions exactly like the AND,OR,XOR Gates provided in the vanilla game but inverts the output.
+[*] [b]Rising Edge Detector[/b]: when it detects a rising edge (the input transitions from low to high), provides a green output for a configurable number of seconds. Settings copyable to other [b]Rising Edge Detectors[/b].
+[*] [b]Falling Edge Detector[/b]: when it detects a falling edge (the input transitions from high to low), provides a green output for a configurable number of second. Settings copyable to other [b]Falling Edge Detectors[/b].
+[/list]
+
+[h1]Problems/Help[/h1]
+
+If there are problems with the mod please reach out on the (un)official Oxygen Not Included Discord where we hang around on the modding channels as @test447, @peterhaneve, and @Hexicube. 
+We probably won't pay full attention to steam comments.
+
+[h1]Code/License[/h1]
+Code is open source and may be found in our shared Github repository for this project. Feel free to look at, copy, modify it, etc.. Art assets and animations may also be found in that repository but cannot be redistributed without permission.
+Come check it out [url=https://github.com/Hexicube/ONI-DenseLogic]here[/url].
