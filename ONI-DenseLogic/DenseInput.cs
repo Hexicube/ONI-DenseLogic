@@ -33,6 +33,9 @@ namespace ONI_DenseLogic {
 #pragma warning disable CS0649
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
+
+		[MyCmpReq]
+		private LogicPorts ports;
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
 
@@ -59,7 +62,7 @@ namespace ONI_DenseLogic {
 		}
 
 		private void UpdateLogicCircuit() {
-			GetComponent<LogicPorts>().SendSignal(OUTPUTID, curOut);
+			ports.SendSignal(OUTPUTID, curOut);
 			UpdateVisuals();
 		}
 

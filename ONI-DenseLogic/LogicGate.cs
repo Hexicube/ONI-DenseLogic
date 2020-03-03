@@ -16,6 +16,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 using KSerialization;
+using PeterHan.PLib;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
@@ -36,6 +37,12 @@ namespace ONI_DenseLogic {
 #pragma warning disable CS0649
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
+
+		[MyCmpReq]
+		private LogicPorts ports;
+
+		[MyCmpGet]
+		private Rotatable rotatable;
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
 
@@ -47,9 +54,8 @@ namespace ONI_DenseLogic {
 		public LogicGateType gateType;
 
 		private int GetActualCell(CellOffset offset) {
-			Rotatable component = GetComponent<Rotatable>();
-			if (component != null)
-				offset = component.GetRotatedCellOffset(offset);
+			if (rotatable != null)
+				offset = rotatable.GetRotatedCellOffset(offset);
 			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
 		}
 
@@ -84,10 +90,10 @@ namespace ONI_DenseLogic {
 				curOut = ~(inVal1 ^ inVal2);
 			else {
 				// should never occur
-				Debug.Log("[DenseLogicGate] WARN: Unknown operand " + gateType);
+				PUtil.LogWarning("Unknown LogicGate operand " + gateType);
 				curOut = 0;
 			}
-			GetComponent<LogicPorts>().SendSignal(OUTPUTID, curOut);
+			ports.SendSignal(OUTPUTID, curOut);
 			UpdateVisuals();
 		}
 

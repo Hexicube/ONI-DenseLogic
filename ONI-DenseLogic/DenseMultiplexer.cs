@@ -17,6 +17,7 @@
  */
 
 using KSerialization;
+using PeterHan.PLib;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
@@ -39,6 +40,12 @@ namespace ONI_DenseLogic {
 #pragma warning disable CS0649
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
+
+		[MyCmpReq]
+		private LogicPorts ports;
+
+		[MyCmpGet]
+		private Rotatable rotatable;
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
 
@@ -52,9 +59,8 @@ namespace ONI_DenseLogic {
 		public MultiplexerType muxType;
 
 		private int GetActualCell(CellOffset offset) {
-			Rotatable component = GetComponent<Rotatable>();
-			if (component != null)
-				offset = component.GetRotatedCellOffset(offset);
+			if (rotatable != null)
+				offset = rotatable.GetRotatedCellOffset(offset);
 			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
 		}
 
@@ -91,15 +97,14 @@ namespace ONI_DenseLogic {
 				curOut = SetBitValue(ctrlVal1 + 2 * ctrlVal2, inVal > 0);
 			} else {
 				// should never occur
-				Debug.Log("[DenseMultiplexerBase] WARN: Unknown multiplexer type " + muxType);
+				PUtil.LogWarning("Unknown multiplexer type " + muxType);
 				curOut = 0;
 			}
-			GetComponent<LogicPorts>().SendSignal(OUTPUTID, curOut);
+			ports.SendSignal(OUTPUTID, curOut);
 			UpdateVisuals();
 		}
 
 		public void Render200ms(float dt) {
-			// hexi/test/peter: Do we have to do this here? Can we render only on state change?
 			UpdateVisuals();
 		}
 
@@ -121,28 +126,25 @@ namespace ONI_DenseLogic {
 			// when there is not an output, we are supposed to play the off animation
 			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OUTPUTOFFSET)) is LogicCircuitNetwork)) {
 				kbac.Play("off", KAnim.PlayMode.Once, 1f, 0.0f);
-				return;
-			}
-			int num0 = 0;
-			int num1 = 0;
-			int num2 = 0;
-			int num3 = 0;
-			if (muxType == MultiplexerType.MUX) {
-				num0 = GetRibbonValue(inVal);
-				num1 = GetSingleValue(ctrlVal1);
-				num2 = GetSingleValue(ctrlVal2);
-				num3 = GetSingleValue(curOut);
-			} else if (muxType == MultiplexerType.DEMUX) {
-				num0 = GetRibbonValue(curOut);
-				num1 = GetSingleValue(ctrlVal1);
-				num2 = GetSingleValue(ctrlVal2);
-				num3 = GetSingleValue(inVal);
 			} else {
-				// should never occur
-				Debug.Log("[DenseMultiplexerBase] WARN: Unknown multiplexer type " + muxType);
+				int bit0 = 0, bit1 = 0, bit2 = 0, bit3 = 0;
+				if (muxType == MultiplexerType.MUX) {
+					bit0 = GetRibbonValue(inVal);
+					bit1 = GetSingleValue(ctrlVal1);
+					bit2 = GetSingleValue(ctrlVal2);
+					bit3 = GetSingleValue(curOut);
+				} else if (muxType == MultiplexerType.DEMUX) {
+					bit0 = GetRibbonValue(curOut);
+					bit1 = GetSingleValue(ctrlVal1);
+					bit2 = GetSingleValue(ctrlVal2);
+					bit3 = GetSingleValue(inVal);
+				} else {
+					// should never occur
+					PUtil.LogWarning("Unknown multiplexer type " + muxType);
+				}
+				kbac.Play("on_" + (bit0 + 3 * bit1 + 6 * bit2 + 12 * bit3), KAnim.PlayMode.
+					Once, 1f, 0.0f);
 			}
-			int state = num0 + 3 * num1 + 6 * num2 + 12 * num3;
-			kbac.Play("on_" + state, KAnim.PlayMode.Once, 1f, 0.0f);
 		}
 
 		public enum MultiplexerType {
