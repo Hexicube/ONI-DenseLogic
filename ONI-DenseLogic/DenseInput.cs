@@ -67,7 +67,12 @@ namespace ONI_DenseLogic {
 		}
 
 		public void UpdateVisuals() {
-			kbac.Play("on_" + curOut, KAnim.PlayMode.Once, 1f, 0.0f);
+			int num0 = (curOut & (0x1 << 0)) > 0 ? 1 : 0;
+			int num1 = (curOut & (0x1 << 1)) > 0 ? 1 : 0;
+			int num2 = (curOut & (0x1 << 2)) > 0 ? 1 : 0;
+			int num3 = (curOut & (0x1 << 3)) > 0 ? 1 : 0;
+			int state = num3 + 2 * num2 + 4 * num1 + 8 * num0;
+			kbac.Play("on_" + state, KAnim.PlayMode.Once, 1f, 0.0f);
 		}
 
 		public void SetBit(bool value, int pos) {
