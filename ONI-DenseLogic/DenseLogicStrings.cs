@@ -152,7 +152,7 @@ namespace ONI_DenseLogic {
 				}
 
 				public static class DENSELOGICTEAM_SIGNALREMAPPER {
-					public static LocString NAME = ONI_UI.FormatAsLink("Signal Rearranger",
+					public static LocString NAME = ONI_UI.FormatAsLink("Ribbon Rearranger",
 						SignalRemapperConfig.ID);
 					public static LocString DESC = $"Repeats the signals on its {RIBBON_CABLE} input to its {RIBBON_CABLE} output in a different order.";
 					public static LocString EFFECT = $"Rearranges the order of signals from one {AUTOMATION} grid to another.\n\n{RIBBON_CABLE} must be used as both the input and output wire to avoid overloading.";
