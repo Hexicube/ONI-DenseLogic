@@ -63,6 +63,30 @@ namespace ONI_DenseLogic {
 					public static LocString PORTOUT_INACTIVE = $"Writes a {RED} signal to the {AUTOMATION} wire.";
 				}
 
+				public static class DENSELOGICTEAM_INLINEGATE {
+					public static LocString NAME = ONI_UI.FormatAsLink("Inline Logic Gate",
+						InlineLogicGateConfig.ID);
+					public static LocString DESC = $"Just when we thought that Moore's law could go no further, Banhi found a way to make logic gates smaller than ever.";
+					public static LocString EFFECT = $"Performs logic on the selected bits in {RIBBON_CABLE} and outputs the result to another selected bit.\n\nAND:\nOutputs {GREEN} when both Input A <b>AND</b> Input B are receiving {GREEN}.\n\nOR:\nOutputs {GREEN} when either Input A <b>OR</b> Input B are receiving {GREEN}.\n\nXOR:\nOutputs {GREEN} when <b>EXACTLY ONE</b> of Input A and Input B are receiving {GREEN}.\n\nOutputs {RED_SIGNAL}s if none of the above are true.";
+					public static LocString PORT_ACTIVE = $"Reads and writes {GREEN} signals from {RIBBON_CABLE}s.";
+					public static LocString PORT_INACTIVE = $"Reads and writes {RED} signals from {RIBBON_CABLE}s.";
+
+					public static LocString LOGIC_PORT_IO = "Bit Reading and Writing";
+				}
+				
+				public static class DENSELOGICTEAM_LOGICDATA {
+					public static LocString NAME = ONI_UI.FormatAsLink("Data Latch",
+						LogicDataConfig.ID);
+					public static LocString DESC = $"A Memory stores an {AUTOMATION} signal received in the Data Port (D) when the Set Port (S) receives a {GREEN_SIGNAL}.";
+					public static LocString EFFECT = $"Contains an internal Memory, and will output whatever signal is stored in that Memory. Signals sent to the Inputs <i>only</i> affect the Memory, and do not pass through to the Output.\n\nSending a {GREEN_SIGNAL} to the Set Port (S) will set the memory to the value of the Data Port (D).";
+					public static LocString DATA_PORT = "DATA PORT (D)";
+					public static LocString DATA_PORT_ACTIVE = $"{GREEN_SIGNAL}: The internal Memory will be set to {GREEN} if the Set Port (S) receives a {GREEN_SIGNAL}";
+					public static LocString DATA_PORT_INACTIVE = $"{RED_SIGNAL}: The internal Memory will be set to {RED} if the Set Port (S) receives a {GREEN_SIGNAL}";
+					public static LocString SET_PORT = "SET PORT (S)";
+					public static LocString SET_PORT_ACTIVE = $"{GREEN_SIGNAL}: Set the internal Memory to the {AUTOMATION} signal received in the Data Port (D)";
+					public static LocString SET_PORT_INACTIVE = $"{RED_SIGNAL}: The {AUTOMATION} signal read from this Memory will not change";
+				}
+
 				public static class DENSELOGICTEAM_LOGICSEVENSEGMENT {
 					public static LocString NAME = ONI_UI.FormatAsLink("Seven Segment Display",
 						LogicSevenSegmentConfig.ID);
@@ -139,7 +163,7 @@ namespace ONI_DenseLogic {
 				}
 
 				public static class DENSELOGICTEAM_SIGNALREMAPPER {
-					public static LocString NAME = ONI_UI.FormatAsLink("Signal Remapper",
+					public static LocString NAME = ONI_UI.FormatAsLink("Ribbon Rearranger",
 						SignalRemapperConfig.ID);
 					public static LocString DESC = $"Repeats the signals on its {RIBBON_CABLE} input to its {RIBBON_CABLE} output in a different order.";
 					public static LocString EFFECT = $"Rearranges the order of signals from one {AUTOMATION} grid to another.\n\n{RIBBON_CABLE} must be used as both the input and output wire to avoid overloading.";
@@ -158,25 +182,39 @@ namespace ONI_DenseLogic {
 					public static LocString DISABLE_ALL = "Disables all bits";
 				}
 
+				public static class INLINELOGIC {
+					public static LocString INPUT_ONE = "Select input bit to use for Logic Input 1";
+					public static LocString INPUT_TWO = "Select input bit to use for Logic Input 2";
+					public static LocString OUTPUT = "Select bit to output logic result";
+				}
+
 				public static class SIGNALREMAPPER {
-					public static LocString BIT_1 = "Select input signal to use on Bit 1";
-					public static LocString BIT_2 = "Select input signal to use on Bit 2";
-					public static LocString BIT_3 = "Select input signal to use on Bit 3";
-					public static LocString BIT_4 = "Select input signal to use on Bit 4";
+					public static LocString BIT_1 = "Select input bit to use on Output Bit 1";
+					public static LocString BIT_2 = "Select input bit to use on Output Bit 2";
+					public static LocString BIT_3 = "Select input bit to use on Output Bit 3";
+					public static LocString BIT_4 = "Select input bit to use on Output Bit 4";
 					public static LocString IDENTITY = "Sets all bits to pass through as normal";
 					public static LocString CLEAR = "Stop all bits from passing through";
 				}
 			}
 
 			public static class UISIDESCREENS {
-				public static class GATESELECT {
-					public static LocString TITLE = "Select Logic Function";
-				}
-
 				public static class FOURBITSELECT {
 					public static LocString ENABLE_ALL = "Set";
 					public static LocString DISABLE_ALL = "Clear";
 					public static LocString TITLE = "Set Provided Signal";
+				}
+
+				public static class GATESELECT {
+					public static LocString TITLE = "Select Logic Function";
+				}
+
+				public static class INLINELOGIC {
+					public static LocString INPUT_ONE = "Input 1";
+					public static LocString INPUT_TWO = "Input 2";
+					public static LocString INVALID_BITS = "Output bit must be different!";
+					public static LocString OUTPUT = "Output";
+					public static LocString TITLE = "Configure Inline Logic Gate";
 				}
 
 				public static class SIGNALREMAPPER {

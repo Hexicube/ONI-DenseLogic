@@ -1,5 +1,6 @@
 ﻿/*
  * Copyright 2020 Dense Logic Team
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
  * restriction, including without limitation the rights to use, copy, modify, merge, publish,
@@ -20,50 +21,34 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace ONI_DenseLogic {
-	public class LogicGateNandConfig : IBuildingConfig {
-		public const string ID = "DenseLogicTeam_LogicNand";
+	public class InlineLogicGateConfig : IBuildingConfig {
+		public const string ID = "DenseLogicTeam_InlineGate";
+		public const ObjectLayer LAYER = ObjectLayer.LogicGate;
 
 		public override BuildingDef CreateBuildingDef() {
-			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 2,
-				"logic_NAND_kanim", TUNING.BUILDINGS.HITPOINTS.TIER0,
-				TUNING.BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER0,
-				TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER0,
+			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 1, 1,
+				"dense_INLINE_kanim", 
+				TUNING.BUILDINGS.HITPOINTS.TIER1, 
+				TUNING.BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER1, 
+				TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER1,
 				TUNING.MATERIALS.REFINED_METALS, 1600.0f, BuildLocationRule.Anywhere,
-				TUNING.BUILDINGS.DECOR.PENALTY.TIER0, TUNING.NOISE_POLLUTION.NONE);
+				TUNING.BUILDINGS.DECOR.PENALTY.TIER1, TUNING.NOISE_POLLUTION.NOISY.TIER1);
 			buildingDef.Overheatable = false;
 			buildingDef.Floodable = false;
 			buildingDef.Entombable = false;
-			buildingDef.PermittedRotations = PermittedRotations.R360;
+			buildingDef.PermittedRotations = PermittedRotations.Unrotatable;
 			buildingDef.ViewMode = OverlayModes.Logic.ID;
 			buildingDef.AudioCategory = "Metal";
-			buildingDef.ObjectLayer = ObjectLayer.LogicGate;
+			buildingDef.ObjectLayer = LAYER;
 			buildingDef.SceneLayer = Grid.SceneLayer.LogicGates;
 			buildingDef.AlwaysOperational = true;
-			buildingDef.LogicInputPorts = new List<LogicPorts.Port>()
-			{
-				LogicPorts.Port.InputPort(
-					LogicGate.INPUTID1,
-					LogicGate.INPUTOFFSET1,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.INPUT_LOGIC_PORT_ONE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTIN_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTIN_INACTIVE
-				),
-				LogicPorts.Port.InputPort(
-					LogicGate.INPUTID2,
-					LogicGate.INPUTOFFSET2,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.INPUT_LOGIC_PORT_TWO,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTIN_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTIN_INACTIVE
-				)
-			};
-			buildingDef.LogicOutputPorts = new List<LogicPorts.Port>()
-			{
-				LogicPorts.Port.OutputPort(
-					LogicGate.OUTPUTID,
-					LogicGate.OUTPUTOFFSET,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.OUTPUT_LOGIC_PORT,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTOUT_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTOUT_INACTIVE
+			buildingDef.LogicOutputPorts = new List<LogicPorts.Port>() {
+				LogicPorts.Port.RibbonOutputPort(
+					InlineLogicGate.PORTID,
+					InlineLogicGate.OFFSET,
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_INLINEGATE.LOGIC_PORT_IO,
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_INLINEGATE.PORT_ACTIVE,
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_INLINEGATE.PORT_INACTIVE
 				)
 			};
 			GeneratedBuildings.RegisterWithOverlay(OverlayModes.Logic.HighlightItemIDs, ID);
@@ -71,7 +56,7 @@ namespace ONI_DenseLogic {
 		}
 
 		public override void DoPostConfigureComplete(GameObject go) {
-			go.AddOrGet<LogicGate>().gateType = LogicGateType.Nand;
+			go.AddOrGet<InlineLogicGate>();
 		}
 	}
 }

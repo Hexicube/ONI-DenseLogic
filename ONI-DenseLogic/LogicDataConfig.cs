@@ -20,13 +20,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace ONI_DenseLogic {
-	public class LogicGateNandConfig : IBuildingConfig {
-		public const string ID = "DenseLogicTeam_LogicNand";
+	public class LogicDataConfig : IBuildingConfig {
+		public const string ID = "DenseLogicTeam_LogicData";
 
 		public override BuildingDef CreateBuildingDef() {
 			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 2,
-				"logic_NAND_kanim", TUNING.BUILDINGS.HITPOINTS.TIER0,
-				TUNING.BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER0,
+				"logic_DLATCH_kanim", TUNING.BUILDINGS.HITPOINTS.TIER0,
+				TUNING.BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2,
 				TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER0,
 				TUNING.MATERIALS.REFINED_METALS, 1600.0f, BuildLocationRule.Anywhere,
 				TUNING.BUILDINGS.DECOR.PENALTY.TIER0, TUNING.NOISE_POLLUTION.NONE);
@@ -42,36 +42,42 @@ namespace ONI_DenseLogic {
 			buildingDef.LogicInputPorts = new List<LogicPorts.Port>()
 			{
 				LogicPorts.Port.InputPort(
-					LogicGate.INPUTID1,
-					LogicGate.INPUTOFFSET1,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.INPUT_LOGIC_PORT_ONE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTIN_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTIN_INACTIVE
+					LogicData.DATAID,
+					LogicData.DATAOFFSET,
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICDATA.DATA_PORT,
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICDATA.DATA_PORT_ACTIVE,
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICDATA.DATA_PORT_INACTIVE,
+					true, 
+					true
 				),
 				LogicPorts.Port.InputPort(
-					LogicGate.INPUTID2,
-					LogicGate.INPUTOFFSET2,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.INPUT_LOGIC_PORT_TWO,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTIN_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTIN_INACTIVE
+					LogicData.SETID,
+					LogicData.SETOFFSET,
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICDATA.SET_PORT,
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICDATA.SET_PORT_ACTIVE,
+					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICDATA.SET_PORT_INACTIVE,
+					true, true
 				)
 			};
 			buildingDef.LogicOutputPorts = new List<LogicPorts.Port>()
 			{
 				LogicPorts.Port.OutputPort(
-					LogicGate.OUTPUTID,
-					LogicGate.OUTPUTOFFSET,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.OUTPUT_LOGIC_PORT,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTOUT_ACTIVE,
-					DenseLogicStrings.BUILDINGS.PREFABS.DENSELOGICTEAM_LOGICGATE.PORTOUT_INACTIVE
+					LogicData.READID,
+					LogicData.READOFFSET,
+					STRINGS.BUILDINGS.PREFABS.LOGICMEMORY.READ_PORT,
+					STRINGS.BUILDINGS.PREFABS.LOGICMEMORY.READ_PORT_ACTIVE,
+					STRINGS.BUILDINGS.PREFABS.LOGICMEMORY.READ_PORT_INACTIVE,
+					true, true
 				)
 			};
+			SoundEventVolumeCache.instance.AddVolume("logic_memory_kanim", "PowerMemory_on", TUNING.NOISE_POLLUTION.NOISY.TIER3);
+			SoundEventVolumeCache.instance.AddVolume("logic_memory_kanim", "PowerMemory_off", TUNING.NOISE_POLLUTION.NOISY.TIER3);
 			GeneratedBuildings.RegisterWithOverlay(OverlayModes.Logic.HighlightItemIDs, ID);
 			return buildingDef;
 		}
 
 		public override void DoPostConfigureComplete(GameObject go) {
-			go.AddOrGet<LogicGate>().gateType = LogicGateType.Nand;
+			go.AddOrGet<LogicData>();
 		}
 	}
 }

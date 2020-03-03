@@ -36,7 +36,7 @@ namespace ONI_DenseLogic {
 			buildingDef.PermittedRotations = PermittedRotations.R360;
 			buildingDef.ViewMode = OverlayModes.Logic.ID;
 			buildingDef.AudioCategory = "Metal";
-			buildingDef.ObjectLayer = ObjectLayer.LogicGates;
+			buildingDef.ObjectLayer = ObjectLayer.LogicGate;
 			buildingDef.SceneLayer = Grid.SceneLayer.LogicGates;
 			buildingDef.AlwaysOperational = true;
 			buildingDef.LogicInputPorts = new List<LogicPorts.Port>()
