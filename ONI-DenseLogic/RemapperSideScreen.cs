@@ -19,14 +19,12 @@
 
 using PeterHan.PLib;
 using PeterHan.PLib.UI;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace ONI_DenseLogic {
 	internal sealed class RemapperSideScreen : SideScreenContent {
-		private readonly string[] tooltips;
 		private readonly IList<BitOption> bitNames;
 
 		private readonly GameObject[] bitSelects;
@@ -34,9 +32,8 @@ namespace ONI_DenseLogic {
 		private SignalRemapper target;
 
 		internal RemapperSideScreen() {
-			tooltips = new string[SignalRemapper.BITS];
-			bitNames = new List<BitOption>(1 + SignalRemapper.BITS);
-			bitSelects = new GameObject[SignalRemapper.BITS];
+			bitNames = new List<BitOption>(1 + DenseLogicGate.NUM_BITS);
+			bitSelects = new GameObject[DenseLogicGate.NUM_BITS];
 			target = null;
 		}
 
@@ -54,7 +51,7 @@ namespace ONI_DenseLogic {
 
 		private void LoadSignalMap() {
 			if (target != null)
-				for (int i = 0; i < SignalRemapper.BITS; i++) {
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
 					var bs = bitSelects[i];
 					// relies on NO_BIT being -1
 					int bit = target.GetBitMapping(i) + 1;
@@ -72,10 +69,12 @@ namespace ONI_DenseLogic {
 					Margin = margin, Direction = PanelDirection.Vertical, Alignment =
 					TextAnchor.UpperCenter, Spacing = 8
 				};
-			tooltips[0] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_1;
-			tooltips[1] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_2;
-			tooltips[2] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_3;
-			tooltips[3] = DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_4;
+			string[] tooltips = {
+				DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_1,
+				DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_2,
+				DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_3,
+				DenseLogicStrings.UI.TOOLTIPS.SIGNALREMAPPER.BIT_4
+			};
 			// Can be safely shared
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_NONE);
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_1);
@@ -83,7 +82,7 @@ namespace ONI_DenseLogic {
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_3);
 			bitNames.Add(DenseLogicStrings.UI.UISIDESCREENS.SIGNALREMAPPER.BIT_4);
 			var rowBG = PUITuning.Images.GetSpriteByName("overview_highlight_outline_sharp");
-			for (int i = 0; i < SignalRemapper.BITS; i++) {
+			for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
 				// This assignment is required for captures to get the right index
 				int index = i;
 				var row = new PPanel("Bit" + index) {
@@ -129,13 +128,13 @@ namespace ONI_DenseLogic {
 
 		private void SetBlankMap(GameObject _) {
 			if (target != null)
-				for (int i = 0; i < SignalRemapper.BITS; i++)
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
 					SetSignalMap(i, bitNames[0]);
 		}
 
 		private void SetDefaultMap(GameObject _) {
 			if (target != null)
-				for (int i = 0; i < SignalRemapper.BITS; i++)
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
 					SetSignalMap(i, bitNames[i + 1]);
 		}
 
@@ -144,7 +143,7 @@ namespace ONI_DenseLogic {
 			if (bs != null && target != null && chosen != null) {
 				// relies on NO_BIT being -1
 				target.SetBitMapping(index, bitNames.IndexOf(chosen).InRange(0,
-					SignalRemapper.BITS) - 1);
+					DenseLogicGate.NUM_BITS) - 1);
 				PComboBox<BitOption>.SetSelectedItem(bs, chosen, false);
 			}
 		}
@@ -152,20 +151,6 @@ namespace ONI_DenseLogic {
 		public override void SetTarget(GameObject target) {
 			this.target = target.GetComponentSafe<SignalRemapper>();
 			LoadSignalMap();
-		}
-
-		private sealed class BitOption : IListableOption {
-			public static implicit operator BitOption(LocString name) => new BitOption(name);
-
-			private readonly string name;
-
-			public BitOption(string name) {
-				this.name = name ?? throw new ArgumentNullException("name");
-			}
-
-			public string GetProperName() {
-				return name;
-			}
 		}
 	}
 }

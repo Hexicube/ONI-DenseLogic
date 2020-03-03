@@ -34,7 +34,10 @@ namespace ONI_DenseLogic {
 			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<SignalRemapper>(
 			(component, data) => component.OnLogicValueChanged(data));
 
-		public const int BITS = 4;
+		private static readonly EventSystem.IntraObjectHandler<SignalRemapper>
+			OnCopySettingsDelegate = new EventSystem.IntraObjectHandler<SignalRemapper>(
+			(component, data) => component.OnCopySettings(data));
+
 		public const int NO_BIT = -1;
 
 #pragma warning disable IDE0044 // Add readonly modifier
@@ -75,7 +78,7 @@ namespace ONI_DenseLogic {
 		public int GetBitMapping(int bit) {
 			int mapping = NO_BIT;
 			if (bits != null && bit < bits.Count)
-				mapping = bits[bit].InRange(NO_BIT, BITS - 1);
+				mapping = bits[bit].InRange(NO_BIT, DenseLogicGate.NUM_BITS - 1);
 			return mapping;
 		}
 
@@ -92,16 +95,27 @@ namespace ONI_DenseLogic {
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
+			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+		}
+
+		private void OnCopySettings(object data) {
+			var mapper = (data as GameObject)?.GetComponent<SignalRemapper>();
+			if (mapper != null) {
+				bits.Clear();
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
+					bits.Add(mapper.GetBitMapping(i));
+				UpdateLogicCircuit();
+			}
 		}
 
 		protected override void OnPrefabInit() {
 			base.OnPrefabInit();
 			if (bits == null)
-				bits = new List<int>(BITS);
-			if (bits.Count <= BITS) {
+				bits = new List<int>(DenseLogicGate.NUM_BITS);
+			if (bits.Count < DenseLogicGate.NUM_BITS) {
 				// Default config: all -1 (none)
 				bits.Clear();
-				for (int i = 0; i < BITS; i++)
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
 					bits.Add(NO_BIT);
 			}
 		}
@@ -129,14 +143,14 @@ namespace ONI_DenseLogic {
 
 		public void SetBitMapping(int bit, int mapping) {
 			if (bits != null && bit < bits.Count) {
-				bits[bit] = mapping.InRange(NO_BIT, BITS - 1);
+				bits[bit] = mapping.InRange(NO_BIT, DenseLogicGate.NUM_BITS - 1);
 				UpdateLogicCircuit();
 			}
 		}
 
 		private void UpdateLogicCircuit() {
 			curOut = 0;
-			for (int i = 0; i < BITS; i++)
+			for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
 				SetBit(GetBit(GetBitMapping(i)), i);
 			ports.SendSignal(OUTPUTID, curOut);
 			UpdateVisuals();

@@ -18,12 +18,18 @@
  */
 
 using KSerialization;
+using PeterHan.PLib;
 using UnityEngine;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
 	public sealed class DenseLogicGate : KMonoBehaviour, ISaveLoadable, IRender200ms,
 			IConfigurableLogicGate {
+		/// <summary>
+		/// The number of bits that can be set/visualized.
+		/// </summary>
+		public const int NUM_BITS = 4;
+
 		public static readonly HashedString INPUTID1 = new HashedString("DenseGate_IN1");
 		public static readonly HashedString INPUTID2 = new HashedString("DenseGate_IN2");
 		public static readonly HashedString OUTPUTID = new HashedString("DenseGate_OUT");
@@ -70,25 +76,31 @@ namespace ONI_DenseLogic {
 #pragma warning disable CS0649
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
+
+		[MyCmpReq]
+		private LogicPorts ports;
+
+		[MyCmpGet]
+		private Rotatable rotatable;
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
 
 		[Serialize]
 		private int inVal1, inVal2;
 		private int curOut;
+
 		[SerializeField]
 		[Serialize]
 		private LogicGateType mode;
 
-		private int GetActualCell(CellOffset offset) {
-			Rotatable component = GetComponent<Rotatable>();
-			if (component != null)
-				offset = component.GetRotatedCellOffset(offset);
-			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
-		}
-
 		internal DenseLogicGate() {
 			mode = LogicGateType.And;
+		}
+
+		private int GetActualCell(CellOffset offset) {
+			if (rotatable != null)
+				offset = rotatable.GetRotatedCellOffset(offset);
+			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
 		}
 
 		protected override void OnSpawn() {
@@ -110,12 +122,12 @@ namespace ONI_DenseLogic {
 			UpdateLogicCircuit();
 		}
 
-		private void OnCopySettings(object data)
-		{
-			DenseLogicGate component = ((GameObject)data).GetComponent<DenseLogicGate>();
-			if (component == null) return;
-			mode = component.mode;
-			UpdateGateType();
+		private void OnCopySettings(object data) {
+			var gate = (data as GameObject)?.GetComponent<DenseLogicGate>();
+			if (gate != null) {
+				mode = gate.mode;
+				UpdateGateType();
+			}
 		}
 
 		private void UpdateGateType() {
@@ -143,10 +155,10 @@ namespace ONI_DenseLogic {
 				curOut = ~(inVal1 ^ inVal2);
 			else {
 				// should never occur
-				Debug.Log("[DenseLogicGate] WARN: Unknown operand " + mode);
+				PUtil.LogWarning("Unknown DenseLogicGate operand " + mode);
 				curOut = 0;
 			}
-			GetComponent<LogicPorts>().SendSignal(OUTPUTID, curOut);
+			ports.SendSignal(OUTPUTID, curOut);
 			UpdateVisuals();
 		}
 
@@ -164,7 +176,7 @@ namespace ONI_DenseLogic {
 			} else {
 				color = 1;
 			}
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < NUM_BITS; i++) {
 				kbac.SetSymbolVisiblity($"light_bloom_{pos}_{i}", false);
 			}
 			kbac.SetSymbolVisiblity($"light_bloom_{pos}_{color}", true);
@@ -172,7 +184,7 @@ namespace ONI_DenseLogic {
 
 		private void SetSymbolsOff() {
 			for (int pos = 0; pos < 3; pos++) {
-				for (int i = 0; i < 4; i++) {
+				for (int i = 0; i < NUM_BITS; i++) {
 					kbac.SetSymbolVisiblity($"light_bloom_{pos}_{i}", false);
 				}
 				kbac.SetSymbolVisiblity($"light_bloom_{pos}_3", true);
@@ -183,24 +195,23 @@ namespace ONI_DenseLogic {
 			// when there is not an output, we are supposed to play the off animation
 			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OUTPUTOFFSET)) is LogicCircuitNetwork)) {
 				SetSymbolsOff();
-				for (int a = 0; a < 4; a++) {
-					kbac.SetSymbolTint(IN_A[a], COLOR_DISABLED);
-					kbac.SetSymbolTint(IN_B[a], COLOR_DISABLED);
-					kbac.SetSymbolTint(OUT[a], COLOR_DISABLED);
+				for (int bit = 0; bit < NUM_BITS; bit++) {
+					kbac.SetSymbolTint(IN_A[bit], COLOR_DISABLED);
+					kbac.SetSymbolTint(IN_B[bit], COLOR_DISABLED);
+					kbac.SetSymbolTint(OUT[bit], COLOR_DISABLED);
 				}
 			} else {
 			// otherwise set the colors of the lamps and of the individual wires on the gate
 				SetSymbolVisibility(0, inVal1);
 				SetSymbolVisibility(1, inVal2);
 				SetSymbolVisibility(2, curOut);
-				for (int a = 0; a < 4; a++) {
-					int mask = 1 << a;
-					kbac.SetSymbolTint(IN_A[a], (inVal2 & mask) != 0 ? COLOR_ON : COLOR_OFF);
-					kbac.SetSymbolTint(IN_B[a], (inVal1 & mask) != 0 ? COLOR_ON : COLOR_OFF);
-					kbac.SetSymbolTint(OUT[a], (curOut & mask) != 0 ? COLOR_ON : COLOR_OFF);
+				for (int bit = 0; bit < NUM_BITS; bit++) {
+					int mask = 1 << bit;
+					kbac.SetSymbolTint(IN_A[bit], (inVal2 & mask) != 0 ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(IN_B[bit], (inVal1 & mask) != 0 ? COLOR_ON : COLOR_OFF);
+					kbac.SetSymbolTint(OUT[bit], (curOut & mask) != 0 ? COLOR_ON : COLOR_OFF);
 				}
 			}
-			
 		}
 	}
 }

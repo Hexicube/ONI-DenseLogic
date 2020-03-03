@@ -39,6 +39,7 @@ namespace ONI_DenseLogic {
 		[HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
 		public static class SideScreenCreator {
 			internal static void Postfix() {
+				PUIUtils.AddSideScreenContent<InlineGateSideScreen>();
 				PUIUtils.AddSideScreenContent<LogicGateSelectSideScreen>();
 				PUIUtils.AddSideScreenContent<FourBitSelectSideScreen>();
 				PUIUtils.AddSideScreenContent<RemapperSideScreen>();
@@ -81,6 +82,8 @@ namespace ONI_DenseLogic {
 					LogicGateAndConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateXnorConfig.ID,
 					LogicGateXorConfig.ID);
+				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, InlineLogicGateConfig.ID,
+					LogicGateXnorConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicSevenSegmentConfig.ID,
 					LogicCounterConfig.ID);
 				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicDataConfig.ID,
@@ -102,24 +105,41 @@ namespace ONI_DenseLogic {
 				AddToTech("DupeTrafficControl", LogicGateXnorConfig.ID, LogicDataConfig.ID);
 				AddToTech("Multiplexing", DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID, SignalRemapperConfig.ID);
 				AddToTech("LogicCircuits", LogicGateNorConfig.ID, LogicGateNandConfig.ID);
-				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID, LogicSevenSegmentConfig.ID);
+				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID, LogicSevenSegmentConfig.ID, InlineLogicGateConfig.ID);
 			}
 		}
 
-		[HarmonyPatch(typeof(Assets), "OnPrefabInit")]
-		public static class Assets_OnPrefabInit_Patch {
-			private sealed class Ordering {
-				public readonly string tech;
-				public readonly string id, id_after;
-
-				public Ordering(string tech, string id, string id_after) {
-					this.tech = tech;
-					this.id = id;
-					this.id_after = id_after;
+		[HarmonyPatch(typeof(LogicCircuitNetwork), "AddItem")]
+		public static class LogicCircuitNetwork_AddItem_Patch {
+			internal static void Postfix(int cell, object item, List<ILogicEventReceiver>
+					___receivers) {
+				if (item is ILogicEventSender) {
+					// Check to see if it occupies an inline logic gate cell
+					var handler = Grid.Objects[cell, (int)InlineLogicGateConfig.LAYER].
+						GetComponentSafe<InlineLogicGate>()?.InputHandler;
+					if (handler != null)
+						___receivers.Add(handler);
 				}
 			}
-
-			private static List<Ordering> swaps = new List<Ordering>() {
+		}
+		
+		[HarmonyPatch(typeof(LogicCircuitNetwork), "RemoveItem")]
+		public static class LogicCircuitNetwork_RemoveItem_Patch {
+			internal static void Postfix(int cell, object item, List<ILogicEventReceiver>
+					___receivers) {
+				if (item is ILogicEventSender) {
+					// Check to see if it occupies an inline logic gate cell
+					var handler = Grid.Objects[cell, (int)InlineLogicGateConfig.LAYER].
+						GetComponentSafe<InlineLogicGate>()?.InputHandler;
+					if (handler != null)
+						___receivers.Remove(handler);
+				}
+			}
+		}
+		
+		[HarmonyPatch(typeof(Assets), "OnPrefabInit")]
+		public static class Assets_OnPrefabInit_Patch {
+			private static readonly List<Ordering> swaps = new List<Ordering>() {
 				new Ordering("DupeTrafficControl", LogicGateXnorConfig.ID, LogicGateXorConfig.ID),
 				new Ordering("DupeTrafficControl", LogicDataConfig.ID, LogicMemoryConfig.ID),
 				new Ordering("LogicCircuits", LogicGateNorConfig.ID, LogicGateOrConfig.ID),
@@ -147,7 +167,17 @@ namespace ONI_DenseLogic {
 					}
 				}
 			}
-		}
 
+			private sealed class Ordering {
+				public readonly string tech;
+				public readonly string id, id_after;
+
+				public Ordering(string tech, string id, string id_after) {
+					this.tech = tech;
+					this.id = id;
+					this.id_after = id_after;
+				}
+			}
+		}
 	}
 }
