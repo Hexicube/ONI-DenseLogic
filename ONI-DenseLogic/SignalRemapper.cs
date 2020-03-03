@@ -172,33 +172,40 @@ namespace ONI_DenseLogic {
 			int cell = GetActualCell(OUTPUTOFFSET);
 			// when there is not an output, we are supposed to play the off animation
 			if (Game.Instance.logicCircuitSystem.GetNetworkForCell(cell) is LogicCircuitNetwork) {
+				// set the tints for the wiring bits on the edges of the remapping (not the central connectors)
 				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
 					kbac.SetSymbolTint(IN_DOT[i], BitOn(inVal, i) ? COLOR_ON : COLOR_OFF);
 					kbac.SetSymbolTint(IN_LINE[i], BitOn(inVal, i) ? COLOR_ON : COLOR_OFF);
 					kbac.SetSymbolTint(OUT_DOT[i], BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
 					kbac.SetSymbolTint(OUT_LINE[i], BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
 				}
+
+				// turn off all of the lights (there are two pairs of lights, one on each side)
 				for (int i = 0; i < DenseLogicGate.NUM_BITS * 2; i++) {
 					kbac.SetSymbolVisiblity(Light(i, 0), false);
 					kbac.SetSymbolVisiblity(Light(i, 1), false);
 				}
+				// turn on only the lights that should be shown (pick green vs red based on the values of the logic wires)
 				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
 					kbac.SetSymbolVisiblity(Light(i, BitOn(inVal, i) ? 0 : 1), true);
 					kbac.SetSymbolVisiblity(Light(4 + i, BitOn(curOut, i) ? 0 : 1), true);
 				}
+
+				// make the connecting symbols visible based on if they are part of the mapping
+				// all of the used ones need to have their tint set properly b/c they are visible
 				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
+					int used = bits[i];
 					for (int j = 0; j < DenseLogicGate.NUM_BITS; j++) {
-						kbac.SetSymbolVisiblity(ConnectingSymbol(i, j), false);
+						string symbol = ConnectingSymbol(j, i);
+						kbac.SetSymbolVisiblity(symbol, j == used);
+						if (j == used)
+							kbac.SetSymbolTint(symbol, BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
 					}
-				}
-				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
-					string symbol = ConnectingSymbol(bits[i], i);
-					kbac.SetSymbolVisiblity(symbol, true);
-					kbac.SetSymbolTint(symbol, BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
 				}
 				kbac.Play("on", KAnim.PlayMode.Once, 1f, 0.0f);
 			} else {
-				// set symbol tints to off
+				// set symbol tints for the wiring bits on the edges of the remapping to off tinting
+				// don't need to worry about symbol visibility here b/c the "off" animation is completely separate from the "on" animation
 				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
 					kbac.SetSymbolTint(IN_DOT[i], COLOR_DISABLED);
 					kbac.SetSymbolTint(IN_LINE[i], COLOR_DISABLED);
