@@ -37,8 +37,7 @@ namespace ONI_DenseLogic {
 
 			// Already has a link
 			private static readonly string RIBBON_CABLE = STRINGS.BUILDINGS.PREFABS.LOGICRIBBON.NAME;
-
-
+			
 			public static class PREFABS {
 				public static class DENSELOGICTEAM_DENSEGATE {
 					public static LocString NAME = ONI_UI.FormatAsLink("Dense Multigate",
