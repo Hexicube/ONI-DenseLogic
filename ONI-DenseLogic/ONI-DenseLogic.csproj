@@ -73,6 +73,8 @@
   <ItemGroup>
     <Compile Include="BitOption.cs" />
     <Compile Include="DenseInput.cs" />
+    <Compile Include="LogicData.cs" />
+    <Compile Include="LogicDataConfig.cs" />
     <Compile Include="IInlineSelectable.cs" />
     <Compile Include="InlineGateSideScreen.cs" />
     <Compile Include="InlineLogicGateConfig.cs" />
