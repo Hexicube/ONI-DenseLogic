@@ -72,6 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DenseInput.cs" />
+    <Compile Include="LogicData.cs" />
+    <Compile Include="LogicDataConfig.cs" />
     <Compile Include="IConfigurableFourBits.cs" />
     <Compile Include="RemapperSideScreen.cs" />
     <Compile Include="SignalRemapper.cs" />
