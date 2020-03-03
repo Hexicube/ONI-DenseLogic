@@ -34,6 +34,10 @@ namespace ONI_DenseLogic {
 			OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<SignalRemapper>(
 			(component, data) => component.OnLogicValueChanged(data));
 
+		private static readonly EventSystem.IntraObjectHandler<SignalRemapper>
+			OnCopySettingsDelegate = new EventSystem.IntraObjectHandler<SignalRemapper>(
+			(component, data) => component.OnCopySettings(data));
+
 		private static readonly Color COLOR_ON = new Color(0.3411765f, 0.7254902f, 0.3686275f);
 		private static readonly Color COLOR_OFF = new Color(0.9529412f, 0.2901961f, 0.2784314f);
 		private static readonly Color COLOR_DISABLED = new Color(1.0f, 1.0f, 1.0f);
@@ -43,7 +47,6 @@ namespace ONI_DenseLogic {
 		private static readonly KAnimHashedString[] IN_LINE = { "in1", "in2", "in3", "in4" };
 		private static readonly KAnimHashedString[] OUT_LINE = { "out1", "out2", "out3", "out4" };
 
-		public const int BITS = 4;
 		public const int NO_BIT = -1;
 
 #pragma warning disable IDE0044 // Add readonly modifier
@@ -84,23 +87,34 @@ namespace ONI_DenseLogic {
 		public int GetBitMapping(int bit) {
 			int mapping = NO_BIT;
 			if (bits != null && bit < bits.Count)
-				mapping = bits[bit].InRange(NO_BIT, BITS - 1);
+				mapping = bits[bit].InRange(NO_BIT, DenseLogicGate.NUM_BITS - 1);
 			return mapping;
 		}
 
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
+			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+		}
+
+		private void OnCopySettings(object data) {
+			var mapper = (data as GameObject)?.GetComponent<SignalRemapper>();
+			if (mapper != null) {
+				bits.Clear();
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
+					bits.Add(mapper.GetBitMapping(i));
+				UpdateLogicCircuit();
+			}
 		}
 
 		protected override void OnPrefabInit() {
 			base.OnPrefabInit();
 			if (bits == null)
-				bits = new List<int>(BITS);
-			if (bits.Count <= BITS) {
+				bits = new List<int>(DenseLogicGate.NUM_BITS);
+			if (bits.Count < DenseLogicGate.NUM_BITS) {
 				// Default config: all -1 (none)
 				bits.Clear();
-				for (int i = 0; i < BITS; i++)
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
 					bits.Add(NO_BIT);
 			}
 		}
@@ -128,14 +142,14 @@ namespace ONI_DenseLogic {
 
 		public void SetBitMapping(int bit, int mapping) {
 			if (bits != null && bit < bits.Count) {
-				bits[bit] = mapping.InRange(NO_BIT, BITS - 1);
+				bits[bit] = mapping.InRange(NO_BIT, DenseLogicGate.NUM_BITS - 1);
 				UpdateLogicCircuit();
 			}
 		}
 
 		private void UpdateLogicCircuit() {
 			curOut = 0;
-			for (int i = 0; i < BITS; i++)
+			for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
 				SetBit(GetBit(GetBitMapping(i)), i);
 			ports.SendSignal(OUTPUTID, curOut);
 			UpdateVisuals();
@@ -157,26 +171,26 @@ namespace ONI_DenseLogic {
 			int cell = GetActualCell(OUTPUTOFFSET);
 			// when there is not an output, we are supposed to play the off animation
 			if (Game.Instance.logicCircuitSystem.GetNetworkForCell(cell) is LogicCircuitNetwork) {
-				for (int i = 0; i < 4; i++) {
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
 					kbac.SetSymbolTint(IN_DOT[i], BitOn(inVal, i) ? COLOR_ON : COLOR_OFF);
 					kbac.SetSymbolTint(IN_LINE[i], BitOn(inVal, i) ? COLOR_ON : COLOR_OFF);
 					kbac.SetSymbolTint(OUT_DOT[i], BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
 					kbac.SetSymbolTint(OUT_LINE[i], BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
 				}
-				for (int i = 0; i < 8; i++) {
+				for (int i = 0; i < DenseLogicGate.NUM_BITS * 2; i++) {
 					kbac.SetSymbolVisiblity(Light(i, 0), false);
 					kbac.SetSymbolVisiblity(Light(i, 1), false);
 				}
-				for (int i = 0; i< 4; i++) {
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
 					kbac.SetSymbolVisiblity(Light(i, BitOn(inVal, i) ? 0 : 1), true);
 					kbac.SetSymbolVisiblity(Light(4 + i, BitOn(curOut, i) ? 0 : 1), true);
 				}
-				for (int i = 0; i < 4; i++) {
-					for (int j = 0; j < 4; j++) {
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
+					for (int j = 0; j < DenseLogicGate.NUM_BITS; j++) {
 						kbac.SetSymbolVisiblity(ConnectingSymbol(i, j), false);
 					}
 				}
-				for (int i = 0; i < 4; i++) {
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
 					string symbol = ConnectingSymbol(bits[i], i);
 					kbac.SetSymbolVisiblity(symbol, true);
 					kbac.SetSymbolTint(symbol, BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
@@ -184,7 +198,7 @@ namespace ONI_DenseLogic {
 				kbac.Play("on", KAnim.PlayMode.Once, 1f, 0.0f);
 			} else {
 				// set symbol tints to off
-				for (int i = 0; i < 4; i++) {
+				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
 					kbac.SetSymbolTint(IN_DOT[i], COLOR_DISABLED);
 					kbac.SetSymbolTint(IN_LINE[i], COLOR_DISABLED);
 					kbac.SetSymbolTint(OUT_DOT[i], COLOR_DISABLED);
