@@ -38,6 +38,7 @@ namespace ONI_DenseLogic {
 			// Already has a link
 			private static readonly string RIBBON_CABLE = STRINGS.BUILDINGS.PREFABS.LOGICRIBBON.NAME;
 
+
 			public static class PREFABS {
 				public static class DENSELOGICTEAM_DENSEGATE {
 					public static LocString NAME = ONI_UI.FormatAsLink("Dense Multigate",
@@ -67,9 +68,9 @@ namespace ONI_DenseLogic {
 					public static LocString NAME = ONI_UI.FormatAsLink("Inline Logic Gate",
 						InlineLogicGateConfig.ID);
 					public static LocString DESC = $"Just when we thought that Moore's law could go no further, Banhi found a way to make logic gates smaller than ever.";
-					public static LocString EFFECT = $"Performs logic on the selected bits in {RIBBON_CABLE} and outputs the result to another selected bit.\n\nAND:\nOutputs {GREEN} when both Input A <b>AND</b> Input B are receiving {GREEN}.\n\nOR:\nOutputs {GREEN} when either Input A <b>OR</b> Input B are receiving {GREEN}.\n\nXOR:\nOutputs {GREEN} when <b>EXACTLY ONE</b> of Input A and Input B are receiving {GREEN}.\n\nOutputs {RED_SIGNAL}s if none of the above are true.";
-					public static LocString PORT_ACTIVE = $"Reads and writes {GREEN} signals from {RIBBON_CABLE}s.";
-					public static LocString PORT_INACTIVE = $"Reads and writes {RED} signals from {RIBBON_CABLE}s.";
+					public static LocString EFFECT = $"Performs logic on the selected bits in {RIBBON_CABLE} and outputs the result to another selected bit.\n\nAND:\nOutputs {GREEN} when both Input A <b>AND</b> Input B are receiving {GREEN}.\n\nOR:\nOutputs {GREEN} when either Input A <b>OR</b> Input B are receiving {GREEN}.\n\nXOR:\nOutputs {GREEN} when <b>EXACTLY ONE</b> of Input A and Input B are receiving {GREEN}.\n\nOutputs {RED} if none of the above are true.";
+					public static LocString PORT_ACTIVE = $"Reads and writes {GREEN} signals on {RIBBON_CABLE} bits.";
+					public static LocString PORT_INACTIVE = $"Reads and writes {RED} signals on {RIBBON_CABLE} bits.";
 
 					public static LocString LOGIC_PORT_IO = "Bit Reading and Writing";
 				}
