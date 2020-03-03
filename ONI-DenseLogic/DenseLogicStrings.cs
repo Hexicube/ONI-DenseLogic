@@ -37,7 +37,7 @@ namespace ONI_DenseLogic {
 
 			// Already has a link
 			private static readonly string RIBBON_CABLE = STRINGS.BUILDINGS.PREFABS.LOGICRIBBON.NAME;
-			
+
 			public static class PREFABS {
 				public static class DENSELOGICTEAM_DENSEGATE {
 					public static LocString NAME = ONI_UI.FormatAsLink("Dense Multigate",
@@ -130,8 +130,8 @@ namespace ONI_DenseLogic {
 					public static LocString OUTPUT_LOGIC_PORT_RIBBON = "4-Bit Selection";
 					public static LocString INPUT_PORT_ACTIVE = $"{GREEN_SIGNAL}: Passes a {GREEN_SIGNAL} to the selected bit of the output.";
 					public static LocString INPUT_PORT_INACTIVE = $"{RED_SIGNAL}: Passes a {RED_SIGNAL} to the selected bit of the output.";
-					public static LocString INPUT_PORT_ACTIVE_RIBBON = $"{GREEN_SIGNAL}: Provides {GREEN} as selectable bits.";
-					public static LocString INPUT_PORT_INACTIVE_RIBBON = $"{RED_SIGNAL}: Provides {RED} as selectable bits.";
+					public static LocString INPUT_PORT_ACTIVE_RIBBON = $"{GREEN_SIGNAL}: Provides {GREEN} signals as selectable bits.";
+					public static LocString INPUT_PORT_INACTIVE_RIBBON = $"{RED_SIGNAL}: Provides {RED} signals as selectable bits.";
 					public static LocString OUTPUT_PORT_ACTIVE = $"{GREEN_SIGNAL}: The bit is selected and is {GREEN}.";
 					public static LocString OUTPUT_PORT_INACTIVE = $"{RED_SIGNAL}: The bit is not selected bit or is {RED}.";
 					public static LocString CONTROL_PORT_ACTIVE = $"{GREEN_SIGNAL}: Selects which bit to pass through/onto.";
