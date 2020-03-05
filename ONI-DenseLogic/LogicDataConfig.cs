@@ -78,6 +78,7 @@ namespace ONI_DenseLogic {
 
 		public override void DoPostConfigureComplete(GameObject go) {
 			go.AddOrGet<LogicData>();
+			go.GetComponent<KPrefabID>().AddTag(GameTags.OverlayBehindConduits, false);
 		}
 	}
 }
