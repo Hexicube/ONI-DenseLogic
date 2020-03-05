@@ -62,8 +62,10 @@ namespace ONI_DenseLogic {
 		private void CheckSignals() {
 			int outBit = target.OutputBit;
 			// In1 == In2 is allowed
-			invalidWarning?.SetActive((outBit == target.InputBit1) || (outBit == target.
-				InputBit2));
+			bool invalid = outBit == target.InputBit1 || outBit == target.InputBit2;
+			if (invalidWarning != null)
+				PUIElements.SetText(invalidWarning, invalid ? (string)DenseLogicStrings.UI.
+					UISIDESCREENS.INLINELOGIC.INVALID_BITS : " ");
 		}
 
 		public override void ClearTarget() {
@@ -121,7 +123,7 @@ namespace ONI_DenseLogic {
 			errorStyle.sdfFont = defaultStyle.sdfFont;
 			errorStyle.textColor = Color.red;
 			invalidWarning = new PLabel("InvalidWarning") {
-				Text = DenseLogicStrings.UI.UISIDESCREENS.INLINELOGIC.INVALID_BITS,
+				Text = " ",
 				TextAlignment = TextAnchor.MiddleCenter, Margin = margin,
 				TextStyle = errorStyle
 			}.AddTo(gameObject);
