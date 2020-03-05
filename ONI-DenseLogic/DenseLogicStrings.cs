@@ -67,9 +67,9 @@ namespace ONI_DenseLogic {
 					public static LocString NAME = ONI_UI.FormatAsLink("Inline Logic Gate",
 						InlineLogicGateConfig.ID);
 					public static LocString DESC = $"Just when we thought that Moore's law could go no further, Banhi found a way to make logic gates smaller than ever.";
-					public static LocString EFFECT = $"Performs logic on the selected bits in {RIBBON_CABLE} and outputs the result to another selected bit.\n\nAND:\nOutputs {GREEN} when both Input A <b>AND</b> Input B are receiving {GREEN}.\n\nOR:\nOutputs {GREEN} when either Input A <b>OR</b> Input B are receiving {GREEN}.\n\nXOR:\nOutputs {GREEN} when <b>EXACTLY ONE</b> of Input A and Input B are receiving {GREEN}.\n\nOutputs {RED_SIGNAL}s if none of the above are true.";
-					public static LocString PORT_ACTIVE = $"Reads and writes {GREEN} signals from {RIBBON_CABLE}s.";
-					public static LocString PORT_INACTIVE = $"Reads and writes {RED} signals from {RIBBON_CABLE}s.";
+					public static LocString EFFECT = $"Performs logic on the selected bits in {RIBBON_CABLE} and outputs the result to another selected bit.\n\nAND:\nOutputs {GREEN} when both Input A <b>AND</b> Input B are receiving {GREEN}.\n\nOR:\nOutputs {GREEN} when either Input A <b>OR</b> Input B are receiving {GREEN}.\n\nXOR:\nOutputs {GREEN} when <b>EXACTLY ONE</b> of Input A and Input B are receiving {GREEN}.\n\nOutputs {RED} if none of the above are true.";
+					public static LocString PORT_ACTIVE = $"Reads and writes {GREEN} signals on {RIBBON_CABLE} bits.";
+					public static LocString PORT_INACTIVE = $"Reads and writes {RED} signals on {RIBBON_CABLE} bits.";
 
 					public static LocString LOGIC_PORT_IO = "Bit Reading and Writing";
 				}
@@ -130,10 +130,10 @@ namespace ONI_DenseLogic {
 					public static LocString OUTPUT_LOGIC_PORT_RIBBON = "4-Bit Selection";
 					public static LocString INPUT_PORT_ACTIVE = $"{GREEN_SIGNAL}: Passes a {GREEN_SIGNAL} to the selected bit of the output.";
 					public static LocString INPUT_PORT_INACTIVE = $"{RED_SIGNAL}: Passes a {RED_SIGNAL} to the selected bit of the output.";
-					public static LocString INPUT_PORT_ACTIVE_RIBBON = $"{GREEN_SIGNAL}: Provides some {GREEN} bits to select from.";
-					public static LocString INPUT_PORT_INACTIVE_RIBBON = $"{RED_SIGNAL}: PRovides {RED} bits to select from.";
-					public static LocString OUTPUT_PORT_ACTIVE = $"{GREEN_SIGNAL}: The selected bit is {GREEN}.";
-					public static LocString OUTPUT_PORT_INACTIVE = $"{RED_SIGNAL}: The selected bit is {RED}.";
+					public static LocString INPUT_PORT_ACTIVE_RIBBON = $"{GREEN_SIGNAL}: Provides {GREEN} signals as selectable bits.";
+					public static LocString INPUT_PORT_INACTIVE_RIBBON = $"{RED_SIGNAL}: Provides {RED} signals as selectable bits.";
+					public static LocString OUTPUT_PORT_ACTIVE = $"{GREEN_SIGNAL}: The bit is selected and is {GREEN}.";
+					public static LocString OUTPUT_PORT_INACTIVE = $"{RED_SIGNAL}: The bit is not selected bit or is {RED}.";
 					public static LocString CONTROL_PORT_ACTIVE = $"{GREEN_SIGNAL}: Selects which bit to pass through/onto.";
 					public static LocString CONTROL_PORT_INACTIVE = $"{RED_SIGNAL}: Selects which bit to pass through/onto.";
 				}
