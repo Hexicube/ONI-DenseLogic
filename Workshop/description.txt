@@ -32,7 +32,7 @@ Functions exactly like the AND/OR/XOR gates provided in the vanilla game, but in
 
 Smaller variants on the [b]Signal Selector[/b] and [b]Signal Distributor[/b].
 
-Only 2x2 tiles in size by taking input/output as an [b]Automation Ribbon[/b].
+Only 2x2 tiles in size by using the [b]Automation Ribbon[/b] as an input/output.
 
 [h1]Dense Multigate[/h1]
 [img]https://i.imgur.com/CbfjZmR.png[/img]
