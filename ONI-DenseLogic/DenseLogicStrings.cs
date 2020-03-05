@@ -43,7 +43,7 @@ namespace ONI_DenseLogic {
 					public static LocString NAME = ONI_UI.FormatAsLink("Dense Multigate",
 						DenseLogicGateConfig.ID);
 					public static LocString DESC = $"Banhi told us she didn't like the old logic gates. Banhi is weird.";
-					public static LocString EFFECT = $"Switches between different logic functions easily in the ONI_UI.\n\nPerforms logic on each bit in {RIBBON_CABLE} based on the specified mode.\n\nAND:\nOutputs {GREEN} when both Input A <b>AND</b> Input B are receiving {GREEN}.\n\nOR:\nOutputs {GREEN} when either Input A <b>OR</b> Input B are receiving {GREEN}.\n\nXOR:\nOutputs {GREEN} when <b>EXACTLY ONE</b> of Input A and Input B are receiving {GREEN}.\n\nOutputs {RED_SIGNAL}s if none of the above are true.";
+					public static LocString EFFECT = $"Switches between different logic functions easily in the UI.\n\nPerforms logic on each bit in {RIBBON_CABLE} based on the specified mode.\n\nAND:\nOutputs {GREEN} when both Input A <b>AND</b> Input B are receiving {GREEN}.\n\nOR:\nOutputs {GREEN} when either Input A <b>OR</b> Input B are receiving {GREEN}.\n\nXOR:\nOutputs {GREEN} when <b>EXACTLY ONE</b> of Input A and Input B are receiving {GREEN}.\n\nOutputs {RED_SIGNAL}s if none of the above are true.";
 					public static LocString INPUT_LOGIC_PORT_ONE = "4-Bit Input A";
 					public static LocString INPUT_LOGIC_PORT_TWO = "4-Bit Input B";
 					public static LocString OUTPUT_LOGIC_PORT = "4-Bit Logic Output";
