@@ -1,7 +1,5 @@
-[h1]Automation Expanded[/h1]
-
 [b]Banhi's Automation Innovation Pack[/b] brought us incredible new 4-Bit [b]Automation[/b] wires to [b]Oxygen Not Included[/b] but [b]Klei[/b] left us without many tools for using these new wires.
-This [b]Automation Expansion Pack[/b] introduces a variety of new [b]Automation[/b] buildings to work with the 4-Bit wires. All new buildings come with custom art and user interfaces deisgned to match the base game [b]Automation[/b] look.
+This [b]Automation Expansion Pack[/b] introduces a variety of new [b]Automation[/b] buildings to work with the 4-Bit wires. All new buildings come with custom art and user interfaces designed to match the base game [b]Automation[/b] look.
 
 [h1]Signal Multiswitch[/h1]
 [img]https://i.imgur.com/mAwWe5i.png[/img]
