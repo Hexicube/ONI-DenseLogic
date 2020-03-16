@@ -15,12 +15,40 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 using KSerialization;
 using PeterHan.PLib;
+using System;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public class LogicGate : KMonoBehaviour, IRender200ms {
+	public class LogicGate : KMonoBehaviour {
+		// Yucky, but exactly what the NOT gate does in the vanilla game :/
+		internal static LogicWire.BitDepth GetInputBitDepth(int cell) {
+			var depth = LogicWire.BitDepth.NumRatings;
+			var wire = Grid.Objects[cell, (int)ObjectLayer.LogicWire].
+				GetComponentSafe<LogicWire>();
+			if (wire != null)
+				depth = wire.MaxBitDepth;
+			return depth;
+		}
+
+		internal static int MaskOutputValue(int cellOne, int cellTwo, int output) {
+			switch ((LogicWire.BitDepth)Math.Min((int)GetInputBitDepth(cellOne), (int)
+				GetInputBitDepth(cellTwo))) {
+			case LogicWire.BitDepth.OneBit:
+				output &= 1;
+				break;
+			case LogicWire.BitDepth.FourBit:
+				output &= 15;
+				break;
+			default:
+				// Some other mod added a custom width, or the ports are not plugged in
+				break;
+			}
+			return output;
+		}
+
 		public static readonly HashedString INPUTID1 = new HashedString("LogicGate_IN1");
 		public static readonly HashedString INPUTID2 = new HashedString("LogicGate_IN2");
 		public static readonly HashedString OUTPUTID = new HashedString("LogicGate_OUT");
@@ -28,10 +56,6 @@ namespace ONI_DenseLogic {
 		public static readonly CellOffset INPUTOFFSET1 = new CellOffset(0, 0);
 		public static readonly CellOffset INPUTOFFSET2 = new CellOffset(0, 1);
 		public static readonly CellOffset OUTPUTOFFSET = new CellOffset(1, 0);
-
-		private static readonly EventSystem.IntraObjectHandler<LogicGate>
-				OnLogicValueChangedDelegate = new EventSystem.IntraObjectHandler<LogicGate>(
-				(component, data) => component.OnLogicValueChanged(data));
 
 #pragma warning disable IDE0044, CS0649 // Add readonly modifier
 		[MyCmpReq]
@@ -49,6 +73,7 @@ namespace ONI_DenseLogic {
 		private int curOut;
 
 		[Serialize]
+		// [SerializeField] is not required on public fields with supported types
 		public LogicGateType gateType;
 
 		private int GetActualCell(CellOffset offset) {
@@ -57,9 +82,18 @@ namespace ONI_DenseLogic {
 			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
 		}
 
+		private int GetSingleValue(int wire) {
+			return wire & 0b1;
+		}
+
+		protected override void OnCleanUp() {
+			Unsubscribe((int)GameHashes.LogicEvent, OnLogicValueChanged);
+			base.OnCleanUp();
+		}
+
 		protected override void OnSpawn() {
 			base.OnSpawn();
-			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
+			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChanged);
 		}
 
 		public void OnLogicValueChanged(object data) {
@@ -91,17 +125,9 @@ namespace ONI_DenseLogic {
 				PUtil.LogWarning("Unknown LogicGate operand " + gateType);
 				curOut = 0;
 			}
-			ports.SendSignal(OUTPUTID, curOut);
+			ports.SendSignal(OUTPUTID, MaskOutputValue(GetActualCell(INPUTOFFSET1),
+				GetActualCell(INPUTOFFSET2), curOut));
 			UpdateVisuals();
-		}
-
-		public void Render200ms(float dt) {
-			// hexi/test/peter: Do we have to do this here? Can we render only on state change?
-			UpdateVisuals();
-		}
-
-		private int GetSingleValue(int wire) {
-			return wire & 0b1;
 		}
 
 		public void UpdateVisuals() {

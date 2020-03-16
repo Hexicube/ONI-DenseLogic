@@ -21,7 +21,7 @@ using PeterHan.PLib;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public class DenseMultiplexer : KMonoBehaviour, IRender200ms {
+	public class DenseMultiplexer : KMonoBehaviour {
 		public static readonly HashedString INPUTID = new HashedString("DenseGate_IN");
 		public static readonly HashedString OUTPUTID = new HashedString("DenseGate_OUT");
 		public static readonly HashedString CONTROLID1 = new HashedString("DenseMuxGate_CTRL1");
@@ -65,6 +65,7 @@ namespace ONI_DenseLogic {
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
+			UpdateVisuals();
 		}
 
 		public void OnLogicValueChanged(object data) {
@@ -99,10 +100,6 @@ namespace ONI_DenseLogic {
 				curOut = 0;
 			}
 			ports.SendSignal(OUTPUTID, curOut);
-			UpdateVisuals();
-		}
-
-		public void Render200ms(float dt) {
 			UpdateVisuals();
 		}
 

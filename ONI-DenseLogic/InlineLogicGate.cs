@@ -24,8 +24,8 @@ using UnityEngine;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public sealed class InlineLogicGate : KMonoBehaviour, ISaveLoadable, IRender200ms,
-			IConfigurableLogicGate, IInlineSelectable {
+	public sealed class InlineLogicGate : KMonoBehaviour, ISaveLoadable, IInlineSelectable,
+			IConfigurableLogicGate {
 		public static readonly HashedString PORTID = new HashedString("InlineGate_IO");
 		public static readonly CellOffset OFFSET = CellOffset.none;
 
@@ -55,6 +55,7 @@ namespace ONI_DenseLogic {
 			set {
 				mode = value;
 				UpdateGateType();
+				UpdateLogicCircuit();
 			}
 		}
 
@@ -143,6 +144,7 @@ namespace ONI_DenseLogic {
 			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
 			InputHandler = new LogicIOHandler(this);
 			UpdateGateType();
+			UpdateVisuals();
 		}
 
 		internal void OnLogicValueChanged(int newValue) {
@@ -159,7 +161,6 @@ namespace ONI_DenseLogic {
 			kbac.SetSymbolVisiblity(GATE_NOR, mode == LogicGateType.Nor);
 			kbac.SetSymbolVisiblity(GATE_NAND, mode == LogicGateType.Nand);
 			kbac.SetSymbolVisiblity(GATE_XNOR, mode == LogicGateType.Xnor);
-			UpdateLogicCircuit();
 		}
 
 		private void UpdateLogicCircuit() {
@@ -184,10 +185,6 @@ namespace ONI_DenseLogic {
 				curOut = (curOut & 0x1) << outputBit;
 			}
 			ports.SendSignal(PORTID, curOut);
-			UpdateVisuals();
-		}
-
-		public void Render200ms(float dt) {
 			UpdateVisuals();
 		}
 

@@ -23,7 +23,7 @@ using UnityEngine;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public sealed class SignalRemapper : KMonoBehaviour, ISaveLoadable, IRender200ms {
+	public sealed class SignalRemapper : KMonoBehaviour, ISaveLoadable {
 		public static readonly HashedString INPUTID = new HashedString("SignalRemapper_IN");
 		public static readonly HashedString OUTPUTID = new HashedString("SignalRemapper_OUT");
 
@@ -94,6 +94,7 @@ namespace ONI_DenseLogic {
 			gameObject.AddOrGet<CopyBuildingSettings>();
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
 			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+			UpdateVisuals();
 		}
 
 		private void OnCopySettings(object data) {
@@ -124,11 +125,6 @@ namespace ONI_DenseLogic {
 				inVal = logicValueChanged.newValue;
 				UpdateLogicCircuit();
 			}
-		}
-
-		public void Render200ms(float dt) {
-			// hexi/test/peter: Do we have to do this here? Can we render only on state change?
-			UpdateVisuals();
 		}
 
 		public void SetBit(bool value, int pos) {

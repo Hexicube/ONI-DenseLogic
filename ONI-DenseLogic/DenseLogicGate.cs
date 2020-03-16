@@ -23,8 +23,8 @@ using UnityEngine;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public sealed class DenseLogicGate : KMonoBehaviour, ISaveLoadable, IRender200ms,
-			IConfigurableLogicGate {
+	public sealed class DenseLogicGate : KMonoBehaviour, ISaveLoadable, IConfigurableLogicGate
+	{
 		/// <summary>
 		/// The number of bits that can be set/visualized.
 		/// </summary>
@@ -68,7 +68,8 @@ namespace ONI_DenseLogic {
 			}
 			set {
 				mode = value;
-				UpdateGateType();
+				UpdateAnimation();
+				UpdateLogicCircuit();
 			}
 		}
 
@@ -106,7 +107,8 @@ namespace ONI_DenseLogic {
 			gameObject.AddOrGet<CopyBuildingSettings>();
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
 			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
-			UpdateGateType();
+			UpdateAnimation();
+			UpdateVisuals();
 		}
 
 		public void OnLogicValueChanged(object data) {
@@ -124,18 +126,18 @@ namespace ONI_DenseLogic {
 			var gate = (data as GameObject)?.GetComponent<DenseLogicGate>();
 			if (gate != null) {
 				mode = gate.mode;
-				UpdateGateType();
+				UpdateAnimation();
+				UpdateLogicCircuit();
 			}
 		}
 
-		private void UpdateGateType() {
+		private void UpdateAnimation() {
 			kbac.SetSymbolVisiblity(GATE_OR, mode == LogicGateType.Or);
 			kbac.SetSymbolVisiblity(GATE_AND, mode == LogicGateType.And);
 			kbac.SetSymbolVisiblity(GATE_XOR, mode == LogicGateType.Xor);
 			kbac.SetSymbolVisiblity(GATE_NOR, mode == LogicGateType.Nor);
 			kbac.SetSymbolVisiblity(GATE_NAND, mode == LogicGateType.Nand);
 			kbac.SetSymbolVisiblity(GATE_XNOR, mode == LogicGateType.Xnor);
-			UpdateLogicCircuit();
 		}
 
 		private void UpdateLogicCircuit() {
@@ -156,12 +158,8 @@ namespace ONI_DenseLogic {
 				PUtil.LogWarning("Unknown DenseLogicGate operand " + mode);
 				curOut = 0;
 			}
-			ports.SendSignal(OUTPUTID, curOut);
-			UpdateVisuals();
-		}
-
-		public void Render200ms(float dt) {
-			// hexi/test/peter: Do we have to do this here? Can we render only on state change?
+			ports.SendSignal(OUTPUTID, LogicGate.MaskOutputValue(GetActualCell(INPUTOFFSET1),
+				GetActualCell(INPUTOFFSET2), curOut));
 			UpdateVisuals();
 		}
 
