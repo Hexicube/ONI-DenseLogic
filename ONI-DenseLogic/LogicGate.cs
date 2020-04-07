@@ -23,30 +23,20 @@ using System;
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
 	public class LogicGate : KMonoBehaviour {
-		// Yucky, but exactly what the NOT gate does in the vanilla game :/
-		internal static LogicWire.BitDepth GetInputBitDepth(int cell) {
-			var depth = LogicWire.BitDepth.NumRatings;
-			var wire = Grid.Objects[cell, (int)ObjectLayer.LogicWire].
-				GetComponentSafe<LogicWire>();
-			if (wire != null)
-				depth = wire.MaxBitDepth;
-			return depth;
+		internal static int GetInputBitMask(int cell) {
+			var wire = Grid.Objects[cell, (int)ObjectLayer.LogicWire].GetComponentSafe<LogicWire>();
+			if (wire != null) {
+				switch (wire.MaxBitDepth) {
+					case LogicWire.BitDepth.OneBit: return 0b1;
+					case LogicWire.BitDepth.FourBit: return 0b1111;
+					default: return 0x7FFFFFFF;
+				}
+			}
+			return 0;
 		}
 
-		internal static int MaskOutputValue(int cellOne, int cellTwo, int output) {
-			switch ((LogicWire.BitDepth)Math.Min((int)GetInputBitDepth(cellOne), (int)
-				GetInputBitDepth(cellTwo))) {
-			case LogicWire.BitDepth.OneBit:
-				output &= 1;
-				break;
-			case LogicWire.BitDepth.FourBit:
-				output &= 15;
-				break;
-			default:
-				// Some other mod added a custom width, or the ports are not plugged in
-				break;
-			}
-			return output;
+		internal static int MaskOutputValue(int cellOne, int cellTwo, int cellOut, int output) {
+			return output & Math.Min(GetInputBitMask(cellOut), Math.Max(GetInputBitMask(cellOne), GetInputBitMask(cellTwo)));
 		}
 
 		public static readonly HashedString INPUTID1 = new HashedString("LogicGate_IN1");
@@ -126,7 +116,7 @@ namespace ONI_DenseLogic {
 				curOut = 0;
 			}
 			ports.SendSignal(OUTPUTID, MaskOutputValue(GetActualCell(INPUTOFFSET1),
-				GetActualCell(INPUTOFFSET2), curOut));
+				GetActualCell(INPUTOFFSET2), GetActualCell(OUTPUTOFFSET), curOut));
 			UpdateVisuals();
 		}
 

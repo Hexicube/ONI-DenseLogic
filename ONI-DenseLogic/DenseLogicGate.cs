@@ -159,7 +159,7 @@ namespace ONI_DenseLogic {
 				curOut = 0;
 			}
 			ports.SendSignal(OUTPUTID, LogicGate.MaskOutputValue(GetActualCell(INPUTOFFSET1),
-				GetActualCell(INPUTOFFSET2), curOut));
+				GetActualCell(INPUTOFFSET2), GetActualCell(OUTPUTOFFSET), curOut));
 			UpdateVisuals();
 		}
 
