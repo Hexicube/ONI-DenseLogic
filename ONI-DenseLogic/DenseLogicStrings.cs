@@ -172,6 +172,18 @@ namespace ONI_DenseLogic {
 					public static LocString PORTOUT_ACTIVE = $"Writes {GREEN} signals to each bit of the output {RIBBON_CABLE} when the configured input {RIBBON_CABLE} bit is sending {GREEN}.";
 					public static LocString PORTOUT_INACTIVE = $"Writes {RED} signals to each bit of the output {RIBBON_CABLE} when the configured input {RIBBON_CABLE} bit is sending {RED}.";
 				}
+
+				public static class DENSELOGICTEAM_EDGEDETECTOR {
+					public static LocString NAME = ONI_UI.FormatAsLink("Edge Detector",
+						SignalRemapperConfig.ID);
+					public static LocString DESC = $"Sends a {GREEN} pulse whenever an {AUTOMATION} input changes state.";
+					public static LocString EFFECT = $"Whenever a bit of the input {RIBBON_CABLE} changes between {RED} and {GREEN}, the corresponding output bit sends a {GREEN_SIGNAL} briefly.";
+					public static LocString PORTIN_ACTIVE = $"Reads {GREEN} signals from {RIBBON_CABLE}s.";
+					public static LocString PORTIN_INACTIVE = $"Reads {RED} signals from {RIBBON_CABLE}s.";
+					public static LocString LOGIC_PORT_OUTPUT = $"Edge Detection";
+					public static LocString PORTOUT_ACTIVE = $"Writes {GREEN} signals to each bit of the output {RIBBON_CABLE} when the input {RIBBON_CABLE} bit changes.";
+					public static LocString PORTOUT_INACTIVE = $"Writes {RED} signals to each bit of the output {RIBBON_CABLE} when the input {RIBBON_CABLE} bit is constant.";
+				}
 			}
 		}
 

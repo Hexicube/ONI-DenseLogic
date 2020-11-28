@@ -81,7 +81,9 @@
     <Compile Include="InlineLogicGate.cs" />
     <Compile Include="IConfigurableFourBits.cs" />
     <Compile Include="RemapperSideScreen.cs" />
+    <Compile Include="EdgeDetector.cs" />
     <Compile Include="SignalRemapper.cs" />
+    <Compile Include="EdgeDetectorConfig.cs" />
     <Compile Include="SignalRemapperConfig.cs" />
     <Compile Include="DenseInputConfig.cs" />
     <Compile Include="FourBitSelectSideScreen.cs" />
