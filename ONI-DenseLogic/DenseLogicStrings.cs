@@ -175,7 +175,7 @@ namespace ONI_DenseLogic {
 
 				public static class DENSELOGICTEAM_EDGEDETECTOR {
 					public static LocString NAME = ONI_UI.FormatAsLink("Edge Detector",
-						SignalRemapperConfig.ID);
+						EdgeDetectorConfig.ID);
 					public static LocString DESC = $"Sends a {GREEN} pulse whenever an {AUTOMATION} input changes state.";
 					public static LocString EFFECT = $"Whenever a bit of the input {RIBBON_CABLE} changes between {RED} and {GREEN}, the corresponding output bit sends a {GREEN_SIGNAL} briefly.";
 					public static LocString PORTIN_ACTIVE = $"Reads {GREEN} signals from {RIBBON_CABLE}s.";
