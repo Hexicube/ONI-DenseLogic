@@ -43,6 +43,9 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>E:\steamlib\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\shared\oni\bin\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PLib, Version=3.12.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\PLib.3.12.0\lib\net40\PLib.dll</HintPath>
     </Reference>
@@ -59,6 +62,9 @@
     <Reference Include="UnityEngine">
       <HintPath>E:\steamlib\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\..\..\shared\oni\bin\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ONI-Mods\src\lib\UnityEngine.TextRenderingModule.dll</HintPath>
@@ -68,6 +74,9 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>E:\steamlib\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\..\..\shared\oni\bin\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

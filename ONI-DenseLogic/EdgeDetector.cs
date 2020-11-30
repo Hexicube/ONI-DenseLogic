@@ -115,7 +115,6 @@ namespace ONI_DenseLogic {
 				curOut = 0;
 			}
 			ports.SendSignal(OUTPUTID, curOut);
-			lastTickInVal = inVal;
 			UpdateVisuals();
 			if (change) {
 				PerformAnim();
@@ -124,6 +123,7 @@ namespace ONI_DenseLogic {
 				added = false;
 				Game.Instance.logicCircuitManager.onLogicTick -= OnLogicTick;
 			}
+			lastTickInVal = inVal;
 		}
 
 		public void OnLogicValueChanged(object data) {
