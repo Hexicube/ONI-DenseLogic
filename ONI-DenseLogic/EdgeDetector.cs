@@ -37,11 +37,9 @@ namespace ONI_DenseLogic {
 		private static readonly Color COLOR_ON = new Color(0.3411765f, 0.7254902f, 0.3686275f);
 		private static readonly Color COLOR_OFF = new Color(0.9529412f, 0.2901961f, 0.2784314f);
 		private static readonly Color COLOR_DISABLED = new Color(1.0f, 1.0f, 1.0f);
-
-		private static readonly KAnimHashedString[] IN_DOT = { "b1", "b2", "b3", "b4" };
-		private static readonly KAnimHashedString[] OUT_DOT = { "c1", "c2", "c3", "c4" };
-		private static readonly KAnimHashedString[] IN_LINE = { "in1", "in2", "in3", "in4" };
-		private static readonly KAnimHashedString[] OUT_LINE = { "out1", "out2", "out3", "out4" };
+		
+		private static readonly KAnimHashedString[] IN_LINE = { "in_1", "in_2", "in_3", "in_4" };
+		private static readonly KAnimHashedString[] OUT_LINE = { "out_1", "out_2", "out_3", "out_4" };
 
 #pragma warning disable IDE0044, CS0649 // Add readonly modifier
 		[MyCmpReq]
@@ -66,13 +64,36 @@ namespace ONI_DenseLogic {
 			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
 		}
 
+		private MeterController piston1, piston2, piston3, piston4;
+
+		// AnimTarg: Symbol name for animation
+		// AnimName: Animation name for animation
+		private MeterController MakePistonController(int id) {
+			return new MeterController((KAnimControllerBase)kbac, "piston_"+id+"_target", "piston_on", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[1]{ "piston_"+id+"_target" });
+		}
+
+		// This is over here to make it easy to verify names match.
+		private void DoPiston(MeterController piston, bool start, bool end) {
+			if (start == end) return;
+			if (start) piston.meterController.Play("piston_turn_off");
+			else piston.meterController.Play("piston_turn_on");
+		}
+
 		// Note: We initially subscribe to the tick event just in case a save happened during a pulse, otherwise that pulse may stick.
 
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
-			UpdateVisuals();
 			Game.Instance.logicCircuitManager.onLogicTick += OnLogicTick;
+
+			kbac.Play("on");
+			UpdateVisuals();
+
+			// TODO: position these
+			piston1 = MakePistonController(1);
+			piston2 = MakePistonController(2);
+			piston3 = MakePistonController(3);
+			piston4 = MakePistonController(4);
 		}
 
 		private bool added = true;
@@ -129,6 +150,10 @@ namespace ONI_DenseLogic {
 		}
 
 		public void PerformAnim() {
+			DoPiston(piston1, (lastTickInVal & 1) > 0, (inVal & 1) > 0);
+			DoPiston(piston2, (lastTickInVal & 2) > 0, (inVal & 2) > 0);
+			DoPiston(piston3, (lastTickInVal & 4) > 0, (inVal & 4) > 0);
+			DoPiston(piston4, (lastTickInVal & 8) > 0, (inVal & 8) > 0);
 			// NOTE: This may break if fed signal pulses, the animation will assume 2 logic ticks minimum.
 			// TODO: Is there a better method?
 			// NOT IMPLEMENTED: kbac.Play(lastTickInVal+"to"+inVal, KAnim.PlayMode.Once, 1f, 0.0f);
@@ -140,14 +165,12 @@ namespace ONI_DenseLogic {
 			if (Game.Instance.logicCircuitSystem.GetNetworkForCell(cell) is LogicCircuitNetwork) {
 				// set the tints for the wiring bits on the edges of the remapping (not the central connectors)
 				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
-					kbac.SetSymbolTint(IN_DOT[i], BitOn(inVal, i) ? COLOR_ON : COLOR_OFF);
 					kbac.SetSymbolTint(IN_LINE[i], BitOn(inVal, i) ? COLOR_ON : COLOR_OFF);
-					kbac.SetSymbolTint(OUT_DOT[i], BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
 					kbac.SetSymbolTint(OUT_LINE[i], BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
 				}
 
 				// turn off all of the lights (there are two pairs of lights, one on each side)
-				for (int i = 0; i < DenseLogicGate.NUM_BITS * 2; i++) {
+				/*for (int i = 0; i < DenseLogicGate.NUM_BITS * 2; i++) {
 					kbac.SetSymbolVisiblity(Light(i, 0), false);
 					kbac.SetSymbolVisiblity(Light(i, 1), false);
 				}
@@ -155,19 +178,14 @@ namespace ONI_DenseLogic {
 				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
 					kbac.SetSymbolVisiblity(Light(i, BitOn(inVal, i) ? 0 : 1), true);
 					kbac.SetSymbolVisiblity(Light(4 + i, BitOn(curOut, i) ? 0 : 1), true);
-				}
-				
-				kbac.Play("on", KAnim.PlayMode.Once, 1f, 0.0f);
+				}*/
 			} else {
 				// set symbol tints for the wiring bits on the edges of the remapping to off tinting
 				// don't need to worry about symbol visibility here b/c the "off" animation is completely separate from the "on" animation
 				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
-					kbac.SetSymbolTint(IN_DOT[i], COLOR_DISABLED);
 					kbac.SetSymbolTint(IN_LINE[i], COLOR_DISABLED);
-					kbac.SetSymbolTint(OUT_DOT[i], COLOR_DISABLED);
 					kbac.SetSymbolTint(OUT_LINE[i], COLOR_DISABLED);
 				}
-				kbac.Play("off", KAnim.PlayMode.Once, 1f, 0.0f);
 			}
 		}
 	}
