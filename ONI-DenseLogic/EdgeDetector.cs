@@ -69,14 +69,12 @@ namespace ONI_DenseLogic {
 		// AnimTarg: Symbol name for animation
 		// AnimName: Animation name for animation
 		private MeterController MakePistonController(int id) {
-			return new MeterController((KAnimControllerBase)kbac, "piston_"+id+"_target", "piston_on", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[1]{ "piston_"+id+"_target" });
+			return new MeterController((KAnimControllerBase)kbac, "piston_"+id+"_target", "piston_off", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[1]{ "piston_"+id+"_target" });
 		}
 
 		// This is over here to make it easy to verify names match.
 		private void DoPiston(MeterController piston, bool start, bool end) {
-			if (start == end) return;
-			if (start) piston.meterController.Play("piston_turn_off");
-			else piston.meterController.Play("piston_turn_on");
+			if (!start && end) piston.meterController.Play("piston_actuate");
 		}
 
 		// Note: We initially subscribe to the tick event just in case a save happened during a pulse, otherwise that pulse may stick.
@@ -86,10 +84,9 @@ namespace ONI_DenseLogic {
 			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
 			Game.Instance.logicCircuitManager.onLogicTick += OnLogicTick;
 
-			kbac.Play("on");
+			kbac.Play("off");
 			UpdateVisuals();
-
-			// TODO: position these
+			
 			piston1 = MakePistonController(1);
 			piston2 = MakePistonController(2);
 			piston3 = MakePistonController(3);
@@ -110,19 +107,18 @@ namespace ONI_DenseLogic {
 
 		public void OnLogicTick() {
 			bool change = false;
-			if (inVal != lastTickInVal) {
-				curOut = (inVal ^ lastTickInVal);
+			if ((~lastTickInVal & inVal) != 0) {
+				curOut = ~lastTickInVal & inVal;
 				change = true;
 			}
-			else if (curOut != 0) {
+			else {
 				curOut = 0;
-				change = true;
 			}
+			ports.SendSignal(OUTPUTID, curOut);
+			lastTickInVal = inVal;
+			UpdateVisuals();
 			if (change) {
-				ports.SendSignal(OUTPUTID, curOut);
 				PerformAnim();
-				UpdateVisuals();
-				lastTickInVal = inVal;
 			}
 			else if (added) {
 				added = false;
@@ -139,10 +135,6 @@ namespace ONI_DenseLogic {
 					Game.Instance.logicCircuitManager.onLogicTick += OnLogicTick;
 				}
 			}
-		}
-
-		private string Light(int pos, int state) {
-			return $"light_bloom_{pos}_{state}";
 		}
 
 		private bool BitOn(int wire, int pos) {
@@ -168,17 +160,6 @@ namespace ONI_DenseLogic {
 					kbac.SetSymbolTint(IN_LINE[i], BitOn(inVal, i) ? COLOR_ON : COLOR_OFF);
 					kbac.SetSymbolTint(OUT_LINE[i], BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
 				}
-
-				// turn off all of the lights (there are two pairs of lights, one on each side)
-				/*for (int i = 0; i < DenseLogicGate.NUM_BITS * 2; i++) {
-					kbac.SetSymbolVisiblity(Light(i, 0), false);
-					kbac.SetSymbolVisiblity(Light(i, 1), false);
-				}
-				// turn on only the lights that should be shown (pick green vs red based on the values of the logic wires)
-				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++) {
-					kbac.SetSymbolVisiblity(Light(i, BitOn(inVal, i) ? 0 : 1), true);
-					kbac.SetSymbolVisiblity(Light(4 + i, BitOn(curOut, i) ? 0 : 1), true);
-				}*/
 			} else {
 				// set symbol tints for the wiring bits on the edges of the remapping to off tinting
 				// don't need to worry about symbol visibility here b/c the "off" animation is completely separate from the "on" animation
