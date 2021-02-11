@@ -54,7 +54,7 @@ namespace ONI_DenseLogic {
 				int index = TUNING.BUILDINGS.PLANORDER.FindIndex(x => x.category == category);
 				if (index < 0)
 					return;
-				var lst = TUNING.BUILDINGS.PLANORDER[index].data as IList<string>;
+				var lst = TUNING.BUILDINGS.PLANORDER[index].data;
 				int after_index = lst.IndexOf(building_after);
 				if (after_index < 0)
 					return;
@@ -93,11 +93,8 @@ namespace ONI_DenseLogic {
 		}
 
 		private static void AddToTech(string tech, params string[] items) {
-			string[] oldList = Techs.TECH_GROUPING[tech];
-			string[] newList = new string[oldList.Length + items.Length];
-			Array.Copy(oldList, newList, oldList.Length);
-			Array.Copy(items, 0, newList, oldList.Length, items.Length);
-			Techs.TECH_GROUPING[tech] = newList;
+			var techs = Db.Get().Techs;
+			techs.Get(tech).unlockedItemIDs.AddRange(items);
 		}
 
 		[HarmonyPatch(typeof(Techs), "Load")]
