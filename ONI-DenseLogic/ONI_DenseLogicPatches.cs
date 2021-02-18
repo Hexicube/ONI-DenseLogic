@@ -109,11 +109,11 @@ namespace ONI_DenseLogic {
 
 		[HarmonyPatch(typeof(LogicCircuitNetwork), "AddItem")]
 		public static class LogicCircuitNetwork_AddItem_Patch {
-			internal static void Postfix(int cell, object item, List<ILogicEventReceiver>
+			internal static void Postfix(object item, List<ILogicEventReceiver>
 					___receivers) {
 				if (item is ILogicEventSender) {
 					// Check to see if it occupies an inline logic gate cell
-					var handler = Grid.Objects[cell, (int)InlineLogicGateConfig.LAYER].
+					var handler = Grid.Objects[(item as ILogicEventSender).GetLogicCell(), (int)InlineLogicGateConfig.LAYER].
 						GetComponentSafe<InlineLogicGate>()?.InputHandler;
 					if (handler != null)
 						___receivers.Add(handler);
@@ -123,11 +123,11 @@ namespace ONI_DenseLogic {
 		
 		[HarmonyPatch(typeof(LogicCircuitNetwork), "RemoveItem")]
 		public static class LogicCircuitNetwork_RemoveItem_Patch {
-			internal static void Postfix(int cell, object item, List<ILogicEventReceiver>
+			internal static void Postfix(object item, List<ILogicEventReceiver>
 					___receivers) {
 				if (item is ILogicEventSender) {
 					// Check to see if it occupies an inline logic gate cell
-					var handler = Grid.Objects[cell, (int)InlineLogicGateConfig.LAYER].
+					var handler = Grid.Objects[(item as ILogicEventSender).GetLogicCell(), (int)InlineLogicGateConfig.LAYER].
 						GetComponentSafe<InlineLogicGate>()?.InputHandler;
 					if (handler != null)
 						___receivers.Remove(handler);
