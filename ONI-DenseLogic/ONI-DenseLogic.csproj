@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ONI_DenseLogic</RootNamespace>
     <AssemblyName>ONI-DenseLogic</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -43,8 +45,8 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>E:\steamlib\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="PLib, Version=3.13.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PLib.3.13.1\lib\net40\PLib.dll</HintPath>
+    <Reference Include="PLib, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PLib.4.1.0\lib\net471\PLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -111,6 +113,7 @@
     <PostBuildEvent>"$(ILMergeConsolePath)" /out:$(TargetName)Merged.dll $(TargetName).dll PLib.dll /targetplatform:v4,C:\Windows\Microsoft.NET\Framework64\v4.0.30319
 xcopy /y /s /i "$(TargetDir)$(TargetName)Merged.dll" "%25userprofile%25\Documents\Klei\OxygenNotIncluded\mods\dev\$(TargetName)\"
 xcopy /y /s /i "$(ProjectDir)mod_info.yaml" "%25userprofile%25\Documents\Klei\OxygenNotIncluded\mods\dev\$(TargetName)\"
+xcopy /y /s /i "$(ProjectDir)mod.yaml" "%25userprofile%25\Documents\Klei\OxygenNotIncluded\mods\dev\$(TargetName)\"
 xcopy /y /s /i "$(ProjectDir)archived_versions" "%25userprofile%25\Documents\Klei\OxygenNotIncluded\mods\dev\$(TargetName)\archived_versions"
 rd /s /q "%25userprofile%25\Documents\Klei\OxygenNotIncluded\mods\dev\$(TargetName)\anim"
 xcopy /y /s /i "$(ProjectDir)anim" "%25userprofile%25\Documents\Klei\OxygenNotIncluded\mods\dev\$(TargetName)\anim"</PostBuildEvent>

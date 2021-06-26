@@ -17,7 +17,7 @@
  */
 
 using KSerialization;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]

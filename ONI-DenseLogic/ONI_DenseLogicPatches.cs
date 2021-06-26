@@ -18,22 +18,24 @@
  */
 
 using Database;
-using Harmony;
+using HarmonyLib;
 using System.Collections.Generic;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.UI;
 using System;
-using System.Linq;
+using PeterHan.PLib.Database;
 
 namespace ONI_DenseLogic {
 	/// <summary>
 	/// Patches which will be applied for Dense Logic.
 	/// </summary>
-	public static class ONI_DenseLogicPatches {
-		public static void OnLoad() {
+	public sealed class ONI_DenseLogicPatches : KMod.UserMod2 {
+		public override void OnLoad(Harmony harmony) {
+			base.OnLoad(harmony);
 			PUtil.InitLibrary();
 			LocString.CreateLocStringKeys(typeof(DenseLogicStrings.BUILDINGS));
 			LocString.CreateLocStringKeys(typeof(DenseLogicStrings.UI));
+			new PLocalization().Register();
 		}
 
 		[HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
