@@ -22,7 +22,6 @@ using HarmonyLib;
 using System.Collections.Generic;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.UI;
-using System;
 using PeterHan.PLib.Database;
 
 namespace ONI_DenseLogic {
@@ -48,49 +47,33 @@ namespace ONI_DenseLogic {
 			}
 		}
 
-		private static void AddBuildingToPlanScreen(HashedString category, string building_id,
-				string building_after = null) {
-			if (building_after == null)
-				ModUtil.AddBuildingToPlanScreen(category, building_id);
-			else {
-				int index = TUNING.BUILDINGS.PLANORDER.FindIndex(x => x.category == category);
-				if (index < 0)
-					return;
-				var lst = TUNING.BUILDINGS.PLANORDER[index].data;
-				int after_index = lst.IndexOf(building_after);
-				if (after_index < 0)
-					return;
-				if (after_index + 1 >= lst.Count)
-					lst.Add(building_id);
-				else
-					lst.Insert(after_index + 1, building_id);
-			}
-		}
-
 		[HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
 		public static class GeneratedBuildings_LoadGeneratedBuildings_Patch {
 			private const string CATEGORY_AUTOMATION = "Automation";
 
 			internal static void Prefix() {
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseMultiplexerConfig.ID);
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseDeMultiplexerConfig.ID);
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseLogicGateConfig.ID);
-				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseInputConfig.ID,
-					LogicSwitchConfig.ID);
-				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateNorConfig.ID,
-					LogicGateOrConfig.ID);
-				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateNandConfig.ID,
-					LogicGateAndConfig.ID);
-				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateXnorConfig.ID,
-					LogicGateXorConfig.ID);
-				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, InlineLogicGateConfig.ID,
-					LogicGateXnorConfig.ID);
-				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, SignalRemapperConfig.ID,
-					InlineLogicGateConfig.ID);
-				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicSevenSegmentConfig.ID,
-					LogicCounterConfig.ID);
-				AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicDataConfig.ID,
-					LogicMemoryConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseMultiplexerConfig.ID,
+					"logic gates");
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION,
+					DenseDeMultiplexerConfig.ID, "logic gates");
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION,DenseLogicGateConfig.ID,
+					"logic gates");
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseInputConfig.ID,
+					"logic gates", LogicSwitchConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateNorConfig.ID,
+					"logic gates", LogicGateOrConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateNandConfig.ID,
+					"logic gates", LogicGateAndConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateXnorConfig.ID,
+					"logic gates", LogicGateXorConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, InlineLogicGateConfig.ID,
+					"logic gates", LogicGateXnorConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, SignalRemapperConfig.ID,
+					"logic gates", InlineLogicGateConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION,
+					LogicSevenSegmentConfig.ID, "logic gates", LogicCounterConfig.ID);
+				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicDataConfig.ID,
+					"logic gates", LogicMemoryConfig.ID);
 			}
 		}
 
