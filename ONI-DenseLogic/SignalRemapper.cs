@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
  * restriction, including without limitation the rights to use, copy, modify, merge, publish,
@@ -23,7 +23,7 @@ using UnityEngine;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public sealed class SignalRemapper : KMonoBehaviour, ISaveLoadable {
+	public sealed class SignalRemapper : KMonoBehaviour {
 		public static readonly HashedString INPUTID = new HashedString("SignalRemapper_IN");
 		public static readonly HashedString OUTPUTID = new HashedString("SignalRemapper_OUT");
 
@@ -98,8 +98,8 @@ namespace ONI_DenseLogic {
 		}
 
 		private void OnCopySettings(object data) {
-			var mapper = (data as GameObject)?.GetComponent<SignalRemapper>();
-			if (mapper != null) {
+			if (data is GameObject go && go != null && go.TryGetComponent(out
+					SignalRemapper mapper)) {
 				bits.Clear();
 				for (int i = 0; i < DenseLogicGate.NUM_BITS; i++)
 					bits.Add(mapper.GetBitMapping(i));
@@ -196,7 +196,7 @@ namespace ONI_DenseLogic {
 							kbac.SetSymbolTint(symbol, BitOn(curOut, i) ? COLOR_ON : COLOR_OFF);
 					}
 				}
-				kbac.Play("on", KAnim.PlayMode.Once, 1f, 0.0f);
+				kbac.Play("on");
 			} else {
 				// set symbol tints for the wiring bits on the edges of the remapping to off tinting
 				// don't need to worry about symbol visibility here b/c the "off" animation is completely separate from the "on" animation
@@ -206,7 +206,7 @@ namespace ONI_DenseLogic {
 					kbac.SetSymbolTint(OUT_DOT[i], COLOR_DISABLED);
 					kbac.SetSymbolTint(OUT_LINE[i], COLOR_DISABLED);
 				}
-				kbac.Play("off", KAnim.PlayMode.Once, 1f, 0.0f);
+				kbac.Play("off");
 			}
 				
 		}

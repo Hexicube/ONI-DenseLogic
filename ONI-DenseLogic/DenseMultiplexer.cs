@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
  * restriction, including without limitation the rights to use, copy, modify, merge, publish,
@@ -85,60 +85,68 @@ namespace ONI_DenseLogic {
 			return inVal & 1 << pos;
 		}
 
-		private int SetBitValue(int pos, bool on) {
+		private static int SetBitValue(int pos, bool on) {
 			return on ? 1 << pos : 0;
 		}
 
 		private void UpdateLogicCircuit() {
-			if (muxType == MultiplexerType.MUX) {
+			switch (muxType) {
+			case MultiplexerType.MUX:
 				curOut = GetBitValue(ctrlVal1 + 2 * ctrlVal2) > 0 ? 1 : 0;
-			} else if (muxType == MultiplexerType.DEMUX) {
+				break;
+			case MultiplexerType.DEMUX:
 				curOut = SetBitValue(ctrlVal1 + 2 * ctrlVal2, inVal > 0);
-			} else {
+				break;
+			default:
 				// should never occur
 				PUtil.LogWarning("Unknown multiplexer type " + muxType);
 				curOut = 0;
+				break;
 			}
 			ports.SendSignal(OUTPUTID, curOut);
 			UpdateVisuals();
 		}
 
-		private int GetRibbonValue(int wire) {
-			if (wire == 0) {
+		private static int GetRibbonValue(int wire) {
+			switch (wire) {
+			case 0:
 				return 0;
-			} else if (wire == 0b1111) {
+			case 0b1111:
 				return 2;
-			} else {
+			default:
 				return 1;
 			}
 		}
 
-		private int GetSingleValue(int wire) {
+		private static int GetSingleValue(int wire) {
 			return wire & 0b1;
 		}
 
 		public void UpdateVisuals() {
 			// when there is not an output, we are supposed to play the off animation
 			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OUTPUTOFFSET)) is LogicCircuitNetwork)) {
-				kbac.Play("off", KAnim.PlayMode.Once, 1f, 0.0f);
+				kbac.Play("off");
 			} else {
 				int bit0 = 0, bit1 = 0, bit2 = 0, bit3 = 0;
-				if (muxType == MultiplexerType.MUX) {
+				switch (muxType) {
+				case MultiplexerType.MUX:
 					bit0 = GetRibbonValue(inVal);
 					bit1 = GetSingleValue(ctrlVal1);
 					bit2 = GetSingleValue(ctrlVal2);
 					bit3 = GetSingleValue(curOut);
-				} else if (muxType == MultiplexerType.DEMUX) {
+					break;
+				case MultiplexerType.DEMUX:
 					bit0 = GetRibbonValue(curOut);
 					bit1 = GetSingleValue(ctrlVal1);
 					bit2 = GetSingleValue(ctrlVal2);
 					bit3 = GetSingleValue(inVal);
-				} else {
+					break;
+				default:
 					// should never occur
 					PUtil.LogWarning("Unknown multiplexer type " + muxType);
+					break;
 				}
-				kbac.Play("on_" + (bit0 + 3 * bit1 + 6 * bit2 + 12 * bit3), KAnim.PlayMode.
-					Once, 1f, 0.0f);
+				kbac.Play("on_" + (bit0 + 3 * bit1 + 6 * bit2 + 12 * bit3));
 			}
 		}
 

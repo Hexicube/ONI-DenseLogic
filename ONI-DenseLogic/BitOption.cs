@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
  * restriction, including without limitation the rights to use, copy, modify, merge, publish,
@@ -29,7 +29,7 @@ namespace ONI_DenseLogic {
 		private readonly string name;
 
 		public BitOption(string name) {
-			this.name = name ?? throw new ArgumentNullException("name");
+			this.name = name ?? throw new ArgumentNullException(nameof(name));
 		}
 
 		public override bool Equals(object obj) {

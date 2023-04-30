@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
@@ -72,7 +72,7 @@ namespace ONI_DenseLogic {
 		}
 
 		public override bool IsValidForTarget(GameObject target) {
-			return target.GetComponent<IConfigurableLogicGate>() != null;
+			return target != null && target.TryGetComponent(out IConfigurableLogicGate _);
 		}
 
 		protected override void OnPrefabInit() {
@@ -118,10 +118,8 @@ namespace ONI_DenseLogic {
 		public override void SetTarget(GameObject target) {
 			if (target == null)
 				PUtil.LogError("Invalid target specified");
-			else {
-				this.target = target.GetComponent<IConfigurableLogicGate>();
+			else if (target.TryGetComponent(out this.target))
 				UpdateGateType();
-			}
 		}
 
 		/// <summary>
@@ -134,8 +132,8 @@ namespace ONI_DenseLogic {
 				for (int i = 0; i < n; i++) {
 					var color = ((LogicGateType)i == type) ? PUITuning.Colors.ButtonPinkStyle :
 						PUITuning.Colors.ButtonBlueStyle;
-					var image = buttons[i].GetComponentSafe<KImage>();
-					if (image != null) {
+					var btn = buttons[i];
+					if (btn != null && btn.TryGetComponent(out KImage image)) {
 						image.colorStyleSetting = color;
 						image.ApplyColorStyleSetting();
 					}

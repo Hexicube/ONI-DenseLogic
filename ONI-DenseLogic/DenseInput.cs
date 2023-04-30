@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
@@ -22,7 +22,7 @@ using UnityEngine;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public sealed class DenseInput : KMonoBehaviour, ISaveLoadable, IConfigurableFourBits {
+	public sealed class DenseInput : KMonoBehaviour, IConfigurableFourBits {
 		public static readonly HashedString OUTPUTID = new HashedString("DenseInput_OUT");
 
 		private static readonly EventSystem.IntraObjectHandler<DenseInput>
@@ -53,10 +53,11 @@ namespace ONI_DenseLogic {
 		}
 
 		private void OnCopySettings(object data) {
-			DenseInput component = ((GameObject)data).GetComponent<DenseInput>();
-			if (component == null) return;
-			curOut = component.curOut;
-			UpdateLogicCircuit();
+			if (data is GameObject go && go != null && go.TryGetComponent(out DenseInput
+					component)) {
+				curOut = component.curOut;
+				UpdateLogicCircuit();
+			}
 		}
 
 		private void UpdateLogicCircuit() {
@@ -70,7 +71,7 @@ namespace ONI_DenseLogic {
 			int num2 = (curOut & (0x1 << 2)) > 0 ? 1 : 0;
 			int num3 = (curOut & (0x1 << 3)) > 0 ? 1 : 0;
 			int state = num3 + 2 * num2 + 4 * num1 + 8 * num0;
-			kbac.Play("on_" + state, KAnim.PlayMode.Once, 1f, 0.0f);
+			kbac.Play("on_" + state);
 		}
 
 		public void SetBit(bool value, int pos) {

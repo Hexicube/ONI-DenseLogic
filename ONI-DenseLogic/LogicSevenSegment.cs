@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
@@ -82,7 +82,7 @@ namespace ONI_DenseLogic {
 
 		public void UpdateVisuals() {
 			int num0 = inVal > 0 ? 1 : 0;
-			kbac.Play("on_" + (num0 + 4 * curOut), KAnim.PlayMode.Once, 1f, 0.0f);
+			kbac.Play("on_" + (num0 + 4 * curOut));
 		}
 	}
 }

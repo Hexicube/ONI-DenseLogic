@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
@@ -46,7 +46,7 @@ namespace ONI_DenseLogic {
 		}
 
 		public override bool IsValidForTarget(GameObject target) {
-			return target.GetComponentSafe<SignalRemapper>() != null;
+			return target != null && target.TryGetComponent(out SignalRemapper _);
 		}
 
 		private void LoadSignalMap() {
@@ -56,16 +56,15 @@ namespace ONI_DenseLogic {
 					// relies on NO_BIT being -1
 					int bit = target.GetBitMapping(i) + 1;
 					if (bs != null)
-						PComboBox<BitOption>.SetSelectedItem(bs, bitNames[bit], false);
+						PComboBox<BitOption>.SetSelectedItem(bs, bitNames[bit]);
 				}
 		}
 
 		protected override void OnPrefabInit() {
 			var margin = new RectOffset(8, 8, 8, 8);
 			// Update the parameters of the base BoxLayoutGroup
-			var baseLayout = gameObject.GetComponent<BoxLayoutGroup>();
-			if (baseLayout != null)
-				baseLayout.Params = new BoxLayoutParams() {
+			if (gameObject.TryGetComponent(out BoxLayoutGroup baseLayout))
+				baseLayout.Params = new BoxLayoutParams {
 					Margin = margin, Direction = PanelDirection.Vertical, Alignment =
 					TextAnchor.UpperCenter, Spacing = 8
 				};
@@ -144,13 +143,13 @@ namespace ONI_DenseLogic {
 				// relies on NO_BIT being -1
 				target.SetBitMapping(index, bitNames.IndexOf(chosen).InRange(0,
 					DenseLogicGate.NUM_BITS) - 1);
-				PComboBox<BitOption>.SetSelectedItem(bs, chosen, false);
+				PComboBox<BitOption>.SetSelectedItem(bs, chosen);
 			}
 		}
 
 		public override void SetTarget(GameObject target) {
-			this.target = target.GetComponentSafe<SignalRemapper>();
-			LoadSignalMap();
+			if (target.TryGetComponent(out this.target))
+				LoadSignalMap();
 		}
 	}
 }

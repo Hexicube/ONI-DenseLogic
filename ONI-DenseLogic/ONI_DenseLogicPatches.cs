@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.UI;
 using PeterHan.PLib.Database;
+using static ResearchTypes;
 
 namespace ONI_DenseLogic {
 	/// <summary>
@@ -49,31 +50,38 @@ namespace ONI_DenseLogic {
 
 		[HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
 		public static class GeneratedBuildings_LoadGeneratedBuildings_Patch {
-			private const string CATEGORY_AUTOMATION = "Automation";
+			private static readonly HashedString CATEGORY_AUTOMATION = "Automation";
 
 			internal static void Prefix() {
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseMultiplexerConfig.ID,
-					"logic gates");
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION,
-					DenseDeMultiplexerConfig.ID, "logic gates");
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION,DenseLogicGateConfig.ID,
-					"logic gates");
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, DenseInputConfig.ID,
-					"logic gates", LogicSwitchConfig.ID);
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateNorConfig.ID,
-					"logic gates", LogicGateOrConfig.ID);
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateNandConfig.ID,
-					"logic gates", LogicGateAndConfig.ID);
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicGateXnorConfig.ID,
-					"logic gates", LogicGateXorConfig.ID);
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, InlineLogicGateConfig.ID,
-					"logic gates", LogicGateXnorConfig.ID);
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, SignalRemapperConfig.ID,
-					"logic gates", InlineLogicGateConfig.ID);
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION,
-					LogicSevenSegmentConfig.ID, "logic gates", LogicCounterConfig.ID);
-				ModUtil.AddBuildingToPlanScreen(CATEGORY_AUTOMATION, LogicDataConfig.ID,
-					"logic gates", LogicMemoryConfig.ID);
+				AddBuilding(CATEGORY_AUTOMATION, DenseMultiplexerConfig.ID, "logic gates");
+				AddBuilding(CATEGORY_AUTOMATION, DenseDeMultiplexerConfig.ID, "logic gates");
+				AddBuilding(CATEGORY_AUTOMATION, DenseLogicGateConfig.ID, "logic gates");
+				AddBuilding(CATEGORY_AUTOMATION, DenseInputConfig.ID, "logic gates",
+					LogicSwitchConfig.ID);
+				AddBuilding(CATEGORY_AUTOMATION, LogicGateNorConfig.ID, "logic gates",
+					LogicGateOrConfig.ID);
+				AddBuilding(CATEGORY_AUTOMATION, LogicGateNandConfig.ID, "logic gates",
+					LogicGateAndConfig.ID);
+				AddBuilding(CATEGORY_AUTOMATION, LogicGateXnorConfig.ID, "logic gates",
+					LogicGateXorConfig.ID);
+				AddBuilding(CATEGORY_AUTOMATION, InlineLogicGateConfig.ID, "logic gates",
+					LogicGateXnorConfig.ID);
+				AddBuilding(CATEGORY_AUTOMATION, SignalRemapperConfig.ID, "logic gates",
+					InlineLogicGateConfig.ID);
+				AddBuilding(CATEGORY_AUTOMATION, LogicSevenSegmentConfig.ID, "logic gates",
+					LogicCounterConfig.ID);
+				AddBuilding(CATEGORY_AUTOMATION, LogicDataConfig.ID, "logic gates",
+					LogicMemoryConfig.ID);
+			}
+
+			private static void AddBuilding(HashedString category, string id,
+					string subCategory, string after = null) {
+				ModUtil.AddBuildingToPlanScreen(category, id, subCategory, after);
+				// The new TUNING.BUILDINGS.PLANSUBCATEGORYSORTING is not updated by
+				// AddBuildingToPlanScreen
+				var subcategories = TUNING.BUILDINGS.PLANSUBCATEGORYSORTING;
+				if (subcategories != null)
+					subcategories[id] = subCategory;
 			}
 		}
 
@@ -86,9 +94,12 @@ namespace ONI_DenseLogic {
 		public static class Techs_Load_Patch {
 			internal static void Postfix() {
 				AddToTech("DupeTrafficControl", LogicGateXnorConfig.ID, LogicDataConfig.ID);
-				AddToTech("Multiplexing", DenseMultiplexerConfig.ID, DenseDeMultiplexerConfig.ID);
+				AddToTech("Multiplexing", DenseMultiplexerConfig.ID,
+					DenseDeMultiplexerConfig.ID);
 				AddToTech("LogicCircuits", LogicGateNorConfig.ID, LogicGateNandConfig.ID);
-				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID, LogicSevenSegmentConfig.ID, InlineLogicGateConfig.ID, SignalRemapperConfig.ID);
+				AddToTech("ParallelAutomation", DenseInputConfig.ID, DenseLogicGateConfig.ID,
+					LogicSevenSegmentConfig.ID, InlineLogicGateConfig.ID,
+					SignalRemapperConfig.ID);
 			}
 		}
 
@@ -96,11 +107,13 @@ namespace ONI_DenseLogic {
 		public static class LogicCircuitNetwork_AddItem_Patch {
 			internal static void Postfix(object item, List<ILogicEventReceiver>
 					___receivers) {
-				if (item is ILogicEventSender) {
+				if (item is ILogicEventSender sender) {
+					ILogicEventReceiver handler;
+					var go = Grid.Objects[sender.GetLogicCell(),
+						(int)InlineLogicGateConfig.LAYER];
 					// Check to see if it occupies an inline logic gate cell
-					var handler = Grid.Objects[(item as ILogicEventSender).GetLogicCell(), (int)InlineLogicGateConfig.LAYER].
-						GetComponentSafe<InlineLogicGate>()?.InputHandler;
-					if (handler != null)
+					if (go != null && go.TryGetComponent(out InlineLogicGate gate) &&
+							(handler = gate.InputHandler) != null)
 						___receivers.Add(handler);
 				}
 			}
@@ -110,11 +123,13 @@ namespace ONI_DenseLogic {
 		public static class LogicCircuitNetwork_RemoveItem_Patch {
 			internal static void Postfix(object item, List<ILogicEventReceiver>
 					___receivers) {
-				if (item is ILogicEventSender) {
+				if (item is ILogicEventSender sender) {
+					ILogicEventReceiver handler;
+					var go = Grid.Objects[sender.GetLogicCell(),
+						(int)InlineLogicGateConfig.LAYER];
 					// Check to see if it occupies an inline logic gate cell
-					var handler = Grid.Objects[(item as ILogicEventSender).GetLogicCell(), (int)InlineLogicGateConfig.LAYER].
-						GetComponentSafe<InlineLogicGate>()?.InputHandler;
-					if (handler != null)
+					if (go != null && go.TryGetComponent(out InlineLogicGate gate) &&
+							(handler = gate.InputHandler) != null)
 						___receivers.Remove(handler);
 				}
 			}

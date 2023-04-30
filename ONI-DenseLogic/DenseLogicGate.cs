@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
@@ -23,8 +23,7 @@ using UnityEngine;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public sealed class DenseLogicGate : KMonoBehaviour, ISaveLoadable, IConfigurableLogicGate
-	{
+	public sealed class DenseLogicGate : KMonoBehaviour, IConfigurableLogicGate {
 		/// <summary>
 		/// The number of bits that can be set/visualized.
 		/// </summary>
@@ -63,9 +62,7 @@ namespace ONI_DenseLogic {
 		private static readonly KAnimHashedString GATE_NOR = "nor_gate";
 
 		public LogicGateType GateType {
-			get {
-				return mode;
-			}
+			get => mode;
 			set {
 				mode = value;
 				UpdateAnimation();
@@ -123,8 +120,8 @@ namespace ONI_DenseLogic {
 		}
 
 		private void OnCopySettings(object data) {
-			var gate = (data as GameObject)?.GetComponent<DenseLogicGate>();
-			if (gate != null) {
+			if (data is GameObject go && go != null && go.TryGetComponent(out
+					DenseLogicGate gate)) {
 				mode = gate.mode;
 				UpdateAnimation();
 				UpdateLogicCircuit();
@@ -141,22 +138,30 @@ namespace ONI_DenseLogic {
 		}
 
 		private void UpdateLogicCircuit() {
-			if (mode == LogicGateType.Or)
+			switch (mode) {
+			case LogicGateType.Or:
 				curOut = inVal1 | inVal2;
-			else if (mode == LogicGateType.And)
+				break;
+			case LogicGateType.And:
 				curOut = inVal1 & inVal2;
-			else if (mode == LogicGateType.Xor)
+				break;
+			case LogicGateType.Xor:
 				curOut = inVal1 ^ inVal2;
-			else if (mode == LogicGateType.Nor)
+				break;
+			case LogicGateType.Nor:
 				curOut = ~(inVal1 | inVal2);
-			else if (mode == LogicGateType.Nand)
+				break;
+			case LogicGateType.Nand:
 				curOut = ~(inVal1 & inVal2);
-			else if (mode == LogicGateType.Xnor)
+				break;
+			case LogicGateType.Xnor:
 				curOut = ~(inVal1 ^ inVal2);
-			else {
+				break;
+			default:
 				// should never occur
 				PUtil.LogWarning("Unknown DenseLogicGate operand " + mode);
 				curOut = 0;
+				break;
 			}
 			ports.SendSignal(OUTPUTID, LogicGate.MaskOutputValue(GetActualCell(INPUTOFFSET1),
 				GetActualCell(INPUTOFFSET2), GetActualCell(OUTPUTOFFSET), curOut));
@@ -165,12 +170,16 @@ namespace ONI_DenseLogic {
 
 		private void SetSymbolVisibility(int pos, int wire) {
 			int color;
-			if (wire == 0) {
+			switch (wire) {
+			case 0:
 				color = 2;
-			} else if (wire == 0b1111) {
+				break;
+			case 0b1111:
 				color = 0;
-			} else {
+				break;
+			default:
 				color = 1;
+				break;
 			}
 			for (int i = 0; i < NUM_BITS; i++) {
 				kbac.SetSymbolVisiblity($"light_bloom_{pos}_{i}", false);
@@ -189,15 +198,9 @@ namespace ONI_DenseLogic {
 
 		public void UpdateVisuals() {
 			// when there is not an output, we are supposed to play the off animation
-			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OUTPUTOFFSET)) is LogicCircuitNetwork)) {
-				SetSymbolsOff();
-				for (int bit = 0; bit < NUM_BITS; bit++) {
-					kbac.SetSymbolTint(IN_A[bit], COLOR_DISABLED);
-					kbac.SetSymbolTint(IN_B[bit], COLOR_DISABLED);
-					kbac.SetSymbolTint(OUT[bit], COLOR_DISABLED);
-				}
-			} else {
-			// otherwise set the colors of the lamps and of the individual wires on the gate
+			if (Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(
+					OUTPUTOFFSET)) is LogicCircuitNetwork) {
+				// otherwise set the colors of the lamps and of the individual wires on the gate
 				SetSymbolVisibility(0, inVal1);
 				SetSymbolVisibility(1, inVal2);
 				SetSymbolVisibility(2, curOut);
@@ -206,6 +209,13 @@ namespace ONI_DenseLogic {
 					kbac.SetSymbolTint(IN_A[bit], (inVal2 & mask) != 0 ? COLOR_ON : COLOR_OFF);
 					kbac.SetSymbolTint(IN_B[bit], (inVal1 & mask) != 0 ? COLOR_ON : COLOR_OFF);
 					kbac.SetSymbolTint(OUT[bit], (curOut & mask) != 0 ? COLOR_ON : COLOR_OFF);
+				}
+			} else {
+				SetSymbolsOff();
+				for (int bit = 0; bit < NUM_BITS; bit++) {
+					kbac.SetSymbolTint(IN_A[bit], COLOR_DISABLED);
+					kbac.SetSymbolTint(IN_B[bit], COLOR_DISABLED);
+					kbac.SetSymbolTint(OUT[bit], COLOR_DISABLED);
 				}
 			}
 		}
