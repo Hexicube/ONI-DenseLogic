@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
-	public sealed class InlineLogicGate : KMonoBehaviour, ISaveLoadable, IInlineSelectable,
+	public sealed class InlineLogicGate : KMonoBehaviour, IInlineSelectable,
 			IConfigurableLogicGate {
 		public static readonly HashedString PORTID = new HashedString("InlineGate_IO");
 		public static readonly CellOffset OFFSET = CellOffset.none;
@@ -49,9 +49,7 @@ namespace ONI_DenseLogic {
 		private static readonly KAnimHashedString GATE_NOR = "nor";
 
 		public LogicGateType GateType {
-			get {
-				return mode;
-			}
+			get => mode;
 			set {
 				mode = value;
 				UpdateGateType();
@@ -60,9 +58,7 @@ namespace ONI_DenseLogic {
 		}
 
 		public int InputBit1 {
-			get {
-				return inputBit1;
-			}
+			get => inputBit1;
 			set {
 				inputBit1 = value.InRange(0, DenseLogicGate.NUM_BITS - 1);
 				UpdateLogicCircuit();
@@ -70,9 +66,7 @@ namespace ONI_DenseLogic {
 		}
 
 		public int InputBit2 {
-			get {
-				return inputBit2;
-			}
+			get => inputBit2;
 			set {
 				inputBit2 = value.InRange(0, DenseLogicGate.NUM_BITS - 1);
 				UpdateLogicCircuit();
@@ -80,9 +74,7 @@ namespace ONI_DenseLogic {
 		}
 
 		public int OutputBit {
-			get {
-				return outputBit;
-			}
+			get => outputBit;
 			set {
 				outputBit = value.InRange(0, DenseLogicGate.NUM_BITS - 1);
 				UpdateLogicCircuit();
@@ -128,8 +120,8 @@ namespace ONI_DenseLogic {
 		}
 
 		private void OnCopySettings(object data) {
-			var gate = (data as GameObject)?.GetComponent<InlineLogicGate>();
-			if (gate != null) {
+			if (data is GameObject go && go != null && go.TryGetComponent(out
+					InlineLogicGate gate)) {
 				mode = gate.mode;
 				inputBit1 = gate.inputBit1;
 				inputBit2 = gate.inputBit2;
@@ -167,39 +159,42 @@ namespace ONI_DenseLogic {
 			int curOut = 0;
 			if (inputBit1 != outputBit && inputBit2 != outputBit) {
 				int inVal1 = inVal >> inputBit1, inVal2 = inVal >> inputBit2;
-				if (mode == LogicGateType.Or)
+				switch (mode) {
+				case LogicGateType.Or:
 					curOut = inVal1 | inVal2;
-				else if (mode == LogicGateType.And)
+					break;
+				case LogicGateType.And:
 					curOut = inVal1 & inVal2;
-				else if (mode == LogicGateType.Xor)
+					break;
+				case LogicGateType.Xor:
 					curOut = inVal1 ^ inVal2;
-				else if (mode == LogicGateType.Nor)
+					break;
+				case LogicGateType.Nor:
 					curOut = ~(inVal1 | inVal2);
-				else if (mode == LogicGateType.Nand)
+					break;
+				case LogicGateType.Nand:
 					curOut = ~(inVal1 & inVal2);
-				else if (mode == LogicGateType.Xnor)
+					break;
+				case LogicGateType.Xnor:
 					curOut = ~(inVal1 ^ inVal2);
-				else
-					// should never occur
+					break;
+				// should never occur
+				default:
 					PUtil.LogWarning("Unknown InlineLogicGate operand " + mode);
+					break;
+				}
 				curOut = (curOut & 0x1) << outputBit;
 			}
 			ports.SendSignal(PORTID, curOut);
 			UpdateVisuals();
 		}
 
-		private int GetSingleValue(int wire) {
+		private static int GetSingleValue(int wire) {
 			return wire & 0b1;
 		}
 
 		private void SetSymbolVisibility(int pos, int wire, int bit) {
-			int color;
-			int singleValue = GetSingleValue(wire >> bit);
-			if (singleValue == 0) {
-				color = 1;
-			} else {
-				color = 0;
-			}
+			int singleValue = GetSingleValue(wire >> bit), color = singleValue == 0 ? 1 : 0;
 			for (int i = 0; i < 3; i++) {
 				kbac.SetSymbolVisiblity($"light_bloom_{pos}_{i}", false);
 			}
@@ -247,7 +242,9 @@ namespace ONI_DenseLogic {
 			private readonly InlineLogicGate gate;
 
 			public LogicIOHandler(InlineLogicGate gate) {
-				this.gate = gate ?? throw new ArgumentNullException("gate");
+				if (gate == null)
+					throw new ArgumentNullException(nameof(gate));
+				this.gate = gate;
 				cell = gate.GetActualCell(OFFSET);
 			}
 

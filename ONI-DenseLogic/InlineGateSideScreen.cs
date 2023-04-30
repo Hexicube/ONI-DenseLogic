@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
@@ -76,7 +76,7 @@ namespace ONI_DenseLogic {
 		}
 
 		public override bool IsValidForTarget(GameObject target) {
-			return target.GetComponent<IInlineSelectable>() != null;
+			return target != null && target.TryGetComponent(out IInlineSelectable _);
 		}
 
 		private void LoadBitSettings() {
@@ -94,9 +94,8 @@ namespace ONI_DenseLogic {
 		protected override void OnPrefabInit() {
 			var margin = new RectOffset(8, 8, 8, 8);
 			// Update the parameters of the base BoxLayoutGroup
-			var baseLayout = gameObject.GetComponent<BoxLayoutGroup>();
-			if (baseLayout != null)
-				baseLayout.Params = new BoxLayoutParams() {
+			if (gameObject.TryGetComponent(out BoxLayoutGroup baseLayout))
+				baseLayout.Params = new BoxLayoutParams {
 					Margin = margin, Direction = PanelDirection.Vertical, Alignment =
 					TextAnchor.UpperCenter, Spacing = 8
 				};
@@ -149,13 +148,10 @@ namespace ONI_DenseLogic {
 		public override void SetTarget(GameObject target) {
 			if (target == null)
 				PUtil.LogError("Invalid gameObject received");
-			else {
-				this.target = target.GetComponent<IInlineSelectable>();
-				if (this.target == null)
-					PUtil.LogError("The gameObject received is not an IInlineSelectable");
-				else
-					LoadBitSettings();
-			}
+			else if (target.TryGetComponent(out this.target))
+				LoadBitSettings();
+			else
+				PUtil.LogError("The gameObject received is not an IInlineSelectable");
 		}
 	}
 }

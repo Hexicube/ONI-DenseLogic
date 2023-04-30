@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
  * restriction, including without limitation the rights to use, copy, modify, merge, publish,
@@ -48,8 +48,9 @@ namespace ONI_DenseLogic {
 
 		protected override void OnSpawn() {
 			if (infoStatusItem == null) {
-				infoStatusItem = new StatusItem("StoredValue", "BUILDING", "", StatusItem.IconType.Info, NotificationType.Neutral, false, OverlayModes.None.ID, true, 129022);
-				infoStatusItem.resolveStringCallback = new Func<string, object, string>(ResolveInfoStatusItemString);
+				infoStatusItem = new StatusItem("StoredValue", "BUILDING", "", StatusItem.
+					IconType.Info, NotificationType.Neutral, false, OverlayModes.None.ID);
+				infoStatusItem.resolveStringCallback = ResolveInfoStatusItemString;
 			}
 			Subscribe(-801688580, OnLogicValueChangedDelegate);
 		}
@@ -65,7 +66,7 @@ namespace ONI_DenseLogic {
 			if (outValue != value) {
 				value = outValue;
 				ports.SendSignal(READID, value);
-				kbac.Play(LogicCircuitNetwork.IsBitActive(0, value) ? "on" : "off", KAnim.PlayMode.Once, 1f, 0.0f);
+				kbac.Play(LogicCircuitNetwork.IsBitActive(0, value) ? "on" : "off");
 			}
 		}
 

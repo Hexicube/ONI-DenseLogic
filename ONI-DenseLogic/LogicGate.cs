@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
  * restriction, including without limitation the rights to use, copy, modify, merge, publish,
@@ -24,8 +24,8 @@ namespace ONI_DenseLogic {
 	[SerializationConfig(MemberSerialization.OptIn)]
 	public class LogicGate : KMonoBehaviour {
 		internal static int GetInputBitMask(int cell) {
-			var wire = Grid.Objects[cell, (int)ObjectLayer.LogicWire].GetComponentSafe<LogicWire>();
-			if (wire != null) {
+			var go = Grid.Objects[cell, (int)ObjectLayer.LogicWire];
+			if (go != null && go.TryGetComponent(out LogicWire wire)) {
 				switch (wire.MaxBitDepth) {
 					case LogicWire.BitDepth.OneBit: return 0b1;
 					case LogicWire.BitDepth.FourBit: return 0b1111;
@@ -123,14 +123,14 @@ namespace ONI_DenseLogic {
 		public void UpdateVisuals() {
 			// when there is not an output, we are supposed to play the off animation
 			if (!(Game.Instance.logicCircuitSystem.GetNetworkForCell(GetActualCell(OUTPUTOFFSET)) is LogicCircuitNetwork)) {
-				kbac.Play("off", KAnim.PlayMode.Once, 1f, 0.0f);
+				kbac.Play("off");
 				return;
 			}
 			int num0 = GetSingleValue(inVal1);
 			int num1 = GetSingleValue(inVal2);
 			int num2 = GetSingleValue(curOut);
 			int state = num0 + 2 * num1 + 4 * num2;
-			kbac.Play("on_" + state, KAnim.PlayMode.Once, 1f, 0.0f);
+			kbac.Play("on_" + state);
 		}
 	}
 }

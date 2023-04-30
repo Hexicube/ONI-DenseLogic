@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Dense Logic Team
+ * Copyright 2023 Dense Logic Team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without
@@ -80,15 +80,14 @@ namespace ONI_DenseLogic {
 		}
 
 		public override bool IsValidForTarget(GameObject target) {
-			return target.GetComponent<IConfigurableFourBits>() != null;
+			return target != null && target.TryGetComponent(out IConfigurableFourBits _);
 		}
 
 		protected override void OnPrefabInit() {
 			var margin = new RectOffset(8, 8, 8, 8);
 			// Update the parameters of the base BoxLayoutGroup
-			var baseLayout = gameObject.GetComponent<BoxLayoutGroup>();
-			if (baseLayout != null)
-				baseLayout.Params = new BoxLayoutParams() {
+			if (gameObject.TryGetComponent(out BoxLayoutGroup baseLayout))
+				baseLayout.Params = new BoxLayoutParams {
 					Margin = margin, Direction = PanelDirection.Vertical, Alignment =
 					TextAnchor.UpperCenter, Spacing = 8
 				};
@@ -104,12 +103,12 @@ namespace ONI_DenseLogic {
 			new PPanel("BottomRow") {
 				Alignment = TextAnchor.MiddleCenter, Direction = PanelDirection.Horizontal,
 				Spacing = 10, Margin = margin
-			}.AddChild(new PButton() {
+			}.AddChild(new PButton {
 				Color = PUITuning.Colors.ButtonBlueStyle, Margin = new RectOffset(8, 8, 3, 3),
 				TextStyle = PUITuning.Fonts.TextLightStyle, OnClick = EnableAll,
 				ToolTip = DenseLogicStrings.UI.TOOLTIPS.FOURBITSELECT.ENABLE_ALL,
 				Text = DenseLogicStrings.UI.UISIDESCREENS.FOURBITSELECT.ENABLE_ALL
-			}).AddChild(new PButton() {
+			}).AddChild(new PButton {
 				Color = PUITuning.Colors.ButtonBlueStyle, Margin = new RectOffset(8, 8, 3, 3),
 				TextStyle = PUITuning.Fonts.TextLightStyle, OnClick = DisableAll,
 				ToolTip = DenseLogicStrings.UI.TOOLTIPS.FOURBITSELECT.DISABLE_ALL,
@@ -123,13 +122,10 @@ namespace ONI_DenseLogic {
 		public override void SetTarget(GameObject target) {
 			if (target == null)
 				PUtil.LogError("Invalid gameObject received");
-			else {
-				this.target = target.GetComponent<IConfigurableFourBits>();
-				if (this.target == null)
-					PUtil.LogError("The gameObject received is not an IConfigurableFourBits");
-				else
-					RefreshToggles();
-			}
+			else if (target.TryGetComponent(out this.target))
+				RefreshToggles();
+			else
+				PUtil.LogError("The gameObject received is not an IConfigurableFourBits");
 		}
 
 		/// <summary>
@@ -190,7 +186,7 @@ namespace ONI_DenseLogic {
 					Toggle.bgImage = img;
 					// this only works as long as the children are realized before the parents
 					// there is probably a better way to do this but this works under that assumption
-					Toggle.additionalKImages = new KImage[1] { outlineImage };
+					Toggle.additionalKImages = new[] { outlineImage };
 				};
 				var RowInternal = new PGridPanel("BitSelectRowInternal") {
 					Margin = new RectOffset(8, 8, 8, 8),
