@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.UI;
 using PeterHan.PLib.Database;
-using static ResearchTypes;
 
 namespace ONI_DenseLogic {
 	/// <summary>
@@ -51,26 +50,27 @@ namespace ONI_DenseLogic {
 		[HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
 		public static class GeneratedBuildings_LoadGeneratedBuildings_Patch {
 			private static readonly HashedString CATEGORY_AUTOMATION = "Automation";
+			private const string TAG_LOGIC = "logic gates";
 
 			internal static void Prefix() {
-				AddBuilding(CATEGORY_AUTOMATION, DenseMultiplexerConfig.ID, "logic gates");
-				AddBuilding(CATEGORY_AUTOMATION, DenseDeMultiplexerConfig.ID, "logic gates");
-				AddBuilding(CATEGORY_AUTOMATION, DenseLogicGateConfig.ID, "logic gates");
-				AddBuilding(CATEGORY_AUTOMATION, DenseInputConfig.ID, "logic gates",
+				AddBuilding(CATEGORY_AUTOMATION, DenseMultiplexerConfig.ID, TAG_LOGIC);
+				AddBuilding(CATEGORY_AUTOMATION, DenseDeMultiplexerConfig.ID, TAG_LOGIC);
+				AddBuilding(CATEGORY_AUTOMATION, DenseLogicGateConfig.ID, TAG_LOGIC);
+				AddBuilding(CATEGORY_AUTOMATION, DenseInputConfig.ID, TAG_LOGIC,
 					LogicSwitchConfig.ID);
-				AddBuilding(CATEGORY_AUTOMATION, LogicGateNorConfig.ID, "logic gates",
+				AddBuilding(CATEGORY_AUTOMATION, LogicGateNorConfig.ID, TAG_LOGIC,
 					LogicGateOrConfig.ID);
-				AddBuilding(CATEGORY_AUTOMATION, LogicGateNandConfig.ID, "logic gates",
+				AddBuilding(CATEGORY_AUTOMATION, LogicGateNandConfig.ID, TAG_LOGIC,
 					LogicGateAndConfig.ID);
-				AddBuilding(CATEGORY_AUTOMATION, LogicGateXnorConfig.ID, "logic gates",
+				AddBuilding(CATEGORY_AUTOMATION, LogicGateXnorConfig.ID, TAG_LOGIC,
 					LogicGateXorConfig.ID);
-				AddBuilding(CATEGORY_AUTOMATION, InlineLogicGateConfig.ID, "logic gates",
+				AddBuilding(CATEGORY_AUTOMATION, InlineLogicGateConfig.ID, TAG_LOGIC,
 					LogicGateXnorConfig.ID);
-				AddBuilding(CATEGORY_AUTOMATION, SignalRemapperConfig.ID, "logic gates",
+				AddBuilding(CATEGORY_AUTOMATION, SignalRemapperConfig.ID, TAG_LOGIC,
 					InlineLogicGateConfig.ID);
-				AddBuilding(CATEGORY_AUTOMATION, LogicSevenSegmentConfig.ID, "logic gates",
+				AddBuilding(CATEGORY_AUTOMATION, LogicSevenSegmentConfig.ID, TAG_LOGIC,
 					LogicCounterConfig.ID);
-				AddBuilding(CATEGORY_AUTOMATION, LogicDataConfig.ID, "logic gates",
+				AddBuilding(CATEGORY_AUTOMATION, LogicDataConfig.ID, TAG_LOGIC,
 					LogicMemoryConfig.ID);
 			}
 
