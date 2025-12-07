@@ -47,6 +47,9 @@ namespace ONI_DenseLogic {
 		public static readonly CellOffset INPUTOFFSET2 = new CellOffset(0, 1);
 		public static readonly CellOffset OUTPUTOFFSET = new CellOffset(1, 0);
 
+		private static readonly Action<object, object> ON_LOGIC_VALUE_CHANGED = (context, data) =>
+			(context as LogicGate)?.OnLogicValueChanged(data);
+
 #pragma warning disable IDE0044, CS0649 // Add readonly modifier
 		[MyCmpReq]
 		private KBatchedAnimController kbac;
@@ -66,6 +69,12 @@ namespace ONI_DenseLogic {
 		// [SerializeField] is not required on public fields with supported types
 		public LogicGateType gateType;
 
+		private int handleLogicChanged;
+
+		internal LogicGate() {
+			handleLogicChanged = -1;
+		}
+
 		private int GetActualCell(CellOffset offset) {
 			if (rotatable != null)
 				offset = rotatable.GetRotatedCellOffset(offset);
@@ -77,13 +86,13 @@ namespace ONI_DenseLogic {
 		}
 
 		protected override void OnCleanUp() {
-			Unsubscribe((int)GameHashes.LogicEvent, OnLogicValueChanged);
+			Unsubscribe(ref handleLogicChanged);
 			base.OnCleanUp();
 		}
 
 		protected override void OnSpawn() {
 			base.OnSpawn();
-			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChanged);
+			handleLogicChanged = Subscribe((int)GameHashes.LogicEvent, ON_LOGIC_VALUE_CHANGED, this);
 		}
 
 		public void OnLogicValueChanged(object data) {

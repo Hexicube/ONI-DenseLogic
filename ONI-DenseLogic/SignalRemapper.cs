@@ -68,7 +68,12 @@ namespace ONI_DenseLogic {
 		[SerializeField]
 		private List<int> bits;
 
+		private int handleCopySettings;
+		private int handleLogicChanged;
+
 		internal SignalRemapper() {
+			handleCopySettings = -1;
+			handleLogicChanged = -1;
 			bits = null;
 		}
 
@@ -89,11 +94,17 @@ namespace ONI_DenseLogic {
 			return mapping;
 		}
 
+		protected override void OnCleanUp() {
+			Unsubscribe(ref handleCopySettings);
+			Unsubscribe(ref handleLogicChanged);
+			base.OnCleanUp();
+		}
+
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			gameObject.AddOrGet<CopyBuildingSettings>();
-			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
-			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+			handleLogicChanged = Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
+			handleCopySettings = Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
 			UpdateVisuals();
 		}
 
