@@ -56,15 +56,26 @@ namespace ONI_DenseLogic {
 		[Serialize]
 		public MultiplexerType muxType;
 
+		private int handleLogicChanged;
+
+		internal DenseMultiplexer() {
+			handleLogicChanged = -1;
+		}
+
 		private int GetActualCell(CellOffset offset) {
 			if (rotatable != null)
 				offset = rotatable.GetRotatedCellOffset(offset);
 			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
 		}
 
+		protected override void OnCleanUp() {
+			Unsubscribe(ref handleLogicChanged);
+			base.OnCleanUp();
+		}
+
 		protected override void OnSpawn() {
 			base.OnSpawn();
-			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
+			handleLogicChanged = Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
 			UpdateVisuals();
 		}
 

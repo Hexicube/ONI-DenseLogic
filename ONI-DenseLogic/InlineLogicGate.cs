@@ -105,8 +105,11 @@ namespace ONI_DenseLogic {
 		[Serialize]
 		private int inputBit1, inputBit2, outputBit;
 
+		private int handleCopySettings;
+
 		internal InlineLogicGate() {
 			InputHandler = null;
+			handleCopySettings = -1;
 			mode = LogicGateType.And;
 			inputBit1 = 0;
 			inputBit2 = 1;
@@ -117,6 +120,11 @@ namespace ONI_DenseLogic {
 			if (rotatable != null)
 				offset = rotatable.GetRotatedCellOffset(offset);
 			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
+		}
+
+		protected override void OnCleanUp() {
+			Unsubscribe(ref handleCopySettings);
+			base.OnCleanUp();
 		}
 
 		private void OnCopySettings(object data) {
@@ -133,7 +141,7 @@ namespace ONI_DenseLogic {
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			gameObject.AddOrGet<CopyBuildingSettings>();
-			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+			handleCopySettings = Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
 			InputHandler = new LogicIOHandler(this);
 			UpdateGateType();
 			UpdateVisuals();

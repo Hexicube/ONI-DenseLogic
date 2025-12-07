@@ -88,9 +88,14 @@ namespace ONI_DenseLogic {
 		[SerializeField]
 		[Serialize]
 		private LogicGateType mode;
+		
+		private int handleCopySettings;
+		private int handleLogicChanged;
 
 		internal DenseLogicGate() {
 			mode = LogicGateType.And;
+			handleCopySettings = -1;
+			handleLogicChanged = -1;
 		}
 
 		private int GetActualCell(CellOffset offset) {
@@ -99,11 +104,17 @@ namespace ONI_DenseLogic {
 			return Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), offset);
 		}
 
+		protected override void OnCleanUp() {
+			Unsubscribe(ref handleCopySettings);
+			Unsubscribe(ref handleLogicChanged);
+			base.OnCleanUp();
+		}
+
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			gameObject.AddOrGet<CopyBuildingSettings>();
-			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
-			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+			handleLogicChanged = Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
+			handleCopySettings = Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
 			UpdateAnimation();
 			UpdateVisuals();
 		}

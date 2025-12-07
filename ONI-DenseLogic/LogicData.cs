@@ -46,17 +46,29 @@ namespace ONI_DenseLogic {
 		private int value;
 		private static StatusItem infoStatusItem;
 
+		private int handleLogicChanged;
+
+		internal LogicData() {
+			handleLogicChanged = -1;
+		}
+
+		protected override void OnCleanUp() {
+			Unsubscribe(ref handleLogicChanged);
+			base.OnCleanUp();
+		}
+
 		protected override void OnSpawn() {
 			if (infoStatusItem == null) {
 				infoStatusItem = new StatusItem("StoredValue", "BUILDING", "", StatusItem.
 					IconType.Info, NotificationType.Neutral, false, OverlayModes.None.ID);
 				infoStatusItem.resolveStringCallback = ResolveInfoStatusItemString;
 			}
-			Subscribe(-801688580, OnLogicValueChangedDelegate);
+			handleLogicChanged = Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
 		}
 
 		public void OnLogicValueChanged(object data) {
-			if (ports == null || gameObject == null || this == null || ((LogicValueChanged)data).portID == READID)
+			if (ports == null || gameObject == null || this == null || !(data is
+					LogicValueChanged parameter) || parameter.portID == READID)
 				return;
 			int dataValue = ports.GetInputValue(DATAID);
 			int setValue = ports.GetInputValue(SETID);

@@ -41,14 +41,22 @@ namespace ONI_DenseLogic {
 		[Serialize]
 		private int curOut;
 
+		private int handleCopySettings;
+
 		internal DenseInput() {
 			curOut = 0;
+			handleCopySettings = -1;
+		}
+
+		protected override void OnCleanUp() {
+			Unsubscribe(ref handleCopySettings);
+			base.OnCleanUp();
 		}
 
 		protected override void OnSpawn() {
 			base.OnSpawn();
 			gameObject.AddOrGet<CopyBuildingSettings>();
-			Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+			handleCopySettings = Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
 			UpdateLogicCircuit();
 		}
 

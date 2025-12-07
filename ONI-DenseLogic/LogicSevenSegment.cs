@@ -46,9 +46,20 @@ namespace ONI_DenseLogic {
 		private int curOut;
 		private MeterController meter;
 
+		private int handleLogicChanged;
+
+		internal LogicSevenSegment() {
+			handleLogicChanged = -1;
+		}
+
+		protected override void OnCleanUp() {
+			Unsubscribe(ref handleLogicChanged);
+			base.OnCleanUp();
+		}
+
 		protected override void OnSpawn() {
 			base.OnSpawn();
-			Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
+			handleLogicChanged = Subscribe((int)GameHashes.LogicEvent, OnLogicValueChangedDelegate);
 			meter = new MeterController(kbac, "meter_target", kbac.FlipY ? "meter_dn" :
 				"meter_up", Meter.Offset.UserSpecified, Grid.SceneLayer.LogicGatesFront,
 				Vector3.zero, null);
